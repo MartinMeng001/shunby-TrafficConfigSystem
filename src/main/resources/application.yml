@@ -1,0 +1,21 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /traffic-config
+
+spring:
+  application:
+    name: traffic-config-system
+
+# 配置文件路径
+traffic:
+  config:
+    file:
+      path: classpath:config.xml
+
+logging:
+  level:
+    com.traffic: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
