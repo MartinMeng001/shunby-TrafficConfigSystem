@@ -65,7 +65,7 @@ public class ConfigException extends RuntimeException {
      */
     public ConfigException(String errorCode, String message, Object details) {
         super(message);
-        self.errorCode = errorCode;
+        this.errorCode = errorCode;
         this.errorMessage = message;
         this.details = details;
     }

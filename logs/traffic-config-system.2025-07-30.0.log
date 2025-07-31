@@ -1,0 +1,1209 @@
+2025-07-30 09:06:59.989 [main] ERROR [] org.springframework.boot.SpringApplication - Application run failed
+java.lang.IllegalStateException: java.lang.IllegalStateException: Logback configuration error detected: 
+ERROR in ch.qos.logback.core.joran.conditional.IfAction - Could not find Janino library on the class path. Skipping conditional processing.
+ERROR in ch.qos.logback.core.joran.conditional.IfAction - See also http://logback.qos.ch/codes.html#ifJanino
+ERROR in ch.qos.logback.core.joran.spi.Interpreter@292:11 - no applicable action for [scan], current ElementPath  is [[configuration][scan]]
+ERROR in ch.qos.logback.core.joran.spi.Interpreter@293:21 - no applicable action for [scanPeriod], current ElementPath  is [[configuration][scan][scanPeriod]]
+	at org.springframework.boot.context.logging.LoggingApplicationListener.initializeSystem(LoggingApplicationListener.java:344)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.initialize(LoggingApplicationListener.java:298)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.onApplicationEnvironmentPreparedEvent(LoggingApplicationListener.java:246)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.onApplicationEvent(LoggingApplicationListener.java:223)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:178)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:171)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:145)
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:133)
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:85)
+	at org.springframework.boot.SpringApplicationRunListeners.lambda$environmentPrepared$2(SpringApplicationRunListeners.java:66)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:120)
+	at org.springframework.boot.SpringApplicationRunListeners.doWithListeners(SpringApplicationRunListeners.java:114)
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:65)
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:344)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:302)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at com.traffic.config.Application.main(Application.java:9)
+Caused by: java.lang.IllegalStateException: Logback configuration error detected: 
+ERROR in ch.qos.logback.core.joran.conditional.IfAction - Could not find Janino library on the class path. Skipping conditional processing.
+ERROR in ch.qos.logback.core.joran.conditional.IfAction - See also http://logback.qos.ch/codes.html#ifJanino
+ERROR in ch.qos.logback.core.joran.spi.Interpreter@292:11 - no applicable action for [scan], current ElementPath  is [[configuration][scan]]
+ERROR in ch.qos.logback.core.joran.spi.Interpreter@293:21 - no applicable action for [scanPeriod], current ElementPath  is [[configuration][scan][scanPeriod]]
+	at org.springframework.boot.logging.logback.LogbackLoggingSystem.reportConfigurationErrorsIfNecessary(LogbackLoggingSystem.java:189)
+	at org.springframework.boot.logging.logback.LogbackLoggingSystem.loadConfiguration(LogbackLoggingSystem.java:170)
+	at org.springframework.boot.logging.AbstractLoggingSystem.initializeWithConventions(AbstractLoggingSystem.java:80)
+	at org.springframework.boot.logging.AbstractLoggingSystem.initialize(AbstractLoggingSystem.java:60)
+	at org.springframework.boot.logging.logback.LogbackLoggingSystem.initialize(LogbackLoggingSystem.java:132)
+	at org.springframework.boot.context.logging.LoggingApplicationListener.initializeSystem(LoggingApplicationListener.java:329)
+	... 18 common frames omitted
+2025-07-30 09:09:26.429 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 7348 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 09:09:26.432 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 09:09:26.433 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 09:09:28.093 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 09:09:28.219 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1726 ms
+2025-07-30 09:09:28.502 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 备份目录创建成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\.\backup
+2025-07-30 09:09:28.503 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 09:09:28.699 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:09:28.700 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 09:09:29.131 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 09:09:29.181 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 09:09:29.197 [main] INFO  com.traffic.config.Application - Started Application in 3.43 seconds (JVM running for 4.184)
+2025-07-30 09:09:29.299 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 09:09:29.299 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 09:09:29.299 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 09:09:29.299 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 09:09:29.300 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@549ab3ac
+2025-07-30 09:09:29.301 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@5da7ff09
+2025-07-30 09:09:29.301 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 09:09:29.301 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 09:15:17.870 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 26116 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 09:15:17.874 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 09:15:17.874 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 09:15:19.022 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 09:15:19.135 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1213 ms
+2025-07-30 09:15:19.389 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 09:15:19.405 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:15:19.405 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 09:15:19.849 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 09:15:19.906 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 09:15:19.923 [main] INFO  com.traffic.config.Application - Started Application in 2.678 seconds (JVM running for 3.338)
+2025-07-30 09:15:20.336 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 09:15:20.336 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 09:15:20.336 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 09:15:20.336 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 09:15:20.337 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@3185a80
+2025-07-30 09:15:20.337 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@3bbeb3ca
+2025-07-30 09:15:20.337 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 09:15:20.337 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-07-30 09:15:56.406 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 13044 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 09:15:56.409 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 09:15:56.410 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 09:15:57.664 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 09:15:57.774 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1311 ms
+2025-07-30 09:15:58.027 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 09:15:58.043 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:15:58.044 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 09:15:58.472 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 09:15:58.520 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 09:15:58.537 [main] INFO  com.traffic.config.Application - Started Application in 2.818 seconds (JVM running for 3.608)
+2025-07-30 09:15:58.705 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 09:15:58.705 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 09:15:58.705 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 09:15:58.705 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 09:15:58.706 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@303c47e6
+2025-07-30 09:15:58.706 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@29227b6
+2025-07-30 09:15:58.707 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 09:15:58.707 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 09:22:29.656 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/debug", parameters={}
+2025-07-30 09:22:29.695 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 09:23:26.986 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 09:23:26.990 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 09:23:45.612 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 09:23:45.635 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 09:28:36.384 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/debug", parameters={}
+2025-07-30 09:28:36.388 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 09:29:37.685 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 32344 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 09:29:37.688 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 09:29:37.689 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 09:29:38.935 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 09:29:39.049 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1305 ms
+2025-07-30 09:29:39.304 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 09:29:39.318 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:29:39.319 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 09:29:39.721 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 09:29:39.770 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 09:29:39.784 [main] INFO  com.traffic.config.Application - Started Application in 2.777 seconds (JVM running for 3.533)
+2025-07-30 09:29:40.074 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 09:29:40.075 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 09:29:40.075 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 09:29:40.075 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 09:29:40.076 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@66e07a20
+2025-07-30 09:29:40.077 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@1acb60ec
+2025-07-30 09:29:40.077 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 09:29:40.077 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 09:29:46.436 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 09:29:46.486 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 09:34:38.969 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 29424 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 09:34:38.973 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 09:34:38.974 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 09:34:40.368 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 09:34:40.488 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1452 ms
+2025-07-30 09:34:40.760 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 09:34:40.776 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:34:40.776 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:34:40.776 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 09:34:41.207 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 09:34:41.257 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 09:34:41.273 [main] INFO  com.traffic.config.Application - Started Application in 3.065 seconds (JVM running for 3.928)
+2025-07-30 09:34:41.643 [RMI TCP Connection(2)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:34:41.646 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 09:34:41.646 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 09:34:41.646 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 09:34:41.646 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 09:34:41.647 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@63b5f853
+2025-07-30 09:34:41.648 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@e0f3c7f
+2025-07-30 09:34:41.648 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 09:34:41.648 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 09:34:57.808 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 09:34:57.832 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:34:57.865 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 09:39:56.339 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 29436 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 09:39:56.342 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 09:39:56.343 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 09:39:57.623 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 09:39:57.725 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1319 ms
+2025-07-30 09:39:57.987 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 09:39:58.002 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:39:58.002 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:39:58.002 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 09:39:58.410 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 09:39:58.454 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 09:39:58.468 [main] INFO  com.traffic.config.Application - Started Application in 2.841 seconds (JVM running for 3.579)
+2025-07-30 09:39:58.666 [RMI TCP Connection(1)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:39:58.668 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 09:39:58.669 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 09:39:58.669 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 09:39:58.669 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 09:39:58.670 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@5d388d97
+2025-07-30 09:39:58.671 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@7e497e29
+2025-07-30 09:39:58.671 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 09:39:58.671 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 09:42:09.054 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 12712 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 09:42:09.057 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 09:42:09.058 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 09:42:10.287 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 09:42:10.392 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1284 ms
+2025-07-30 09:42:10.671 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 09:42:10.686 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:42:10.686 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:42:10.687 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 09:42:11.103 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 09:42:11.151 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 09:42:11.167 [main] INFO  com.traffic.config.Application - Started Application in 2.773 seconds (JVM running for 3.461)
+2025-07-30 09:42:11.506 [RMI TCP Connection(1)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:42:11.516 [RMI TCP Connection(4)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 09:42:11.516 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 09:42:11.516 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 09:42:11.517 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 09:42:11.518 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@7a7bba49
+2025-07-30 09:42:11.518 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@20bc5ee9
+2025-07-30 09:42:11.518 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 09:42:11.518 [RMI TCP Connection(4)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 09:42:24.135 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/debug", parameters={}
+2025-07-30 09:42:24.155 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:42:24.176 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 09:54:50.501 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 21096 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 09:54:50.505 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 09:54:50.505 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 09:54:51.651 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 09:54:51.773 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1216 ms
+2025-07-30 09:54:52.031 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 09:54:52.047 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:54:52.047 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:54:52.047 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 09:54:52.508 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 09:54:52.561 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 09:54:52.576 [main] INFO  com.traffic.config.Application - Started Application in 2.668 seconds (JVM running for 3.313)
+2025-07-30 09:54:53.038 [RMI TCP Connection(2)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 0
+2025-07-30 09:54:53.042 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 09:54:53.042 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 09:54:53.042 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 09:54:53.043 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 09:54:53.044 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@1421d7a6
+2025-07-30 09:54:53.044 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@6644922e
+2025-07-30 09:54:53.044 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 09:54:53.044 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 09:55:42.280 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 31544 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 09:55:42.282 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 09:55:42.283 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 09:55:43.420 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 09:55:43.531 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1202 ms
+2025-07-30 09:55:43.771 [main] ERROR com.traffic.config.service.impl.ConfigServiceImpl - JAXB上下文初始化失败
+com.sun.xml.bind.v2.runtime.IllegalAnnotationsException: 2 counts of IllegalAnnotationExceptions
+	at com.sun.xml.bind.v2.runtime.IllegalAnnotationsException$Builder.check(IllegalAnnotationsException.java:106)
+	at com.sun.xml.bind.v2.runtime.JAXBContextImpl.getTypeInfoSet(JAXBContextImpl.java:471)
+	at com.sun.xml.bind.v2.runtime.JAXBContextImpl.<init>(JAXBContextImpl.java:303)
+	at com.sun.xml.bind.v2.runtime.JAXBContextImpl.<init>(JAXBContextImpl.java:139)
+	at com.sun.xml.bind.v2.runtime.JAXBContextImpl$JAXBContextBuilder.build(JAXBContextImpl.java:1156)
+	at com.sun.xml.bind.v2.ContextFactory.createContext(ContextFactory.java:165)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at javax.xml.bind.ContextFinder.newInstance(ContextFinder.java:297)
+	at javax.xml.bind.ContextFinder.newInstance(ContextFinder.java:286)
+	at javax.xml.bind.ContextFinder.find(ContextFinder.java:409)
+	at javax.xml.bind.JAXBContext.newInstance(JAXBContext.java:721)
+	at javax.xml.bind.JAXBContext.newInstance(JAXBContext.java:662)
+	at com.traffic.config.service.impl.ConfigServiceImpl.init(ConfigServiceImpl.java:58)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:389)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:333)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:157)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:440)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1796)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:710)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:693)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:119)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:408)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1431)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:619)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:929)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at com.traffic.config.Application.main(Application.java:9)
+2025-07-30 09:55:43.774 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'configController': Unsatisfied dependency expressed through field 'configService'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'configServiceImpl': Invocation of init method failed; nested exception is com.traffic.config.exception.ConfigException: 配置服务初始化失败
+2025-07-30 09:55:43.791 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2025-07-30 09:55:43.807 [main] ERROR org.springframework.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'configController': Unsatisfied dependency expressed through field 'configService'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'configServiceImpl': Invocation of init method failed; nested exception is com.traffic.config.exception.ConfigException: 配置服务初始化失败
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:713)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:693)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:119)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:408)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1431)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:619)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:929)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at com.traffic.config.Application.main(Application.java:9)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'configServiceImpl': Invocation of init method failed; nested exception is com.traffic.config.exception.ConfigException: 配置服务初始化失败
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:160)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:440)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1796)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:710)
+	... 20 common frames omitted
+Caused by: com.traffic.config.exception.ConfigException: 配置服务初始化失败
+	at com.traffic.config.service.impl.ConfigServiceImpl.init(ConfigServiceImpl.java:71)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:389)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:333)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:157)
+	... 32 common frames omitted
+Caused by: com.sun.xml.bind.v2.runtime.IllegalAnnotationsException: 2 counts of IllegalAnnotationExceptions
+	at com.sun.xml.bind.v2.runtime.IllegalAnnotationsException$Builder.check(IllegalAnnotationsException.java:106)
+	at com.sun.xml.bind.v2.runtime.JAXBContextImpl.getTypeInfoSet(JAXBContextImpl.java:471)
+	at com.sun.xml.bind.v2.runtime.JAXBContextImpl.<init>(JAXBContextImpl.java:303)
+	at com.sun.xml.bind.v2.runtime.JAXBContextImpl.<init>(JAXBContextImpl.java:139)
+	at com.sun.xml.bind.v2.runtime.JAXBContextImpl$JAXBContextBuilder.build(JAXBContextImpl.java:1156)
+	at com.sun.xml.bind.v2.ContextFactory.createContext(ContextFactory.java:165)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at javax.xml.bind.ContextFinder.newInstance(ContextFinder.java:297)
+	at javax.xml.bind.ContextFinder.newInstance(ContextFinder.java:286)
+	at javax.xml.bind.ContextFinder.find(ContextFinder.java:409)
+	at javax.xml.bind.JAXBContext.newInstance(JAXBContext.java:721)
+	at javax.xml.bind.JAXBContext.newInstance(JAXBContext.java:662)
+	at com.traffic.config.service.impl.ConfigServiceImpl.init(ConfigServiceImpl.java:58)
+	... 39 common frames omitted
+2025-07-30 09:58:26.353 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 8384 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 09:58:26.356 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 09:58:26.357 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 09:58:27.977 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 09:58:28.125 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1708 ms
+2025-07-30 09:58:28.503 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 09:58:28.524 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 09:58:28.524 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 09:58:28.524 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 09:58:29.016 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 09:58:29.068 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 09:58:29.086 [main] INFO  com.traffic.config.Application - Started Application in 3.608 seconds (JVM running for 4.293)
+2025-07-30 09:58:29.639 [RMI TCP Connection(5)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 09:58:29.642 [RMI TCP Connection(4)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 09:58:29.642 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 09:58:29.642 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 09:58:29.643 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 09:58:29.643 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@3ee6640c
+2025-07-30 09:58:29.644 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@2b056394
+2025-07-30 09:58:29.644 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 09:58:29.645 [RMI TCP Connection(4)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-07-30 10:29:35.448 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 10:29:35.583 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:29:35.626 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 10:30:20.612 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 10:30:20.615 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:30:20.617 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 10:30:20.622 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 10:30:20.625 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:30:20.629 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 10:30:52.672 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 10:30:52.677 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 10:30:52.680 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 10:30:52.694 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 10:33:49.990 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/health/detailed", parameters={}
+2025-07-30 10:33:49.993 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:33:49.993 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:33:49.993 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:33:50.009 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 10:34:14.855 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/health", parameters={}
+2025-07-30 10:34:14.856 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:34:14.858 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 10:34:25.977 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 10:34:25.980 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 10:34:25.981 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 10:34:25.985 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 10:36:15.515 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/health/detailed", parameters={}
+2025-07-30 10:36:15.516 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:36:15.516 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:36:15.517 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:36:15.520 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 10:40:56.699 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 34016 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 10:40:56.702 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 10:40:56.703 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 10:40:57.950 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 10:40:58.059 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1295 ms
+2025-07-30 10:40:58.315 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 10:40:58.331 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:40:58.331 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:40:58.331 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 10:40:58.759 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 10:40:58.808 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 10:40:58.823 [main] INFO  com.traffic.config.Application - Started Application in 2.752 seconds (JVM running for 3.613)
+2025-07-30 10:40:58.898 [RMI TCP Connection(1)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:40:58.901 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 10:40:58.901 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 10:40:58.901 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 10:40:58.901 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 10:40:58.902 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@741ba362
+2025-07-30 10:40:58.902 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@6daf538
+2025-07-30 10:40:58.903 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 10:40:58.903 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 10:41:10.717 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 10:41:10.750 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 10:41:10.761 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 10:41:10.793 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 10:42:15.294 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/health/detailed", parameters={}
+2025-07-30 10:42:15.297 [http-nio-8080-exec-2] WARN  c.traffic.config.exception.GlobalExceptionHandler - 非法参数异常: When allowCredentials is true, allowedOrigins cannot contain the special value "*" since that cannot be set on the "Access-Control-Allow-Origin" response header. To allow credentials to a set of origins, list them explicitly or consider using "allowedOriginPatterns" instead.
+2025-07-30 10:42:15.302 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-30 10:42:29.783 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/health/detailed", parameters={}
+2025-07-30 10:42:29.785 [http-nio-8080-exec-4] WARN  c.traffic.config.exception.GlobalExceptionHandler - 非法参数异常: When allowCredentials is true, allowedOrigins cannot contain the special value "*" since that cannot be set on the "Access-Control-Allow-Origin" response header. To allow credentials to a set of origins, list them explicitly or consider using "allowedOriginPatterns" instead.
+2025-07-30 10:42:29.786 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-30 10:47:00.797 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 30896 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 10:47:00.799 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 10:47:00.800 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 10:47:01.968 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 10:47:02.076 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1228 ms
+2025-07-30 10:47:02.330 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 10:47:02.344 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:47:02.344 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:47:02.344 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 10:47:02.758 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 10:47:02.803 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 10:47:02.818 [main] INFO  com.traffic.config.Application - Started Application in 2.682 seconds (JVM running for 3.429)
+2025-07-30 10:47:03.182 [RMI TCP Connection(2)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:47:03.185 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 10:47:03.185 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 10:47:03.186 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 10:47:03.186 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 10:47:03.187 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@469d2db0
+2025-07-30 10:47:03.187 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@6ffd722d
+2025-07-30 10:47:03.187 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 10:47:03.187 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 10:47:09.697 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 10:47:09.725 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 10:47:09.732 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 10:47:09.761 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 10:47:21.492 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/health/detailed", parameters={}
+2025-07-30 10:47:21.494 [http-nio-8080-exec-2] WARN  c.traffic.config.exception.GlobalExceptionHandler - 非法参数异常: When allowCredentials is true, allowedOrigins cannot contain the special value "*" since that cannot be set on the "Access-Control-Allow-Origin" response header. To allow credentials to a set of origins, list them explicitly or consider using "allowedOriginPatterns" instead.
+2025-07-30 10:47:21.502 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-30 10:47:50.552 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 18392 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 10:47:50.560 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 10:47:50.563 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 10:47:52.701 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 10:47:52.885 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2199 ms
+2025-07-30 10:47:53.333 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 10:47:53.361 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:47:53.361 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:47:53.361 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 10:47:54.136 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 10:47:54.238 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 10:47:54.268 [main] INFO  com.traffic.config.Application - Started Application in 4.861 seconds (JVM running for 6.129)
+2025-07-30 10:47:54.633 [RMI TCP Connection(3)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:47:54.638 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 10:47:54.638 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 10:47:54.638 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 10:47:54.638 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 10:47:54.640 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@5ee5ff04
+2025-07-30 10:47:54.642 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@d352b7f
+2025-07-30 10:47:54.642 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 10:47:54.642 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 4 ms
+2025-07-30 10:47:56.797 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/health/detailed", parameters={}
+2025-07-30 10:47:56.822 [http-nio-8080-exec-1] WARN  c.traffic.config.exception.GlobalExceptionHandler - 非法参数异常: When allowCredentials is true, allowedOrigins cannot contain the special value "*" since that cannot be set on the "Access-Control-Allow-Origin" response header. To allow credentials to a set of origins, list them explicitly or consider using "allowedOriginPatterns" instead.
+2025-07-30 10:47:56.861 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-30 10:48:36.015 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 12892 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 10:48:36.022 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 10:48:36.023 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 10:48:38.210 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 10:48:38.370 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2233 ms
+2025-07-30 10:48:38.743 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 10:48:38.765 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:48:38.765 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:48:38.765 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 10:48:39.361 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 10:48:39.430 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 10:48:39.452 [main] INFO  com.traffic.config.Application - Started Application in 4.451 seconds (JVM running for 5.548)
+2025-07-30 10:48:39.820 [RMI TCP Connection(3)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:48:39.824 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 10:48:39.824 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 10:48:39.824 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 10:48:39.824 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 10:48:39.825 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@4cd65ba3
+2025-07-30 10:48:39.826 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@74654e5f
+2025-07-30 10:48:39.826 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 10:48:39.826 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 10:48:46.033 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/health/detailed", parameters={}
+2025-07-30 10:48:46.056 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:48:46.057 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:48:46.057 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:48:46.094 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 10:48:57.012 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 10:48:57.049 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 10:48:57.057 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 10:48:57.124 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 10:49:41.892 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 10:49:41.895 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 10:49:41.896 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 10:49:41.929 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 10:50:31.976 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health", parameters={}
+2025-07-30 10:50:31.978 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:50:31.980 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 10:53:42.316 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 10:53:42.319 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 10:53:42.320 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 10:53:42.322 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 10:59:22.009 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 10:59:22.015 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:59:22.020 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 10:59:22.034 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 10:59:22.037 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 10:59:22.047 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 10:59:27.001 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 10:59:27.003 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 10:59:27.004 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 10:59:27.006 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 11:00:25.985 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - POST "/traffic-config/api/config/refresh", parameters={}
+2025-07-30 11:00:25.986 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置缓存已刷新
+2025-07-30 11:00:25.986 [http-nio-8080-exec-5] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 11:00:25.989 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:00:25.989 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:00:25.990 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:00:25.999 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:00:26.001 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:00:26.002 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:00:26.006 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:00:26.007 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:00:26.009 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:00:31.471 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 11:00:31.472 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 11:00:31.473 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 11:00:31.474 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 11:00:43.379 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:00:43.381 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:00:43.384 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:00:43.403 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:00:43.406 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:00:43.409 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:00:48.937 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 11:00:48.940 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 11:00:48.940 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 11:00:48.943 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 11:02:59.798 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:02:59.800 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:02:59.804 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:02:59.834 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:02:59.837 [http-nio-8080-exec-4] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:02:59.844 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:03:03.061 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:03:03.062 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:03:03.064 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:03:03.104 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:03:03.107 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:03:03.108 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:03:07.296 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 11:03:07.298 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 11:03:07.298 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 11:03:07.300 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 11:03:38.384 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 11:03:38.386 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 11:03:38.387 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 11:03:38.388 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 11:07:52.029 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:07:52.030 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:07:52.032 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:07:52.036 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:07:52.037 [http-nio-8080-exec-10] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:07:52.040 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:07:54.641 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 11:07:54.643 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 403 FORBIDDEN
+2025-07-30 11:08:01.880 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 11:08:01.883 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 403 FORBIDDEN
+2025-07-30 11:10:15.449 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:10:15.451 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:10:15.453 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:10:15.473 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:10:15.476 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:10:15.478 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:11:10.368 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:11:10.370 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:11:10.371 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:11:10.395 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:11:10.396 [http-nio-8080-exec-6] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:11:10.397 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:11:13.583 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 11:11:13.585 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 11:11:13.585 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 11:11:13.587 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 11:15:16.643 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 11:15:16.647 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 11:15:16.648 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 11:15:16.655 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 11:15:30.069 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 11:15:30.071 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 403 FORBIDDEN
+2025-07-30 11:16:01.854 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:16:01.855 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:16:01.858 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:16:01.903 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:16:01.907 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:16:01.909 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:16:06.104 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/health/detailed", parameters={}
+2025-07-30 11:16:06.107 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-07-30 11:16:06.108 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/traffic-config/error", parameters={}
+2025-07-30 11:16:06.110 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-07-30 11:30:19.785 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:30:19.787 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:30:19.789 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:30:19.802 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:30:19.804 [http-nio-8080-exec-10] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:30:19.805 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:30:27.742 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:30:27.744 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:30:27.747 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:30:27.774 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:30:27.778 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:30:27.780 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:30:31.160 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/health/detailed", parameters={}
+2025-07-30 11:30:31.162 [http-nio-8080-exec-4] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:30:31.163 [http-nio-8080-exec-4] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:30:31.163 [http-nio-8080-exec-4] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:30:31.184 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:45:47.943 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:45:47.945 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:45:47.948 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:45:48.038 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:45:48.039 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:45:48.041 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:46:01.652 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:46:01.653 [http-nio-8080-exec-6] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:46:01.655 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:46:01.678 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:46:01.680 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:46:01.681 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:46:32.280 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:46:32.281 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:46:32.282 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:46:32.303 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:46:32.304 [http-nio-8080-exec-10] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:46:32.306 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:47:04.690 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:47:04.692 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:47:04.694 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:47:04.706 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:47:04.707 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:47:04.709 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:47:24.468 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:47:24.474 [http-nio-8080-exec-4] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:47:24.480 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:47:24.503 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:47:24.506 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:47:24.508 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:48:34.735 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:48:34.737 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:48:34.738 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:48:34.822 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:48:34.824 [http-nio-8080-exec-6] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:48:34.826 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:50:03.474 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:50:03.475 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:50:03.477 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:50:03.483 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:50:03.485 [http-nio-8080-exec-10] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:50:03.486 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:52:36.131 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:52:36.132 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:52:36.133 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:52:36.138 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:52:36.139 [http-nio-8080-exec-4] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:52:36.140 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:55:03.179 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:55:03.181 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:55:03.182 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:55:03.194 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:55:03.196 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:55:03.198 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:59:49.976 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 11:59:49.978 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:59:49.979 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 11:59:49.987 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 11:59:49.994 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 11:59:49.995 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 12:00:18.640 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 12:00:18.641 [http-nio-8080-exec-10] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 12:00:18.643 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 12:00:18.654 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 12:00:18.656 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 12:00:18.657 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 12:00:42.862 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 12:00:42.863 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 12:00:42.864 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 12:00:42.871 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 12:00:42.872 [http-nio-8080-exec-4] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 12:00:42.873 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 13:54:24.733 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 13:54:24.735 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 13:54:24.736 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 13:54:24.745 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 13:54:24.746 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 13:54:24.747 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 13:54:40.718 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 13:54:40.719 [http-nio-8080-exec-6] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 13:54:40.720 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 13:54:40.736 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 13:54:40.738 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 13:54:40.739 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 13:54:44.097 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/health/detailed", parameters={}
+2025-07-30 13:54:44.098 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 13:54:44.098 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 13:54:44.098 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 13:54:44.112 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:06:42.012 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 15:06:42.066 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:06:42.084 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:06:42.106 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 15:06:42.108 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:06:42.116 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:07:00.373 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - OPTIONS "/traffic-config/api/config/segments/10001", parameters={}
+2025-07-30 15:07:00.388 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:07:00.415 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10001", parameters={}
+2025-07-30 15:07:00.593 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:07:00.636 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_150700.xml
+2025-07-30 15:07:00.664 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:07:00.664 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10001, name=路段1
+2025-07-30 15:07:00.665 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:07:18.962 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - OPTIONS "/traffic-config/api/config/segments/10002", parameters={}
+2025-07-30 15:07:18.963 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:07:18.966 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10002", parameters={}
+2025-07-30 15:07:18.971 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:07:18.973 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_150718.xml
+2025-07-30 15:07:18.975 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:07:18.975 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10002, name=路段2
+2025-07-30 15:07:18.976 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:07:29.067 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - OPTIONS "/traffic-config/api/config/segments/10003", parameters={}
+2025-07-30 15:07:29.067 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:07:29.070 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10003", parameters={}
+2025-07-30 15:07:29.072 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:07:29.074 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_150729.xml
+2025-07-30 15:07:29.076 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:07:29.076 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10003, name=路段3
+2025-07-30 15:07:29.077 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:07:38.229 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - OPTIONS "/traffic-config/api/config/segments/10004", parameters={}
+2025-07-30 15:07:38.232 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:07:38.238 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10004", parameters={}
+2025-07-30 15:07:38.241 [http-nio-8080-exec-10] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:07:38.243 [http-nio-8080-exec-10] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_150738.xml
+2025-07-30 15:07:38.245 [http-nio-8080-exec-10] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:07:38.245 [http-nio-8080-exec-10] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10004, name=路段4
+2025-07-30 15:07:38.247 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:07:49.884 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - OPTIONS "/traffic-config/api/config/segments/10005", parameters={}
+2025-07-30 15:07:49.885 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:07:49.888 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10005", parameters={}
+2025-07-30 15:07:49.889 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:07:49.892 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_150749.xml
+2025-07-30 15:07:49.895 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:07:49.895 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10005, name=路段5
+2025-07-30 15:07:49.896 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:16:00.203 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 15:16:00.205 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:16:00.207 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:16:00.238 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 15:16:00.240 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:16:00.242 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:25:40.424 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 28340 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 15:25:40.427 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 15:25:40.428 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 15:25:42.107 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 15:25:42.229 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1745 ms
+2025-07-30 15:25:42.526 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:25:42.542 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:25:42.542 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:25:42.543 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 15:25:42.990 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 15:25:43.039 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 15:25:43.054 [main] INFO  com.traffic.config.Application - Started Application in 3.248 seconds (JVM running for 4.409)
+2025-07-30 15:25:43.474 [RMI TCP Connection(2)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:25:43.477 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 15:25:43.478 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 15:25:43.478 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 15:25:43.478 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 15:25:43.479 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@20a6c048
+2025-07-30 15:25:43.479 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@3a649ed0
+2025-07-30 15:25:43.479 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 15:25:43.479 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-07-30 15:25:55.745 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:25:55.759 [http-nio-8080-exec-1] WARN  c.traffic.config.exception.GlobalExceptionHandler - 非法参数异常: When allowCredentials is true, allowedOrigins cannot contain the special value "*" since that cannot be set on the "Access-Control-Allow-Origin" response header. To allow credentials to a set of origins, list them explicitly or consider using "allowedOriginPatterns" instead.
+2025-07-30 15:25:55.780 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-30 15:28:06.997 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 24544 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 15:28:07.001 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 15:28:07.002 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 15:28:08.899 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 15:28:09.023 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1959 ms
+2025-07-30 15:28:09.326 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:28:09.344 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:28:09.344 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:28:09.344 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 15:28:09.823 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 15:28:09.876 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 15:28:09.893 [main] INFO  com.traffic.config.Application - Started Application in 3.546 seconds (JVM running for 4.238)
+2025-07-30 15:28:09.969 [RMI TCP Connection(5)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:28:09.972 [RMI TCP Connection(4)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 15:28:09.973 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 15:28:09.973 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 15:28:09.973 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 15:28:09.974 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@55ec2993
+2025-07-30 15:28:09.974 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@6f041506
+2025-07-30 15:28:09.974 [RMI TCP Connection(4)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 15:28:09.974 [RMI TCP Connection(4)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 15:28:14.300 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:28:14.314 [http-nio-8080-exec-1] WARN  c.traffic.config.exception.GlobalExceptionHandler - 非法参数异常: When allowCredentials is true, allowedOrigins cannot contain the special value "*" since that cannot be set on the "Access-Control-Allow-Origin" response header. To allow credentials to a set of origins, list them explicitly or consider using "allowedOriginPatterns" instead.
+2025-07-30 15:28:14.334 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 400 BAD_REQUEST
+2025-07-30 15:32:18.892 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 20800 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 15:32:18.895 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 15:32:18.896 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 15:32:20.309 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 15:32:20.425 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1472 ms
+2025-07-30 15:32:20.702 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:32:20.719 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:32:20.719 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:32:20.719 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 15:32:21.162 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 15:32:21.212 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 15:32:21.228 [main] INFO  com.traffic.config.Application - Started Application in 3.026 seconds (JVM running for 3.734)
+2025-07-30 15:32:21.777 [RMI TCP Connection(1)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:32:21.780 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 15:32:21.780 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 15:32:21.780 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 15:32:21.780 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 15:32:21.781 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@28bc3b4a
+2025-07-30 15:32:21.781 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@1e479093
+2025-07-30 15:32:21.782 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 15:32:21.782 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 15:32:32.181 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:32:32.200 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:32:32.229 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:40:48.082 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 33884 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 15:40:48.084 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 15:40:48.085 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 15:40:49.288 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 15:40:49.397 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1263 ms
+2025-07-30 15:40:49.662 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:40:49.677 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:40:49.677 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:40:49.677 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 15:40:50.094 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 15:40:50.140 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 15:40:50.155 [main] INFO  com.traffic.config.Application - Started Application in 2.723 seconds (JVM running for 3.397)
+2025-07-30 15:40:50.552 [RMI TCP Connection(2)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:40:50.555 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 15:40:50.556 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 15:40:50.556 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 15:40:50.556 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 15:40:50.557 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@e7752bc
+2025-07-30 15:40:50.557 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@d542180
+2025-07-30 15:40:50.557 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 15:40:50.557 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-07-30 15:40:59.734 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:40:59.757 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:40:59.787 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:41:38.465 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:41:38.466 [http-nio-8080-exec-4] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:41:38.468 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:43:49.275 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 24560 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 15:43:49.278 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 15:43:49.278 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 15:43:50.620 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 15:43:50.742 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1409 ms
+2025-07-30 15:43:51.042 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:43:51.058 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:43:51.058 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:43:51.058 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 15:43:51.522 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 15:43:51.573 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 15:43:51.589 [main] INFO  com.traffic.config.Application - Started Application in 3.003 seconds (JVM running for 3.822)
+2025-07-30 15:43:52.063 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 15:43:52.063 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 15:43:52.063 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 15:43:52.064 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 15:43:52.066 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@65d84fc7
+2025-07-30 15:43:52.066 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@213d532d
+2025-07-30 15:43:52.067 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 15:43:52.067 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 4 ms
+2025-07-30 15:43:52.068 [RMI TCP Connection(3)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:43:56.781 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:43:56.804 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:43:56.835 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:50:55.462 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 15644 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 15:50:55.465 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 15:50:55.466 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 15:50:56.858 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 15:50:56.959 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1426 ms
+2025-07-30 15:50:57.259 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:50:57.275 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:50:57.275 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:50:57.275 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 15:50:57.878 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 15:50:57.930 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 15:50:57.945 [main] INFO  com.traffic.config.Application - Started Application in 3.274 seconds (JVM running for 4.146)
+2025-07-30 15:50:58.155 [RMI TCP Connection(3)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:50:58.158 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 15:50:58.158 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 15:50:58.158 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 15:50:58.158 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 15:50:58.160 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@1dd405
+2025-07-30 15:50:58.161 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@19ff7ca3
+2025-07-30 15:50:58.161 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 15:50:58.161 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-07-30 15:51:01.867 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:51:01.889 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:51:01.921 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:54:10.524 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 27528 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 15:54:10.527 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 15:54:10.528 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 15:54:11.791 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 15:54:11.907 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1323 ms
+2025-07-30 15:54:12.183 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:54:12.201 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:54:12.201 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:54:12.201 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 15:54:12.697 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 15:54:12.748 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 15:54:12.763 [main] INFO  com.traffic.config.Application - Started Application in 2.952 seconds (JVM running for 3.675)
+2025-07-30 15:54:12.894 [RMI TCP Connection(2)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:54:12.897 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 15:54:12.897 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 15:54:12.897 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 15:54:12.897 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 15:54:12.899 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@1631b8a3
+2025-07-30 15:54:12.900 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@1d9aabf9
+2025-07-30 15:54:12.900 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 15:54:12.900 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-07-30 15:54:17.124 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:54:17.144 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:54:17.174 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:55:02.977 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 2328 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 15:55:02.980 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 15:55:02.980 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 15:55:04.145 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 15:55:04.256 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1227 ms
+2025-07-30 15:55:04.517 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:55:04.532 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:55:04.532 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:55:04.532 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 15:55:04.981 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 15:55:05.031 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 15:55:05.047 [main] INFO  com.traffic.config.Application - Started Application in 2.69 seconds (JVM running for 3.324)
+2025-07-30 15:55:05.528 [RMI TCP Connection(2)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:55:05.532 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 15:55:05.533 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 15:55:05.533 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 15:55:05.533 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 15:55:05.534 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@5aa9e72b
+2025-07-30 15:55:05.534 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@44a6a639
+2025-07-30 15:55:05.534 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 15:55:05.534 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-07-30 15:55:12.734 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:55:12.755 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:55:12.783 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:56:12.743 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 27796 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 15:56:12.746 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 15:56:12.747 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 15:56:14.380 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 15:56:14.552 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1741 ms
+2025-07-30 15:56:15.043 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:56:15.074 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:56:15.074 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:56:15.074 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 15:56:15.851 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 15:56:15.932 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 15:56:15.957 [main] INFO  com.traffic.config.Application - Started Application in 3.976 seconds (JVM running for 4.798)
+2025-07-30 15:56:16.509 [RMI TCP Connection(1)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:56:16.513 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 15:56:16.513 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 15:56:16.513 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 15:56:16.513 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 15:56:16.515 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@3e569ceb
+2025-07-30 15:56:16.515 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@6e15b3fc
+2025-07-30 15:56:16.515 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 15:56:16.515 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 15:56:18.512 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:56:18.531 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:56:18.561 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:59:25.314 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 3212 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 15:59:25.317 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 15:59:25.318 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 15:59:26.805 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 15:59:26.926 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1545 ms
+2025-07-30 15:59:27.226 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:59:27.243 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:59:27.243 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:59:27.243 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 15:59:27.869 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 15:59:27.940 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 15:59:27.967 [main] INFO  com.traffic.config.Application - Started Application in 3.467 seconds (JVM running for 4.204)
+2025-07-30 15:59:28.054 [RMI TCP Connection(2)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:59:28.058 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 15:59:28.058 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 15:59:28.058 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 15:59:28.058 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 15:59:28.060 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@1d088965
+2025-07-30 15:59:28.060 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@1bb6653
+2025-07-30 15:59:28.060 [RMI TCP Connection(3)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 15:59:28.060 [RMI TCP Connection(3)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 15:59:32.092 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:59:32.111 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:59:32.143 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:59:34.889 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 15:59:34.891 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:59:34.894 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 15:59:55.332 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 28060 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 15:59:55.336 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 15:59:55.337 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 15:59:56.917 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 15:59:57.055 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1658 ms
+2025-07-30 15:59:57.427 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 15:59:57.449 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:59:57.450 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:59:57.450 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 15:59:58.054 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 15:59:58.106 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 15:59:58.124 [main] INFO  com.traffic.config.Application - Started Application in 3.52 seconds (JVM running for 4.38)
+2025-07-30 15:59:58.561 [RMI TCP Connection(3)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 15:59:58.564 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 15:59:58.564 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 15:59:58.564 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 15:59:58.565 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 15:59:58.566 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@29a47eda
+2025-07-30 15:59:58.566 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@4629890e
+2025-07-30 15:59:58.566 [RMI TCP Connection(2)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 15:59:58.566 [RMI TCP Connection(2)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 16:00:06.417 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 16:00:06.438 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:00:06.467 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:00:10.401 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 16:00:10.402 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:00:10.405 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:08:52.744 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 16552 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-30 16:08:52.748 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-30 16:08:52.749 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-30 16:08:54.097 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-30 16:08:54.201 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1390 ms
+2025-07-30 16:08:54.501 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 16:08:54.520 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:08:54.520 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:08:54.520 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-30 16:08:54.948 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-30 16:08:54.992 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-30 16:08:55.008 [main] INFO  com.traffic.config.Application - Started Application in 2.984 seconds (JVM running for 3.74)
+2025-07-30 16:08:55.550 [RMI TCP Connection(2)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:08:55.552 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-30 16:08:55.552 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-30 16:08:55.552 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-30 16:08:55.553 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-30 16:08:55.554 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@1115d648
+2025-07-30 16:08:55.554 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@1b32a8b2
+2025-07-30 16:08:55.554 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-30 16:08:55.554 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-30 16:09:04.912 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/full", parameters={}
+2025-07-30 16:09:04.933 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:09:04.963 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:11:33.439 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 16:11:33.456 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:11:33.481 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:11:33.496 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 16:11:33.498 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:11:33.504 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:22:21.109 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 16:22:21.110 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:22:21.114 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:25:16.159 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 16:25:16.161 [http-nio-8080-exec-10] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:25:16.162 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:26:56.472 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 16:26:56.474 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:26:56.476 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:27:09.258 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 16:27:09.259 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:27:09.260 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:28:12.290 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - POST "/traffic-config/api/config/refresh", parameters={}
+2025-07-30 16:28:12.291 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置缓存已刷新
+2025-07-30 16:28:12.291 [http-nio-8080-exec-3] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 16:28:12.294 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:28:12.294 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:28:12.295 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:28:12.308 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 16:28:12.310 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:28:12.311 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:28:12.317 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 16:28:12.319 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:28:12.324 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:34:24.942 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 16:34:24.944 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:34:24.947 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:34:24.957 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 16:34:24.959 [http-nio-8080-exec-4] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:34:24.961 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:36:33.543 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 16:36:33.547 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:36:33.551 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:36:33.589 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 16:36:33.592 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:36:33.593 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:41:39.962 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 16:41:39.963 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:41:39.965 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 16:41:40.042 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 16:41:40.043 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 16:41:40.045 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:15:54.848 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - OPTIONS "/traffic-config/api/config/segments/10001", parameters={}
+2025-07-30 17:15:54.895 [http-nio-8080-exec-10] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:15:55.022 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10001", parameters={}
+2025-07-30 17:15:55.618 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 17:15:55.664 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_171555.xml
+2025-07-30 17:15:55.678 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 17:15:55.678 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10001, name=路段1
+2025-07-30 17:15:55.686 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:16:10.254 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - OPTIONS "/traffic-config/api/config/segments/10002", parameters={}
+2025-07-30 17:16:10.255 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:16:10.260 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10002", parameters={}
+2025-07-30 17:16:10.265 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 17:16:10.266 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_171610.xml
+2025-07-30 17:16:10.268 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 17:16:10.269 [http-nio-8080-exec-7] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10002, name=路段2
+2025-07-30 17:16:10.270 [http-nio-8080-exec-7] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:16:18.206 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - OPTIONS "/traffic-config/api/config/segments/10003", parameters={}
+2025-07-30 17:16:18.208 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:16:18.214 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10003", parameters={}
+2025-07-30 17:16:18.218 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 17:16:18.220 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_171618.xml
+2025-07-30 17:16:18.222 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 17:16:18.223 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10003, name=路段3
+2025-07-30 17:16:18.224 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:17:25.018 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - OPTIONS "/traffic-config/api/config/segments/10004", parameters={}
+2025-07-30 17:17:25.019 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:17:25.022 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10004", parameters={}
+2025-07-30 17:17:25.024 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 17:17:25.026 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_171725.xml
+2025-07-30 17:17:25.028 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 17:17:25.029 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10004, name=路段4
+2025-07-30 17:17:25.030 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:17:49.179 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10004", parameters={}
+2025-07-30 17:17:49.183 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 5
+2025-07-30 17:17:49.185 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_171749.xml
+2025-07-30 17:17:49.189 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 17:17:49.189 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10004, name=路段4
+2025-07-30 17:17:49.191 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:18:54.300 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 17:18:54.302 [http-nio-8080-exec-1] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 17:18:54.322 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:18:54.322 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:18:54.326 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:18:54.338 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 17:18:54.340 [http-nio-8080-exec-4] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:18:54.343 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:34:12.271 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 17:34:12.274 [http-nio-8080-exec-2] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 17:34:12.281 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:34:12.282 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:34:12.300 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:34:12.310 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 17:34:12.313 [http-nio-8080-exec-5] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:34:12.316 [http-nio-8080-exec-5] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:34:33.668 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10001", parameters={}
+2025-07-30 17:34:33.673 [http-nio-8080-exec-6] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:34:33.675 [http-nio-8080-exec-6] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_173433.xml
+2025-07-30 17:34:33.677 [http-nio-8080-exec-6] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 17:34:33.678 [http-nio-8080-exec-6] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10001, name=路段1
+2025-07-30 17:34:33.679 [http-nio-8080-exec-6] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:34:45.623 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10002", parameters={}
+2025-07-30 17:34:45.627 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:34:45.629 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_173445.xml
+2025-07-30 17:34:45.632 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 17:34:45.632 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10002, name=路段2
+2025-07-30 17:34:45.634 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:34:54.174 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10003", parameters={}
+2025-07-30 17:34:54.204 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:34:54.206 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_173454.xml
+2025-07-30 17:34:54.210 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 17:34:54.210 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10003, name=路段3
+2025-07-30 17:34:54.211 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:35:03.237 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - PUT "/traffic-config/api/config/segments/10004", parameters={}
+2025-07-30 17:35:03.242 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:35:03.247 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件备份成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml -> .\backup\config_backup_20250730_173503.xml
+2025-07-30 17:35:03.250 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件保存成功: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-30 17:35:03.250 [http-nio-8080-exec-9] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 路段配置更新成功: sigid=10004, name=路段4
+2025-07-30 17:35:03.252 [http-nio-8080-exec-9] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:41:39.379 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 17:41:39.382 [http-nio-8080-exec-1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:41:39.384 [http-nio-8080-exec-1] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:41:39.408 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-30 17:41:39.409 [http-nio-8080-exec-4] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:41:39.411 [http-nio-8080-exec-4] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-30 17:48:00.043 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-30 17:48:00.044 [http-nio-8080-exec-2] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-30 17:48:00.045 [http-nio-8080-exec-2] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK

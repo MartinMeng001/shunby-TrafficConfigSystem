@@ -1,0 +1,42 @@
+{
+  "groups": [
+    {
+      "name": "adapter.webservice",
+      "type": "com.traffic.config.config.WebServiceAdapterConfig",
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "adapter.webservice.connection-timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+    },
+    {
+      "name": "adapter.webservice.default-port",
+      "type": "java.lang.String",
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+    },
+    {
+      "name": "adapter.webservice.enable-logging",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+    },
+    {
+      "name": "adapter.webservice.name-space",
+      "type": "java.lang.String",
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+    },
+    {
+      "name": "adapter.webservice.read-timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+    },
+    {
+      "name": "adapter.webservice.service-path",
+      "type": "java.lang.String",
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+    }
+  ],
+  "hints": []
+}

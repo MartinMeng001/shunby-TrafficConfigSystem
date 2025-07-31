@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SingleLane>
+    <global>
+        <AllRed>120</AllRed>
+        <MaxAllRed>300</MaxAllRed>
+    </global>
+    <segments size="5">
+        <segment>
+            <name>路段1</name>
+            <sigid>10001</sigid>
+            <allred>60</allred>
+            <upctrl>1</upctrl>
+            <downctrl>2</downctrl>
+            <inzone>2</inzone>
+            <outzone>2</outzone>
+        </segment>
+        <segment>
+            <name>路段2</name>
+            <sigid>10002</sigid>
+            <allred>60</allred>
+            <upctrl>1</upctrl>
+            <downctrl>2</downctrl>
+            <inzone>2</inzone>
+            <outzone>2</outzone>
+        </segment>
+        <segment>
+            <name>路段3</name>
+            <sigid>10003</sigid>
+            <allred>60</allred>
+            <upctrl>1</upctrl>
+            <downctrl>2</downctrl>
+            <inzone>2</inzone>
+            <outzone>2</outzone>
+        </segment>
+        <segment>
+            <name>路段4</name>
+            <sigid>10004</sigid>
+            <allred>60</allred>
+            <upctrl>1</upctrl>
+            <downctrl>2</downctrl>
+            <inzone>2</inzone>
+            <outzone>2</outzone>
+        </segment>
+        <segment>
+            <name>路段5</name>
+            <sigid>10005</sigid>
+            <allred>60</allred>
+            <upctrl>1</upctrl>
+            <downctrl>2</downctrl>
+            <inzone>2</inzone>
+            <outzone>2</outzone>
+        </segment>
+    </segments>
+</SingleLane>

@@ -2,18 +2,17 @@ package com.traffic.config.controller;
 
 import com.traffic.config.entity.GlobalConfig;
 import com.traffic.config.entity.Segment;
+import com.traffic.config.entity.Segments;
 import com.traffic.config.entity.SingleLane;
 import com.traffic.config.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/config")
-@CrossOrigin(origins = "*")
 public class ConfigController {
 
     @Autowired
@@ -26,6 +25,7 @@ public class ConfigController {
     public ResponseEntity<SingleLane> getFullConfig() {
         try {
             SingleLane config = configService.loadConfig();
+
             return ResponseEntity.ok(config);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
@@ -177,6 +177,42 @@ public class ConfigController {
             return ResponseEntity.ok("配置服务正常");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("配置服务异常: " + e.getMessage());
+        }
+    }
+    /**
+     * 调试配置加载情况
+     */
+    @GetMapping("/debug")
+    public ResponseEntity<Map<String, Object>> debugConfig() {
+        try {
+            SingleLane config = configService.loadConfig();
+            Map<String, Object> result = new HashMap<>();
+
+            if (config != null && config.getSegments() != null) {
+                Segments segments = config.getSegments();
+
+                result.put("getSize", segments.getSize());
+                result.put("getActualSize", segments.getSegmentList().size());
+                //result.put("getOriginalSize", segments.getOriginalSize());
+                result.put("toString", segments.toString());
+                result.put("listIsNull", segments.getSegmentList() == null);
+
+                if (segments.getSegmentList() != null) {
+                    result.put("listSize", segments.getSegmentList().size());
+                    result.put("firstSegmentName",
+                            segments.getSegmentList().isEmpty() ? "no segments" :
+                                    segments.getSegmentList().get(0).getName());
+                }
+            } else {
+                result.put("error", "config or segments is null");
+            }
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("exception", e.getMessage());
+            return ResponseEntity.status(500).body(error);
         }
     }
 }

@@ -1,0 +1,83 @@
+2025-07-31 08:02:50.298 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/global", parameters={}
+2025-07-31 08:02:50.302 [http-nio-8080-exec-3] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-31 08:02:50.304 [http-nio-8080-exec-3] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-31 08:02:50.310 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - GET "/traffic-config/api/config/segments", parameters={}
+2025-07-31 08:02:50.312 [http-nio-8080-exec-8] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-31 08:02:50.313 [http-nio-8080-exec-8] DEBUG org.springframework.web.servlet.DispatcherServlet - Completed 200 OK
+2025-07-31 09:12:27.251 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 20160 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-31 09:12:27.254 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-31 09:12:27.255 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-31 09:12:28.396 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.ws.config.annotation.DelegatingWsConfiguration' of type [org.springframework.ws.config.annotation.DelegatingWsConfiguration$$EnhancerBySpringCGLIB$$dd11606b] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2025-07-31 09:12:28.443 [main] INFO  o.s.w.s.a.server.AnnotationActionEndpointMapping - Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2025-07-31 09:12:28.723 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-31 09:12:28.837 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1525 ms
+2025-07-31 09:12:29.140 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-31 09:12:29.165 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-31 09:12:29.185 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-31 09:12:29.186 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-31 09:12:29.199 [main] INFO  c.t.c.signalplatform.platformbase.WebServiceClient - WebServiceClient: 初始化完成。当前 Server URL: 192.168.1.254:8080
+2025-07-31 09:12:29.726 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-31 09:12:29.781 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-31 09:12:29.797 [main] INFO  com.traffic.config.Application - Started Application in 3.24 seconds (JVM running for 4.703)
+2025-07-31 09:12:29.907 [RMI TCP Connection(2)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-31 09:12:29.910 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-31 09:12:29.910 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-31 09:12:29.910 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-31 09:12:29.910 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-31 09:12:29.911 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@642f81ec
+2025-07-31 09:12:29.912 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@35f2ebe0
+2025-07-31 09:12:29.912 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-31 09:12:29.912 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-31 09:17:24.255 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 14436 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-31 09:17:24.258 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-31 09:17:24.259 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-31 09:17:25.533 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.ws.config.annotation.DelegatingWsConfiguration' of type [org.springframework.ws.config.annotation.DelegatingWsConfiguration$$EnhancerBySpringCGLIB$$d0e49bf6] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2025-07-31 09:17:25.571 [main] INFO  o.s.w.s.a.server.AnnotationActionEndpointMapping - Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2025-07-31 09:17:25.881 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-31 09:17:26.008 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1673 ms
+2025-07-31 09:17:26.383 [main] DEBUG com.traffic.config.service.impl.ConfigServiceImpl - 重新加载配置文件: E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes\config.xml
+2025-07-31 09:17:26.404 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-31 09:17:26.427 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-31 09:17:26.428 [main] INFO  com.traffic.config.service.impl.ConfigServiceImpl - ConfigService初始化完成, 配置文件路径: classpath:config.xml
+2025-07-31 09:17:26.441 [main] INFO  c.t.c.signalplatform.platformbase.WebServiceClient - WebServiceClient: 初始化完成。当前 Server URL: 192.168.1.254:8080
+2025-07-31 09:17:26.953 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-07-31 09:17:27.003 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/traffic-config'
+2025-07-31 09:17:27.019 [main] INFO  com.traffic.config.Application - Started Application in 3.638 seconds (JVM running for 4.68)
+2025-07-31 09:17:27.185 [RMI TCP Connection(3)-172.30.128.1] INFO  com.traffic.config.service.impl.ConfigServiceImpl - 配置文件加载成功, 路段数量: 4
+2025-07-31 09:17:27.188 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-31 09:17:27.188 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-07-31 09:17:27.188 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-07-31 09:17:27.188 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-07-31 09:17:27.189 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@5349d410
+2025-07-31 09:17:27.190 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@5defc8f7
+2025-07-31 09:17:27.190 [RMI TCP Connection(1)-172.30.128.1] DEBUG org.springframework.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-07-31 09:17:27.190 [RMI TCP Connection(1)-172.30.128.1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-07-31 09:27:58.861 [main] INFO  com.traffic.config.Application - Starting Application using Java 17.0.14 on DESKTOP-SKVPP2S with PID 14232 (E:\OnGoingProjects\会车让行系统\source\traffic-config-system\target\classes started by Martin in E:\OnGoingProjects\会车让行系统\source\traffic-config-system)
+2025-07-31 09:27:58.864 [main] DEBUG com.traffic.config.Application - Running with Spring Boot v2.7.18, Spring v5.3.31
+2025-07-31 09:27:58.865 [main] INFO  com.traffic.config.Application - No active profile set, falling back to 1 default profile: "default"
+2025-07-31 09:27:59.997 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.ws.config.annotation.DelegatingWsConfiguration' of type [org.springframework.ws.config.annotation.DelegatingWsConfiguration$$EnhancerBySpringCGLIB$$aca649fd] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2025-07-31 09:28:00.041 [main] INFO  o.s.w.s.a.server.AnnotationActionEndpointMapping - Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2025-07-31 09:28:00.327 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-07-31 09:28:00.437 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1505 ms
+2025-07-31 09:28:00.622 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'configController': Unsatisfied dependency expressed through field 'configService'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'configServiceImpl': Unsatisfied dependency expressed through field 'taskScheduler'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'org.springframework.scheduling.TaskScheduler' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2025-07-31 09:28:00.641 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2025-07-31 09:28:00.665 [main] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field taskScheduler in com.traffic.config.service.impl.ConfigServiceImpl required a bean of type 'org.springframework.scheduling.TaskScheduler' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.scheduling.TaskScheduler' in your configuration.
+

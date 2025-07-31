@@ -1,0 +1,18 @@
+2025-07-31 09:28:00.665 [main] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field taskScheduler in com.traffic.config.service.impl.ConfigServiceImpl required a bean of type 'org.springframework.scheduling.TaskScheduler' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+
+Action:
+
+Consider defining a bean of type 'org.springframework.scheduling.TaskScheduler' in your configuration.
+

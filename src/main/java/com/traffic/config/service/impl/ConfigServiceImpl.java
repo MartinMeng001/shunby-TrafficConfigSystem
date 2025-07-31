@@ -6,8 +6,13 @@ import com.traffic.config.entity.Segments;
 import com.traffic.config.entity.SingleLane;
 import com.traffic.config.exception.ConfigException;
 import com.traffic.config.service.ConfigService;
+import com.traffic.config.service.event.ServerUrlUpdateEvent;
+import com.traffic.config.service.event.SignalListEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
@@ -26,8 +31,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Slf4j
@@ -51,6 +58,12 @@ public class ConfigServiceImpl implements ConfigService {
     private long lastModified = 0;
     private JAXBContext jaxbContext;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Autowired // 注入 TaskScheduler
+    private TaskScheduler taskScheduler;
+
     @PostConstruct
     public void init() {
         try {
@@ -66,6 +79,14 @@ public class ConfigServiceImpl implements ConfigService {
             loadConfig();
 
             log.info("ConfigService初始化完成, 配置文件路径: {}", configFilePath);
+
+            // *** 延迟发布初始事件 ***
+            // 使用 TaskScheduler 安排一个任务在指定延迟后执行
+            taskScheduler.schedule(() -> {
+                log.info("ConfigService: 延迟 {} 秒后发布初始 ServerUrlUpdateEvent。", 5);
+                eventPublisher.publishEvent(new ServerUrlUpdateEvent(this, cachedConfig.getGlobal().getPlatformUrl()));
+                eventPublisher.publishEvent(new SignalListEvent(this, cachedConfig.getGlobal().getRegionList()));
+            }, new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5)));
         } catch (JAXBException e) {
             log.error("JAXB上下文初始化失败", e);
             throw new ConfigException("CONFIG_INIT_ERROR", "配置服务初始化失败", e);
@@ -96,18 +117,21 @@ public class ConfigServiceImpl implements ConfigService {
 
                         log.info("配置文件加载成功, 路段数量: {}",
                                 cachedConfig.getSegments().getSize());
+
+                        eventPublisher.publishEvent(new ServerUrlUpdateEvent(this, cachedConfig.getGlobal().getPlatformUrl()));
                     }
                 } finally {
                     lock.readLock().lock();
                     lock.writeLock().unlock();
                 }
             }
-
+            log.info("配置文件加载成功, 路段数量: {}",
+                    cachedConfig.getSegments().getSize());
             return cachedConfig;
         } catch (Exception e) {
             log.error("加载配置文件失败: {}", e.getMessage(), e);
             if (e instanceof ConfigException) {
-                throw e;
+                throw (ConfigException)e;
             }
             throw new ConfigException("CONFIG_LOAD_ERROR", "加载配置文件失败", e);
         } finally {
@@ -150,7 +174,7 @@ public class ConfigServiceImpl implements ConfigService {
         } catch (Exception e) {
             log.error("配置文件保存失败: {}", e.getMessage(), e);
             if (e instanceof ConfigException) {
-                throw e;
+                throw (ConfigException)e;
             }
             throw ConfigException.saveError(configFilePath, e);
         } finally {
@@ -413,7 +437,7 @@ public class ConfigServiceImpl implements ConfigService {
         } catch (Exception e) {
             log.error("配置文件恢复失败: {}", e.getMessage(), e);
             if (e instanceof ConfigException) {
-                throw e;
+                throw (ConfigException)e;
             }
             throw new ConfigException("CONFIG_RESTORE_ERROR", "配置文件恢复失败", e);
         }
