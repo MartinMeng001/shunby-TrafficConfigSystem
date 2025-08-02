@@ -8,7 +8,7 @@
             <Region name="入口信号机">16</Region>
             <Region name="信号机2">18</Region>
             <Region name="信号机3">314850</Region>
-            <Region name="信号机4">316123</Region>
+            <Region name="信号机4">10</Region>
             <Region name="出口信号机">105</Region>
         </RegionList>
     </global>

@@ -14,7 +14,7 @@ public final class SystemConstants {
     /**
      * 系统全红过渡时间（秒）
      */
-    public static final int TRANSITION_TIME = 5;
+    public static final int TRANSITION_TIME = 20;
 
     /**
      * 错误统计时间窗口（秒） - 60分钟
@@ -118,6 +118,12 @@ public final class SystemConstants {
      * 最大响应时间（秒）
      */
     public static final int MAX_RESPONSE_TIME = 10;
+
+    // ==================== 环境定义常量 (Field Constants) ====================
+    /**
+     * 路段总数（4）
+     */
+    public static final int TOTAL_SEGMENT_COUNT = 4;
 
     // ==================== 私有构造函数 ====================
 

@@ -379,6 +379,18 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
+    public boolean isValidConfig(){
+        if(isConfigFileExists()==false) return false;
+        try{
+            validateConfig(cachedConfig);
+            return true;
+        }catch(Exception e){
+            log.warn("检查配置文件参数有效性失败: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
     public long getConfigLastModified() {
         try {
             File configFile = getConfigFile();
