@@ -117,6 +117,13 @@ public interface ConfigService {
     boolean isConfigFileExists();
 
     /**
+     * 检查配置文件参数是否有效
+     *
+     * @return 配置文件参数是否有效
+     */
+    boolean isValidConfig();
+
+    /**
      * 获取配置文件最后修改时间
      *
      * @return 最后修改时间戳

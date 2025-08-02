@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.traffic.config.entity.Region;
 import com.traffic.config.service.event.SignalListEvent;
 import com.traffic.config.signalplatform.platformbase.entity.CrossInfo;
+import com.traffic.config.signalplatform.platformbase.enums.ControlPhase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,7 @@ public class CrossInfoManager {
         logger.info("CrossInfoManager 定时任务已启动，每 60 秒执行一次平台连接和单元状态检查。");
     }
 
-    public boolean guardCrossAs(String sigid, int guardMode){
+    public boolean guardCrossBySigid(String sigid, int guardMode){
         CrossInfo crossInfo = crossInfoMap.get(sigid);
         if(crossInfo == null) {
             logger.warn("Can't Guard, can't find the cross-sigid: " + sigid);
@@ -89,6 +90,87 @@ public class CrossInfoManager {
             return false;
         }
         return 1 == webServiceClient.guardControl(crossInfo.getDevBasicInfo().getIp4G(), guardMode, 0);
+    }
+    /**
+     * Attempts to guard a cross by its signal ID with a retry mechanism.
+     *
+     * @param sigid The signal ID of the cross.
+     * @param guardMode The guard mode to set.
+     * @param maxRetries The maximum number of retry attempts.
+     * @return true if the guard operation succeeds within the given retries, false otherwise.
+     */
+    public boolean guardCrossBySigidWithRetry(String sigid, int guardMode, int maxRetries) {
+        // --- 参数校验 (Parameter Validation) ---
+        CrossInfo crossInfo = crossInfoMap.get(sigid);
+        if (crossInfo == null) {
+            logger.warn("Can't Guard. Cross not found for sigid: {}", sigid);
+            return false;
+        }
+        if (crossInfo.getCrossid() == 0) {
+            logger.warn("Can't Guard. Invalid crossid (0) for sigid: {}", sigid);
+            return false;
+        }
+
+        // --- 重试逻辑 (Retry Logic) ---
+        int retryCount = 0;
+        while (retryCount <= maxRetries) {
+            logger.info("Attempting to guard cross. Sigid: {}, GuardMode: {}, Attempt: {}", sigid, guardMode, retryCount + 1);
+            if (guardCrossBySigid(sigid, guardMode)) {
+                logger.info("Successfully guarded cross with sigid: {}", sigid);
+                return true;
+            }
+
+            retryCount++;
+            if (retryCount <= maxRetries) {
+                try {
+                    // Optional: Add a small delay between retries to avoid overwhelming the service
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    logger.error("Thread was interrupted during retry delay.", e);
+                    break;
+                }
+            }
+        }
+
+        logger.error("Failed to guard cross with sigid: {} after {} retries.", sigid, maxRetries);
+        return false;
+    }
+
+    /**
+     * 遍历 crossInfoMap，将所有路口设置为全红模式。
+     *
+     * @param maxRetries 每个路口控制失败时的最大重试次数。
+     */
+    public boolean controlAllCrossesToAllRed(int maxRetries) {
+        logger.info("开始遍历 crossInfoMap，对所有路口进行全红控制...");
+
+        // 使用一个副本进行遍历，以避免在遍历过程中对原始 Map 进行修改
+        Map<String, CrossInfo> crossInfoMapCopy = new HashMap<>(crossInfoMap);
+
+        if (crossInfoMapCopy.isEmpty()) {
+            logger.warn("crossInfoMap 为空，没有路口需要控制。");
+            return false;
+        }
+
+        int allRedCount = 0;
+        int failedCount = 0;
+
+        for (Map.Entry<String, CrossInfo> entry : crossInfoMapCopy.entrySet()) {
+            String sigid = entry.getKey();
+            // 调用已经封装好的 guardCrossBySigidWithRetry 方法
+            // 模式参数使用 ControlPhase.ALL_RED.getValue()
+            if (guardCrossBySigidWithRetry(sigid, ControlPhase.ALL_RED.getValue(), maxRetries)) {
+                allRedCount++;
+            } else {
+                failedCount++;
+                logger.error("对路口 {} 进行全红控制失败。", sigid);
+            }
+        }
+
+        logger.info("全红控制操作完成。成功 {} 个路口，失败 {} 个路口。", allRedCount, failedCount);
+        if(failedCount==0) return true;
+        return false;
     }
 
     /**
@@ -122,6 +204,7 @@ public class CrossInfoManager {
         int notFoundCount = 0;
         int updatedCount = 0; // 新增：记录实际更新的条目数
 
+        // 只检查需要的ID即可，其它不需要处理
         logger.debug("开始解析并更新 CrossInfoMap...");
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -132,12 +215,13 @@ public class CrossInfoManager {
                 // 确保 devBasicInfo 不为空，并且 sigid 可用
                 if (crossInfo.getDevBasicInfo() != null && crossInfo.getDevBasicInfo().getSigid() > 0) { // 假设 sigid > 0 是有效ID
                     String sigid = String.valueOf(crossInfo.getDevBasicInfo().getSigid()); // 将 int sigid 转换为 String
+                    if(crossInfoMap.containsKey(sigid)==false) continue;
                     crossInfoMap.put(sigid, crossInfo); // 更新或添加 CrossInfo
                     updatedCount++;
 
                     if (crossInfo.getDevBasicInfo().getOnline() == 1) { // 假设 online == 1 表示在线
                         onlineCount++;
-                        logger.trace("CrossInfo单元 '{}' (sigid: {}) 状态：在线。", crossInfo.getCrossName(), sigid);
+                        logger.info("CrossInfo单元 '{}' (sigid: {}) 状态：在线。", crossInfo.getCrossName(), sigid);
                     } else { // 假设 online == 0 表示离线
                         offlineCount++;
                         logger.warn("CrossInfo单元 '{}' (sigid: {}) 状态：离线！", crossInfo.getCrossName(), sigid);
@@ -258,5 +342,18 @@ public class CrossInfoManager {
 
         logger.debug("健康检查接口被调用，返回状态: {}", healthStatus);
         return healthStatus;
+    }
+    public boolean checkHealthStatus(){
+        Map<String, Integer> unitsCounts = getCrossInfoUnitsCounts();
+        if (webServiceClientLastConnected && unitsCounts.getOrDefault("offlineCount", 0) == 0 && unitsCounts.getOrDefault("invalidCount", 0) == 0) {
+            logger.info("Platform comm HealthCheck: 所有组件均正常运行。");
+            return true;
+        } else if (webServiceClientLastConnected && unitsCounts.getOrDefault("offlineCount", 0) > 0) {
+            logger.warn("Platform comm HealthCheck: Web服务连接正常，但存在离线或无效的CrossInfo单元。");
+            return false;
+        } else {
+            logger.warn("Platform comm HealthCheck: Web服务连接Down，Web服务连接异常或数据未同步。");
+            return false;
+        }
     }
 }

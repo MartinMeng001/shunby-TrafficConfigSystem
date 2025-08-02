@@ -2,7 +2,7 @@ package com.traffic.config.statemachinev2.variables;
 
 import com.traffic.config.statemachinev2.enums.SystemStateV2;
 import com.traffic.config.statemachinev2.constants.SystemConstants;
-import com.traffic.config.statemachine.enums.ClearanceDecision;
+import com.traffic.config.statemachinev2.enums.ext.ClearanceDecision;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -495,6 +495,9 @@ public class SystemVariables {
     // ==================== Getter和Setter方法 ====================
 
     // 时间变量的getter和setter
+    public LocalDateTime getSystemInitStartTime(){ return systemInitStartTime; }
+    public void setSystemInitStartTime(LocalDateTime systemInitStartTime){ this.systemInitStartTime = systemInitStartTime; }
+
     public LocalDateTime getStateStartTime() { return stateStartTime; }
     public void setStateStartTime(LocalDateTime stateStartTime) { this.stateStartTime = stateStartTime; }
 
