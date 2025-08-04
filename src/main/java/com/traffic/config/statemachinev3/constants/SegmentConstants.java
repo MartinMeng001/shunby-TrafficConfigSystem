@@ -183,10 +183,27 @@ public final class SegmentConstants {
      */
     public static final int THROUGHPUT_CALCULATION_WINDOW = 60;
 
+    /*
+     * 错误统计窗口
+     */
+    public static final int ERROR_WINDOW = 10;
     /**
      * 平均等待时间移动平均系数
      */
     public static final double WAITING_TIME_SMOOTH_FACTOR = 0.8;
+    /*
+     * 正常健康阈值
+     */
+    public static final int NORMAL_HEALTH_THRESHOLD = 70;
+    /*
+     * 安全健康阈值
+     */
+    public static final int RECOVERY_HEALTH_THRESHOLD = 60;
+    /*
+     * 健康度过低阈值
+     */
+    public static final int CRITICAL_HEALTH_THRESHOLD = 20;
+
 
     // ==================== 私有构造函数 ====================
 

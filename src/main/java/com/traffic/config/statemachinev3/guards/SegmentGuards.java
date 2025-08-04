@@ -637,4 +637,180 @@ public class SegmentGuards {
 
         return clearanceAcceptable && segmentHealthy && systemStable;
     }
+    /**
+     * 车辆事件统一守护条件检查
+     * 对应数学模型中的车辆事件守护条件 G(q, vehicle_event, v)
+     *
+     * @param currentState 当前状态
+     * @param event 车辆事件
+     * @param variables 路段变量
+     * @return 是否允许处理该车辆事件
+     */
+    public static boolean checkVehicleEventAllowed(SegmentState currentState,
+                                                   SegmentEvent event,
+                                                   SegmentVariables variables) {
+        // 检查事件是否为车辆事件
+        if (!event.isVehicleEvent()) {
+            return false;
+        }
+
+        // 检查系统基本状态
+        if (!checkBasicSystemConditions(variables)) {
+            return false;
+        }
+
+        // 检查是否处于故障状态
+        if (variables.isFaultDetected()) {
+            // 故障状态下需要特殊处理
+            return handleFaultStateVehicleEvent(currentState, event, variables);
+        }
+
+        // 检查传感器状态
+//        if (!variables.areCriticalSensorsNormal()) {
+//            // 传感器异常时，只允许基于备用传感器的事件
+//            return event.SENSOR_FAULT();
+//        }
+
+        // 根据具体车辆事件类型进行详细检查
+        return switch (event) {
+            case VEHICLE_ENTER_UPSTREAM, VEHICLE_ENTER_DOWNSTREAM ->
+                    checkVehicleEntryPreconditions(currentState, event, variables);
+
+            case VEHICLE_EXIT_UPSTREAM, VEHICLE_EXIT_DOWNSTREAM ->
+                    checkVehicleExitPreconditions(currentState, event, variables);
+
+            default -> false;
+        };
+    }
+
+    /**
+     * 检查系统基本条件
+     * @param variables 路段变量
+     * @return 系统是否处于可接受车辆事件的状态
+     */
+    private static boolean checkBasicSystemConditions(SegmentVariables variables) {
+        // 检查健康度
+        boolean healthAcceptable = variables.getSegmentHealthScore() >=
+                SegmentConstants.CRITICAL_HEALTH_THRESHOLD;
+
+        // 检查连续错误数量
+        boolean errorCountAcceptable = variables.getConsecutiveErrors() <
+                SegmentConstants.MAX_CONSECUTIVE_ERRORS;
+
+        // 检查是否超出最大容量
+        boolean capacityNotExceeded = !variables.isCapacityReached(SegmentVariables.Direction.NONE);
+
+        return healthAcceptable && errorCountAcceptable && capacityNotExceeded;
+    }
+
+    /**
+     * 处理故障状态下的车辆事件
+     * @param currentState 当前状态
+     * @param event 车辆事件
+     * @param variables 路段变量
+     * @return 是否允许处理
+     */
+    private static boolean handleFaultStateVehicleEvent(SegmentState currentState,
+                                                        SegmentEvent event,
+                                                        SegmentVariables variables) {
+        // 故障状态下的特殊处理逻辑
+
+        // 允许车辆离开（安全考虑）
+        if (event.isVehicleExitEvent()) {
+            return true;
+        }
+
+        // 车辆进入需要更严格的检查
+        if (event.isVehicleEntryEvent()) {
+            // 只有在清空决策为SAFE时才允许新车辆进入
+            return variables.getOverallClearanceDecision() == ClearanceDecision.SAFE;
+        }
+
+        return false;
+    }
+
+    /**
+     * 检查车辆进入的前置条件
+     * @param currentState 当前状态
+     * @param event 车辆进入事件
+     * @param variables 路段变量
+     * @return 是否满足进入前置条件
+     */
+    private static boolean checkVehicleEntryPreconditions(SegmentState currentState,
+                                                          SegmentEvent event,
+                                                          SegmentVariables variables) {
+        // 获取车辆进入方向
+        SegmentVariables.Direction direction = getVehicleDirection(event);
+
+        // 检查方向容量
+        boolean capacityAvailable = !variables.isCapacityReached(direction);
+
+        // 检查状态兼容性
+        boolean stateCompatible = variables.canAcceptVehicle(direction, currentState);
+
+        // 检查是否处于切换过程中
+        boolean notInTransition = !variables.isInRedState();
+
+        // 检查清空状态
+        boolean clearanceAllowsEntry = checkClearanceAllowsEntry(direction, variables);
+
+        return capacityAvailable && stateCompatible && notInTransition && clearanceAllowsEntry;
+    }
+
+    /**
+     * 检查车辆离开的前置条件
+     * @param currentState 当前状态
+     * @param event 车辆离开事件
+     * @param variables 路段变量
+     * @return 是否满足离开前置条件
+     */
+    private static boolean checkVehicleExitPreconditions(SegmentState currentState,
+                                                         SegmentEvent event,
+                                                         SegmentVariables variables) {
+        // 车辆离开通常应该被允许（安全考虑）
+        // 但仍需要基本的数据一致性检查
+
+        SegmentVariables.Direction direction = getVehicleDirection(event);
+
+        // 检查是否有车辆可以离开
+        boolean hasVehiclesToExit = switch (direction) {
+            case UPSTREAM -> !variables.getUpstreamVehicleIds().isEmpty();
+            case DOWNSTREAM -> !variables.getDownstreamVehicleIds().isEmpty();
+            case NONE -> false;
+        };
+
+        // 检查传感器可用性
+        boolean exitSensorsWorking = variables.areCriticalSensorsNormal();//direction
+
+        return hasVehiclesToExit && exitSensorsWorking;
+    }
+
+    /**
+     * 检查清空状态是否允许车辆进入
+     * @param direction 车辆方向
+     * @param variables 路段变量
+     * @return 是否允许进入
+     */
+    private static boolean checkClearanceAllowsEntry(SegmentVariables.Direction direction,
+                                                     SegmentVariables variables) {
+        ClearanceDecision overallDecision = variables.getOverallClearanceDecision();
+
+        // SAFE状态总是允许进入
+        if (overallDecision == ClearanceDecision.SAFE) {
+            return true;
+        }
+
+        // WARNING状态需要检查具体方向
+        if (overallDecision == ClearanceDecision.WARNING) {
+            ClearanceDecision directionDecision = switch (direction) {
+                case UPSTREAM -> variables.getUpstreamClearanceDecision();
+                case DOWNSTREAM -> variables.getDownstreamClearanceDecision();
+                case NONE -> ClearanceDecision.WAIT;
+            };
+            return directionDecision == ClearanceDecision.SAFE;
+        }
+
+        // CONSERVATIVE和WAIT状态不允许新车辆进入
+        return false;
+    }
 }
