@@ -10,7 +10,10 @@ package com.traffic.config.statemachinev3.constants;
 public final class SystemConstants {
 
     // ==================== 时间常量 (Time Constants) ====================
-
+    /**
+     * 最大全红时间（秒）
+     */
+    public static final int MAX_RED_TIME = 60;
     /**
      * 系统全红过渡时间（秒）
      */

@@ -1,9 +1,0 @@
-2025-08-01 11:52:03.255 [main] ERROR c.t.config.statemachinev2.core.SystemStateMachine - 执行进入紧急模式动作 (触发: 严重故障)
-2025-08-01 11:52:03.262 [main] ERROR c.t.config.statemachinev2.core.SystemStateMachine - 启动紧急信号模式
-2025-08-01 11:52:03.263 [main] ERROR c.t.config.statemachinev2.core.SystemStateMachine - 发送严重报警: 检测到严重故障，需要立即进入紧急模式
-2025-08-01 15:18:19.136 [main] ERROR c.t.config.statemachinev2.core.SystemStateMachine - 执行进入紧急模式动作 (触发: 严重故障)
-2025-08-01 15:18:19.137 [main] ERROR c.t.config.statemachinev2.core.SystemStateMachine - 启动紧急信号模式
-2025-08-01 15:18:19.137 [main] ERROR c.t.config.statemachinev2.core.SystemStateMachine - 发送严重报警: 检测到严重故障，需要立即进入紧急模式
-2025-08-01 15:20:25.055 [main] ERROR c.t.config.statemachinev2.core.SystemStateMachine - 执行进入紧急模式动作 (触发: 严重故障)
-2025-08-01 15:20:25.055 [main] ERROR c.t.config.statemachinev2.core.SystemStateMachine - 启动紧急信号模式
-2025-08-01 15:20:25.055 [main] ERROR c.t.config.statemachinev2.core.SystemStateMachine - 发送严重报警: 检测到严重故障，需要立即进入紧急模式
