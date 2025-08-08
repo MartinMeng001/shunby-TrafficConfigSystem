@@ -3,6 +3,9 @@ package com.traffic.config.statemachinev3.variables;
 import com.traffic.config.statemachinev3.enums.system.SystemStateV3;
 import com.traffic.config.statemachinev3.enums.segment.ClearanceDecision;
 import com.traffic.config.statemachinev3.constants.SystemConstants;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -19,6 +22,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author System
  * @version 3.0.0
  */
+@Getter
+@Setter
+@Data
 public class SystemVariables {
 
     // ==================== 时间管理变量 (Time Management Variables) ====================
@@ -127,6 +133,11 @@ public class SystemVariables {
      */
     private volatile boolean autoRecoveryEnabled;
 
+    /*
+     * 全红状态标识
+     */
+    private boolean allSignalRed;
+
     // ==================== 系统健康度变量 (System Health Variables) ====================
 
     /**
@@ -198,6 +209,11 @@ public class SystemVariables {
      */
     private volatile boolean emergencySignalsActive;
 
+    /*
+     * 控制指令最大重试次数
+     */
+    private volatile int maxRetryNumsAllCtrl;
+
     // ==================== 通信和外部接口变量 (Communication and External Interface Variables) ====================
 
     /**
@@ -214,6 +230,11 @@ public class SystemVariables {
      * 电源状态
      */
     private volatile PowerStatus powerStatus;
+
+    /*
+     * 配置文件是否加载
+     */
+    private volatile boolean configurationLoaded;
 
     // ==================== 错误统计变量 (Error Statistics Variables) ====================
 
@@ -396,6 +417,7 @@ public class SystemVariables {
         public boolean isReadyForSwitch() { return isReadyForSwitch; }
         public void setReadyForSwitch(boolean readyForSwitch) { this.isReadyForSwitch = readyForSwitch; }
 
+
         @Override
         public String toString() {
             return String.format("ClearanceState{segmentId=%d, overall=%s, ready=%s}",
@@ -486,6 +508,7 @@ public class SystemVariables {
         this.communicationStatus = CommunicationStatus.NORMAL;
         this.externalSystemConnected = true;
         this.powerStatus = PowerStatus.NORMAL;
+        this.configurationLoaded = false;
     }
 
     /**
@@ -544,7 +567,7 @@ public class SystemVariables {
      * @return 是否满足条件
      */
     public boolean isTransitionComplete() {
-        return getTransitionDurationSeconds() >= SystemConstants.TRANSITION_TIME && segmentsAllReady;
+        return getTransitionDurationSeconds() >= SystemConstants.TRANSITION_TIME;// && segmentsAllReady
     }
 
     /**
@@ -559,6 +582,12 @@ public class SystemVariables {
         return duration > SystemConstants.SYSTEM_INIT_DELAY;
     }
 
+    public void setAllSignalRed(boolean allSignalsRed){
+        if(allSignalsRed){
+            setStateStartTime(LocalDateTime.now());
+        }
+        this.allSignalRed = allSignalsRed;
+    }
     // ==================== 路段清空相关方法 ====================
 
     /**
@@ -820,26 +849,6 @@ public class SystemVariables {
     // ==================== Getter和Setter方法 ====================
 
     // 时间变量的getter和setter
-    public LocalDateTime getStateStartTime() { return stateStartTime; }
-    public void setStateStartTime(LocalDateTime stateStartTime) { this.stateStartTime = stateStartTime; }
-
-    public LocalDateTime getTransitionStartTime() { return transitionStartTime; }
-    public void setTransitionStartTime(LocalDateTime transitionStartTime) { this.transitionStartTime = transitionStartTime; }
-
-    public LocalDateTime getLastFaultTime() { return lastFaultTime; }
-    public void setLastFaultTime(LocalDateTime lastFaultTime) { this.lastFaultTime = lastFaultTime; }
-
-    public LocalDateTime getRecoveryStartTime() { return recoveryStartTime; }
-    public void setRecoveryStartTime(LocalDateTime recoveryStartTime) { this.recoveryStartTime = recoveryStartTime; }
-
-    public LocalDateTime getLastHealthUpdateTime() { return lastHealthUpdateTime; }
-    public void setLastHealthUpdateTime(LocalDateTime lastHealthUpdateTime) { this.lastHealthUpdateTime = lastHealthUpdateTime; }
-
-    public LocalDateTime getLastClearanceCheckTime() { return lastClearanceCheckTime; }
-    public void setLastClearanceCheckTime(LocalDateTime lastClearanceCheckTime) { this.lastClearanceCheckTime = lastClearanceCheckTime; }
-
-    public LocalDateTime getSystemInitStartTime() { return systemInitStartTime; }
-    public void setSystemInitStartTime(LocalDateTime systemInitStartTime) { this.systemInitStartTime = systemInitStartTime; }
 
     // 计数器变量的getter和setter
     public int getErrorCountWindow() { return errorCountWindow.get(); }
@@ -861,23 +870,6 @@ public class SystemVariables {
     public void incrementClearTimeoutCount() { this.clearTimeoutCount.incrementAndGet(); }
 
     // 状态标记变量的getter和setter
-    public SystemStateV3 getPreviousState() { return previousState; }
-    public void setPreviousState(SystemStateV3 previousState) { this.previousState = previousState; }
-
-    public FaultSource getFaultSource() { return faultSource; }
-    public void setFaultSource(FaultSource faultSource) { this.faultSource = faultSource; }
-
-    public MaintenanceType getMaintenanceType() { return maintenanceType; }
-    public void setMaintenanceType(MaintenanceType maintenanceType) { this.maintenanceType = maintenanceType; }
-
-    public EmergencyLevel getEmergencyLevel() { return emergencyLevel; }
-    public void setEmergencyLevel(EmergencyLevel emergencyLevel) { this.emergencyLevel = emergencyLevel; }
-
-    public boolean isClearDetectionActive() { return clearDetectionActive; }
-    public void setClearDetectionActive(boolean clearDetectionActive) { this.clearDetectionActive = clearDetectionActive; }
-
-    public boolean isAutoRecoveryEnabled() { return autoRecoveryEnabled; }
-    public void setAutoRecoveryEnabled(boolean autoRecoveryEnabled) { this.autoRecoveryEnabled = autoRecoveryEnabled; }
 
     // 系统健康度变量的getter和setter
     public int getSystemHealthScore() { return systemHealthScore.get(); }
@@ -893,16 +885,13 @@ public class SystemVariables {
 
     public Map<String, Object> getLastStableConfig() { return new HashMap<>(lastStableConfig); }
 
-    public boolean isCommunicationNormal() { return communicationNormal; }
-    public void setCommunicationNormal(boolean communicationNormal) { this.communicationNormal = communicationNormal; }
-
-    public boolean isPowerStatusNormal() { return powerStatusNormal; }
-    public void setPowerStatusNormal(boolean powerStatusNormal) { this.powerStatusNormal = powerStatusNormal; }
-
     // 路段管理变量的getter
     public int getSegmentCount() { return segmentCount; }
     public void setSegmentCount(int segmentCount) {
         this.segmentCount = segmentCount;
+        initializeSegmentClearanceStates();
+    }
+    public void resetSegmentClearanceStates(){
         initializeSegmentClearanceStates();
     }
 
@@ -910,30 +899,15 @@ public class SystemVariables {
 
     public int getClearedSegmentCount() { return clearedSegmentCount.get(); }
 
-    public boolean isSegmentsAllReady() { return segmentsAllReady; }
-
     // 控制模式变量的getter和setter
-    public ControlMode getCurrentControlMode() { return currentControlMode; }
-    public void setCurrentControlMode(ControlMode currentControlMode) { this.currentControlMode = currentControlMode; }
-
-    public boolean isInductiveAlgorithmActive() { return inductiveAlgorithmActive; }
-    public void setInductiveAlgorithmActive(boolean inductiveAlgorithmActive) { this.inductiveAlgorithmActive = inductiveAlgorithmActive; }
-
-    public boolean isManualControlActive() { return manualControlActive; }
-    public void setManualControlActive(boolean manualControlActive) { this.manualControlActive = manualControlActive; }
-
-    public boolean isEmergencySignalsActive() { return emergencySignalsActive; }
-    public void setEmergencySignalsActive(boolean emergencySignalsActive) { this.emergencySignalsActive = emergencySignalsActive; }
 
     // 通信和外部接口变量的getter和setter
     public CommunicationStatus getCommunicationStatus() { return communicationStatus; }
     public void setCommunicationStatus(CommunicationStatus communicationStatus) {
         this.communicationStatus = communicationStatus;
         this.communicationNormal = (communicationStatus == CommunicationStatus.NORMAL);
+        this.setConfigurationLoaded(true);
     }
-
-    public boolean isExternalSystemConnected() { return externalSystemConnected; }
-    public void setExternalSystemConnected(boolean externalSystemConnected) { this.externalSystemConnected = externalSystemConnected; }
 
     public PowerStatus getPowerStatus() { return powerStatus; }
     public void setPowerStatus(PowerStatus powerStatus) {

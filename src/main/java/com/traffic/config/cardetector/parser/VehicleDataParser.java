@@ -16,7 +16,7 @@ public class VehicleDataParser implements DataParser<VehicleData> {
     public VehicleData parse(ProtocolMessage message) throws DataParseException {
         byte[] data = message.getData();
 
-        if (data.length < 25) { // 1+4+1+16+1+1+1 = 25字节
+        if (data.length < 26) { // 1+4+1+16+1+1+1+1 = 26字节
             throw new DataParseException("车辆数据长度不足");
         }
 
@@ -61,11 +61,17 @@ public class VehicleDataParser implements DataParser<VehicleData> {
             // 速度 (1字节)
             int speed = data[offset] & 0xFF;
             vehicleData.setSpeed(speed);
+            offset++;
+
+            // 速度 (1字节)
+            int runDirection = data[offset] & 0xFF;
+            vehicleData.setRunDirection(runDirection);
 
             return vehicleData;
 
         } catch (Exception e) {
-            throw new DataParseException("解析车辆数据失败", e);
+            String error = String.format("解析车辆数据失败:%s", e.getMessage());
+            throw new DataParseException(error, e);
         }
     }
 

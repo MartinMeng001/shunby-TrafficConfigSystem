@@ -19,7 +19,7 @@ public final class SegmentConstants {
     /**
      * 最大绿灯时间（秒）
      */
-    public static final int MAX_GREEN_TIME = 120;
+    public static final int MAX_GREEN_TIME = 40;
 
     /**
      * 最大全红时间（秒）
@@ -184,9 +184,9 @@ public final class SegmentConstants {
     public static final int THROUGHPUT_CALCULATION_WINDOW = 60;
 
     /*
-     * 错误统计窗口
+     * 错误统计窗口 1小时
      */
-    public static final int ERROR_WINDOW = 10;
+    public static final int ERROR_WINDOW = 3600;
     /**
      * 平均等待时间移动平均系数
      */

@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class SingleLane {
     private GlobalConfig global;
     private Segments segments;
+    private DetectPoints detectPoints;
 
     @XmlElement(name = "global")
     public GlobalConfig getGlobal() {
@@ -24,5 +25,14 @@ public class SingleLane {
 
     public void setSegments(Segments segments) {
         this.segments = segments;
+    }
+
+    @XmlElement(name = "DetectPoints")
+    public DetectPoints getDetectPoints() {
+        return detectPoints;
+    }
+
+    public void setDetectPoints(DetectPoints detectPoints) {
+        this.detectPoints = detectPoints;
     }
 }

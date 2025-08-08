@@ -146,4 +146,7 @@ public class ConfigException extends RuntimeException {
                 "配置版本冲突",
                 java.util.Map.of("expected", expectedVersion, "actual", actualVersion));
     }
+    public static ConfigException detectPointAlreadyExists(int index) {
+        return new ConfigException("DETECT_POINT_EXISTS", "DetectPoint已存在: index=" + index);
+    }
 }

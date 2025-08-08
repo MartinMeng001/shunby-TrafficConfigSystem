@@ -1,9 +1,6 @@
 package com.traffic.config.service.impl;
 
-import com.traffic.config.entity.GlobalConfig;
-import com.traffic.config.entity.Segment;
-import com.traffic.config.entity.Segments;
-import com.traffic.config.entity.SingleLane;
+import com.traffic.config.entity.*;
 import com.traffic.config.exception.ConfigException;
 import com.traffic.config.service.ConfigService;
 import com.traffic.config.service.event.ServerUrlUpdateEvent;
@@ -115,8 +112,8 @@ public class ConfigServiceImpl implements ConfigService {
                             validateConfig(cachedConfig);
                         }
 
-                        log.info("配置文件加载成功, 路段数量: {}",
-                                cachedConfig.getSegments().getSize());
+                        log.info("配置文件加载成功, 路段数量: {}, 检测点数量: {}",
+                                cachedConfig.getSegments().getSize(), cachedConfig.getDetectPoints().getDetectPointList().size());
 
                         eventPublisher.publishEvent(new ServerUrlUpdateEvent(this, cachedConfig.getGlobal().getPlatformUrl()));
                     }
@@ -212,13 +209,25 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
+    public List<DetectPoint> getAllDetectPoints() {
+        return cachedConfig.getDetectPoints().getDetectPointList();
+    }
+
+    @Override
     public Optional<Segment> getSegmentBySigid(String sigid) {
         if (!StringUtils.hasText(sigid)) {
             return Optional.empty();
         }
 
         return getAllSegments().stream()
-                .filter(segment -> sigid.equals(segment.getSigid()))
+                .filter(segment -> sigid.equals(segment.getUpsigid()))
+                .findFirst();
+    }
+
+    @Override
+    public Optional<Segment> getSegmentBySegmentId(int segmentId) {
+        return getAllSegments().stream()
+                .filter(segment -> segmentId == segmentId)
                 .findFirst();
     }
 
@@ -230,6 +239,14 @@ public class ConfigServiceImpl implements ConfigService {
 
         return getAllSegments().stream()
                 .filter(segment -> name.equals(segment.getName()))
+                .findFirst();
+    }
+
+    @Override
+    public Optional<DetectPoint> getDetectPointByIndex(int index) {
+        //return Optional.empty();
+        return getAllDetectPoints().stream()
+                .filter(detectPoint -> index==detectPoint.getIndex())
                 .findFirst();
     }
 
@@ -248,7 +265,7 @@ public class ConfigServiceImpl implements ConfigService {
         List<Segment> segments = config.getSegments().getSegmentList();
 
         for (int i = 0; i < segments.size(); i++) {
-            if (sigid.equals(segments.get(i).getSigid())) {
+            if (sigid.equals(segments.get(i).getUpsigid())) {
                 segments.set(i, updatedSegment);
                 saveConfig(config);
                 log.info("路段配置更新成功: sigid={}, name={}", sigid, updatedSegment.getName());
@@ -272,8 +289,8 @@ public class ConfigServiceImpl implements ConfigService {
         }
 
         // 检查是否已存在
-        if (getSegmentBySigid(segment.getSigid()).isPresent()) {
-            throw ConfigException.segmentAlreadyExists(segment.getSigid());
+        if (getSegmentBySigid(segment.getUpsigid()).isPresent()) {
+            throw ConfigException.segmentAlreadyExists(segment.getUpsigid());
         }
 
         SingleLane config = loadConfig();
@@ -282,7 +299,7 @@ public class ConfigServiceImpl implements ConfigService {
         config.getSegments().setSize(segments.size());
 
         saveConfig(config);
-        log.info("路段配置添加成功: sigid={}, name={}", segment.getSigid(), segment.getName());
+        log.info("路段配置添加成功: sigid={}, name={}", segment.getUpsigid(), segment.getName());
     }
 
     @Override
@@ -294,13 +311,80 @@ public class ConfigServiceImpl implements ConfigService {
         SingleLane config = loadConfig();
         List<Segment> segments = config.getSegments().getSegmentList();
 
-        boolean removed = segments.removeIf(segment -> sigid.equals(segment.getSigid()));
+        boolean removed = segments.removeIf(segment -> sigid.equals(segment.getUpsigid()));
         if (removed) {
             config.getSegments().setSize(segments.size());
             saveConfig(config);
             log.info("路段配置删除成功: sigid={}", sigid);
         } else {
             log.warn("路段不存在，删除失败: sigid={}", sigid);
+        }
+
+        return removed;
+    }
+
+    @Override
+    public void addDetectPoint(DetectPoint detectPoint) {
+        if (detectPoint == null) {
+            throw new IllegalArgumentException("DetectPoint配置不能为空");
+        }
+
+        // 验证DetectPoint配置
+        if (validationEnabled) {
+            validateDetectPoint(detectPoint);
+        }
+
+        // 检查是否已存在
+        if (getDetectPointByIndex(detectPoint.getIndex()).isPresent()) {
+            throw ConfigException.detectPointAlreadyExists(detectPoint.getIndex());
+        }
+
+        SingleLane config = loadConfig();
+        List<DetectPoint> detectPoints = config.getDetectPoints().getDetectPointList();
+        detectPoints.add(detectPoint);
+
+        saveConfig(config);
+        log.info("DetectPoint配置添加成功: index={}", detectPoint.getIndex());
+    }
+
+    @Override
+    public boolean updateDetectPoint(int index, DetectPoint updatedDetectPoint) {
+        if (updatedDetectPoint == null) {
+            throw new IllegalArgumentException("DetectPoint配置不能为空");
+        }
+
+        // 验证DetectPoint配置
+        if (validationEnabled) {
+            validateDetectPoint(updatedDetectPoint);
+        }
+
+        SingleLane config = loadConfig();
+        List<DetectPoint> detectPoints = config.getDetectPoints().getDetectPointList();
+
+        for (int i = 0; i < detectPoints.size(); i++) {
+            if (index == detectPoints.get(i).getIndex()) {
+                detectPoints.set(i, updatedDetectPoint);
+                saveConfig(config);
+                log.info("DetectPoint配置更新成功: index={}", index);
+                return true;
+            }
+        }
+
+        log.warn("DetectPoint不存在，更新失败: index={}", index);
+        return false;
+    }
+
+    @Override
+    public boolean deleteDetectPoint(int index) {
+        SingleLane config = loadConfig();
+        List<DetectPoint> detectPoints = config.getDetectPoints().getDetectPointList();
+
+        boolean removed = detectPoints.removeIf(detectPoint -> index == detectPoint.getIndex());
+        if (removed) {
+            saveConfig(config);
+            log.info("DetectPoint配置删除成功: index={}", index);
+        } else {
+            log.warn("DetectPoint不存在，删除失败: index={}", index);
         }
 
         return removed;
@@ -317,8 +401,8 @@ public class ConfigServiceImpl implements ConfigService {
             throw ConfigException.validationError("name", segment.getName());
         }
 
-        if (!StringUtils.hasText(segment.getSigid())) {
-            throw ConfigException.validationError("sigid", segment.getSigid());
+        if (!StringUtils.hasText(segment.getUpsigid())) {
+            throw ConfigException.validationError("sigid", segment.getUpsigid());
         }
 
         // 验证数值范围
@@ -351,7 +435,30 @@ public class ConfigServiceImpl implements ConfigService {
 
         validateGlobalParameters(globalConfig.getAllRed(), globalConfig.getMaxAllRed());
     }
+    @Override
+    public void validateDetectPoint(DetectPoint detectPoint) {
+        if (detectPoint == null) {
+            throw ConfigException.validationError("detectPoint", null);
+        }
 
+        // 验证必填字段和数值范围
+        if (detectPoint.getIndex() <= 0) {
+            throw ConfigException.validationError("detectPoint.index", detectPoint.getIndex());
+        }
+
+        if (detectPoint.getSegmentId() <= 0) {
+            throw ConfigException.validationError("detectPoint.segmentId", detectPoint.getSegmentId());
+        }
+
+        // 验证字符串字段不为空
+        if (!StringUtils.hasText(detectPoint.getInout())) {
+            throw ConfigException.validationError("detectPoint.inout", detectPoint.getInout());
+        }
+
+        if (!StringUtils.hasText(detectPoint.getDirection())) {
+            throw ConfigException.validationError("detectPoint.direction", detectPoint.getDirection());
+        }
+    }
     @Override
     public void refreshCache() {
         lock.writeLock().lock();
@@ -482,6 +589,12 @@ public class ConfigServiceImpl implements ConfigService {
         if (config.getSegments() != null && config.getSegments().getSegmentList() != null) {
             for (Segment segment : config.getSegments().getSegmentList()) {
                 validateSegment(segment);
+            }
+        }
+        // --- 新增代码，用于验证 DetectPoint ---
+        if (config.getDetectPoints() != null && config.getDetectPoints().getDetectPointList() != null) {
+            for (DetectPoint detectPoint : config.getDetectPoints().getDetectPointList()) {
+                validateDetectPoint(detectPoint);
             }
         }
     }

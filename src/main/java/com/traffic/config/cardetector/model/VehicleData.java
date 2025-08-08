@@ -14,6 +14,7 @@ public class VehicleData {
     private VehicleDirection direction;     // 车入/车出
     private int queueLength;                // 排队长度(m)
     private int speed;                      // 速度(km/h)
+    private int runDirection;               // 行驶方向，0-未知，1-正向[由远到近]，2-反向[由近到远]
     private LocalDateTime timestamp;        // 时间戳
 
     public VehicleData() {
@@ -45,5 +46,8 @@ public class VehicleData {
 
     public LocalDateTime getTimestamp() { return timestamp; }
     public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+
+    public int getRunDirection() { return runDirection; }
+    public void setRunDirection(int runDirection) { this.runDirection = runDirection; }
 }
 

@@ -3,14 +3,18 @@ package com.traffic.config.statemachinev3.actions;
 import com.traffic.config.statemachinev3.enums.segment.SegmentState;
 import com.traffic.config.statemachinev3.enums.segment.SegmentEvent;
 import com.traffic.config.statemachinev3.enums.segment.ClearanceDecision;
+import com.traffic.config.statemachinev3.events.GreenCtrlEvent;
+import com.traffic.config.statemachinev3.events.SegmentMachineActionEvent;
+import com.traffic.config.statemachinev3.utils.SpringContextUtil;
 import com.traffic.config.statemachinev3.variables.SegmentVariables;
 import com.traffic.config.statemachinev3.constants.SegmentConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -48,6 +52,7 @@ public class SegmentActions {
             default -> SegmentVariables.Direction.NONE;
         };
 
+        publishEvent(new GreenCtrlEvent("GreenCtrlEvent", targetState, event, variables));
         // 开始绿灯计时
         variables.startGreenTimer(direction);
 
@@ -135,7 +140,7 @@ public class SegmentActions {
         variables.setFaultDetected(true);
 
         // 停止所有计时器
-        variables.resetAllTimers();
+        variables.resetAllTimers(now);
 
         // 清除所有通行请求
         variables.setUpstreamRequest(false);
@@ -178,7 +183,7 @@ public class SegmentActions {
         LocalDateTime now = LocalDateTime.now();
 
         // 停止所有自动控制
-        variables.resetAllTimers();
+        variables.resetAllTimers(now);
 
         // 清除所有通行请求
         clearAllRequests(variables);
@@ -242,22 +247,22 @@ public class SegmentActions {
                                            SegmentVariables.Direction direction) {
         LocalDateTime now = LocalDateTime.now();
 
-        // 验证车辆进入条件
-        if (!validateVehicleEntry(vehicleId, direction, variables)) {
-            recordVehicleEntryError(vehicleId, direction, "车辆进入验证失败", variables);
-            return;
-        }
-
         // 检查容量限制
         if (!checkCapacityLimit(direction, variables)) {
             recordVehicleEntryError(vehicleId, direction, "容量超限", variables);
             variables.incrementCounterMismatchErrors();
             return;
         }
-
-        // 添加车辆记录
-        addVehicleRecord(vehicleId, direction, variables);
-
+        // 有车牌需要记录车牌，不管有无车牌都需要记录过车数
+        if(validateVehicleId(vehicleId)) {
+            // 验证车辆进入条件
+            if (!validateVehicleEntry(vehicleId, direction, variables)) {
+                recordVehicleEntryError(vehicleId, direction, "车辆进入验证失败", variables);
+                return;
+            }
+            // 添加车辆记录
+            addVehicleRecord(vehicleId, direction, variables);
+        }
         // 增加计数器
         incrementDirectionCounter(direction, variables, true);
 
@@ -293,14 +298,16 @@ public class SegmentActions {
                                           SegmentVariables.Direction direction) {
         LocalDateTime now = LocalDateTime.now();
 
-        // 验证车辆离开条件
-        if (!validateVehicleExit(vehicleId, direction, variables)) {
-            recordVehicleExitError(vehicleId, direction, "车辆离开验证失败", variables);
-            return;
-        }
+        if(validateVehicleId(vehicleId)) {
+            // 验证车辆离开条件
+            if (!validateVehicleExit(vehicleId, direction, variables)) {
+                recordVehicleExitError(vehicleId, direction, "车辆离开验证失败", variables);
+                return;
+            }
 
-        // 移除车辆记录
-        removeVehicleRecord(vehicleId, direction, variables);
+            // 移除车辆记录
+            removeVehicleRecord(vehicleId, direction, variables);
+        }
 
         // 增加出口计数器
         incrementDirectionCounter(direction, variables, false);
@@ -376,12 +383,12 @@ public class SegmentActions {
         recordForceSwitchReason(currentState, event, variables);
 
         // 设置强制清空决策
-        variables.setUpstreamClearanceDecision(ClearanceDecision.SAFE);
-        variables.setDownstreamClearanceDecision(ClearanceDecision.SAFE);
-        variables.setOverallClearanceDecision(ClearanceDecision.SAFE);
+        variables.setUpstreamClearanceDecision(ClearanceDecision.WAIT);
+        variables.setDownstreamClearanceDecision(ClearanceDecision.WAIT);
+        variables.setOverallClearanceDecision(ClearanceDecision.WAIT);
 
         // 重置计时器
-        variables.resetAllTimers();
+        variables.resetAllTimers(now);
 
         logger.info("路段 {} 执行强制切换 - 当前状态: {}",
                 variables.getSegmentId(), currentState.getChineseName());
@@ -521,6 +528,13 @@ public class SegmentActions {
         // 检查车辆是否已存在
         return !variables.getUpstreamVehicleIds().contains(vehicleId) &&
                 !variables.getDownstreamVehicleIds().contains(vehicleId);
+    }
+    private static boolean validateVehicleId(String vehicleId){
+        // 检查车辆ID是否为空
+        if (vehicleId == null || vehicleId.trim().isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -822,7 +836,7 @@ public class SegmentActions {
         LocalDateTime now = LocalDateTime.now();
 
         // 重置所有计时器
-        variables.resetAllTimers();
+        variables.resetAllTimers(now);
 
         // 清除所有车辆记录
         variables.getUpstreamVehicleIds().clear();
@@ -1230,5 +1244,21 @@ public class SegmentActions {
                 variables.getPriorityScoreDownstream()));
 
         logger.info(performanceReport.toString());
+    }
+
+    /**
+     * 发布事件的辅助方法
+     */
+    private static void publishEvent(SegmentMachineActionEvent event) {
+        if (SpringContextUtil.isContextAvailable()) {
+            try {
+                ApplicationEventPublisher publisher = SpringContextUtil.getBean(ApplicationEventPublisher.class);
+                publisher.publishEvent(event);
+            } catch (Exception e) {
+                logger.warn("发布状态机事件失败: {}", e.getMessage());
+            }
+        } else {
+            logger.warn("Spring上下文不可用，无法发布控制信号机事件");
+        }
     }
 }

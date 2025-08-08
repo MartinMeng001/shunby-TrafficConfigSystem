@@ -125,9 +125,9 @@ public class SegmentStateMachine {
      * 主要的事件处理循环
      * 实现状态转换函数 δ: Q × Σ × V* → Q
      */
-    public void processEvents() {
+    public boolean processEvents() {
         if (!isRunning) {
-            return;
+            return false;
         }
 
         try {
@@ -147,10 +147,11 @@ public class SegmentStateMachine {
 
             // 更新最后处理时间
             lastEventProcessTime = LocalDateTime.now();
-
+            return true;
         } catch (Exception e) {
             logger.warn("路段 {} 事件处理异常: {}", variables.getSegmentId(), e.getMessage());
             variables.incrementConsecutiveErrors();
+            return false;
         }
     }
 
@@ -176,7 +177,7 @@ public class SegmentStateMachine {
      * 处理单个事件
      * 实现完整的状态转换逻辑：δ(q, σ, v) → q'
      */
-    private void processEvent(SegmentEvent event, Map<String, Object> eventData) {
+    private boolean processEvent(SegmentEvent event, Map<String, Object> eventData) {
         SegmentState oldState = currentState;
         LocalDateTime eventTime = LocalDateTime.now();
 
@@ -185,7 +186,7 @@ public class SegmentStateMachine {
             if (!isEventApplicable(event, currentState)) {
                 logger.debug("路段 {} 事件 {} 不适用于当前状态 {}",
                         variables.getSegmentId(), event.getChineseName(), currentState.getChineseName());
-                return;
+                return false;
             }
 
             // 2. 确定目标状态
@@ -193,14 +194,14 @@ public class SegmentStateMachine {
             if (targetState == null) {
                 logger.debug("路段 {} 事件 {} 无法确定目标状态",
                         variables.getSegmentId(), event.getChineseName());
-                return;
+                return false;
             }
 
             // 3. 检查守护条件 G(q, σ, v)
             if (!checkGuardCondition(event, targetState)) {
-                logger.debug("路段 {} 状态转换被守护条件阻止: {} -> {}",
-                        variables.getSegmentId(), currentState.getChineseName(), targetState.getChineseName());
-                return;
+                logger.debug("路段 {} 状态转换被守护条件阻止: {} -> {}, event:{}",
+                        variables.getSegmentId(), currentState.getChineseName(), targetState.getChineseName(), event.getChineseName());
+                return false;
             }
 
             // 4. 执行动作函数 A(q, σ, v)
@@ -214,9 +215,11 @@ public class SegmentStateMachine {
             // 6. 记录状态转换
             recordStateTransition(oldState, currentState, event, eventTime);
 
+            return true;
         } catch (Exception e) {
             logger.warn("路段 {} 处理事件 {} 时发生异常: {}", variables.getSegmentId(), event.getChineseName(), e.getMessage());
             variables.incrementConsecutiveErrors();
+            return false;
         }
     }
 
@@ -291,9 +294,9 @@ public class SegmentStateMachine {
                     SegmentActions.executeEnterGreenState(currentState, newState, triggerEvent, variables);
             case ALL_RED_CLEAR ->
                     SegmentActions.executeEnterAllRedClear(currentState, newState, triggerEvent, variables);
-//            case FAULT_MODE ->
+//            case FAULT_MODE -> // 路段不包含该状态
 //                    SegmentActions.executeEnterFaultMode(currentState, newState, triggerEvent, variables);
-//            case MAINTENANCE ->
+//            case MAINTENANCE -> // 路段不包含该状态
 //                    SegmentActions.executeEnterMaintenanceMode(currentState, newState, triggerEvent, variables);
         }
     }
@@ -305,34 +308,32 @@ public class SegmentStateMachine {
      * 基于当前状态和事件类型确定下一个状态
      */
     private SegmentState determineTargetState(SegmentEvent event, SegmentState currentState) {
-//        switch (event) {
-//            case SYSTEM_RESET -> {//SYSTEM_INIT_COMPLETE
-//                if (currentState == SegmentState.IDLE) {
-//                    return SegmentState.ALL_RED_CLEAR;
-//                }
-//            }
-//            case TIMER_TICK -> {
-//                return determineTimerTickTargetState();
-//            }
-//            case FORCE_SWITCH -> {
-//                if (currentState.isGreenState()) {
-//                    return SegmentState.ALL_RED_CLEAR;
-//                }
-//            }
-//            case FAULT_DETECTED -> {
-//                return SegmentState.FAULT_MODE;
-//            }
-//            case RECOVERY_REQUEST -> {
-//                if (currentState == SegmentState.FAULT_MODE) {
-//                    return SegmentState.ALL_RED_CLEAR;
-//                }
-//            }
-//            case VEHICLE_ENTER, VEHICLE_EXIT -> {
-//                // 车辆事件不改变状态，只更新变量
-//                return currentState;
-//            }
-//        }
-        logger.info("pending for design in deep");
+        switch (event) {
+            case TIMER_TICK -> {
+                return determineTimerTickTargetState();
+            }
+            case FORCE_SWITCH -> {
+                if (currentState.isGreenState()) {
+                    return SegmentState.ALL_RED_CLEAR;
+                }
+            }
+            case GREEN_TIMEOUT -> {
+                return SegmentState.ALL_RED_CLEAR;
+            }
+            case VEHICLE_ENTER_UPSTREAM, VEHICLE_EXIT_UPSTREAM, VEHICLE_ENTER_DOWNSTREAM, VEHICLE_EXIT_DOWNSTREAM -> {
+                // 车辆事件不改变状态，只更新变量
+                return currentState;
+            }
+            case CLEARANCE_COMPLETE -> {
+                return determineGreenStateFromRed();
+            }
+            case CLEAR_TIMEOUT -> {
+                // 黄闪，停止感应，需人工介入
+                logger.info("Event:{} 处理流程缺失", event.getChineseName());
+                return null;
+            }
+        }
+        logger.info("Event:{} 不能被处理", event.getChineseName());
         return null;
     }
 
@@ -346,17 +347,17 @@ public class SegmentStateMachine {
                 // 从全红清空状态转换到绿灯状态
                 return determineGreenStateFromRed();
             }
-            case UPSTREAM_GREEN -> {
+            case UPSTREAM_GREEN -> {    // 目标状态是确定的，不应该有条件，是否转换是有条件的
                 // 检查是否需要从上行绿灯转换到全红清空
-                if (shouldSwitchFromUpstreamGreen()) {
-                    return SegmentState.ALL_RED_CLEAR;
-                }
+                //if (shouldSwitchFromUpstreamGreen()) {
+                return SegmentState.ALL_RED_CLEAR;
+                //}
             }
             case DOWNSTREAM_GREEN -> {
                 // 检查是否需要从下行绿灯转换到全红清空
-                if (shouldSwitchFromDownstreamGreen()) {
-                    return SegmentState.ALL_RED_CLEAR;
-                }
+                //if (shouldSwitchFromDownstreamGreen()) {
+                return SegmentState.ALL_RED_CLEAR;
+                //}
             }
 //            case FAULT_MODE -> {
 //                // 故障模式下不自动转换状态
@@ -367,7 +368,7 @@ public class SegmentStateMachine {
 //                return SegmentState.MAINTENANCE;
 //            }
         }
-        return currentState; // 保持当前状态
+        return null;
     }
 
     /**
@@ -385,18 +386,14 @@ public class SegmentStateMachine {
 
         switch (priorityDirection) {
             case UPSTREAM -> {
-                if (variables.isUpstreamRequest()) {
-                    return SegmentState.UPSTREAM_GREEN;
-                }
+                return SegmentState.UPSTREAM_GREEN;
             }
             case DOWNSTREAM -> {
-                if (variables.isDownstreamRequest()) {
-                    return SegmentState.DOWNSTREAM_GREEN;
-                }
+                return SegmentState.DOWNSTREAM_GREEN;
             }
         }
 
-        // 如果优先级方向没有请求，检查另一个方向
+        // 如果优先级方向没有请求，检查另一个方向, 理论上应该不会出现下面的情况
         if (variables.isUpstreamRequest()) {
             return SegmentState.UPSTREAM_GREEN;
         } else if (variables.isDownstreamRequest()) {
@@ -410,21 +407,20 @@ public class SegmentStateMachine {
      * 判断是否应该从上行绿灯状态切换
      */
     private boolean shouldSwitchFromUpstreamGreen() {
+        // 检查强制切换条件
+        if (variables.isGreenTimeout() ||
+                isCapacityNearFull(SegmentVariables.Direction.UPSTREAM)) {
+            return true;
+        }
         // 检查最小绿灯时间
         if (!variables.isMinGreenTimeReached()) {
             return false;
         }
 
         // 检查是否有下行请求
-        if (!variables.isDownstreamRequest()) {
-            return false;
+        if (variables.isDownstreamRequest()) {
+            return true;
         }
-
-//        // 检查强制切换条件
-//        if (variables.isMaxGreenTimeReached() ||
-//                isCapacityNearFull(SegmentVariables.Direction.UPSTREAM)) {
-//            return true;
-//        }
 
         // 基于优先级判断是否切换
         return shouldSwitchBasedOnPriority(SegmentVariables.Direction.DOWNSTREAM);
@@ -444,11 +440,11 @@ public class SegmentStateMachine {
             return false;
         }
 
-//        // 检查强制切换条件
-//        if (variables.isMaxGreenTimeReached() ||
-//                isCapacityNearFull(SegmentVariables.Direction.DOWNSTREAM)) {
-//            return true;
-//        }
+        // 检查强制切换条件
+        if (variables.isGreenTimeout() ||
+                isCapacityNearFull(SegmentVariables.Direction.DOWNSTREAM)) {
+            return true;
+        }
 
         // 基于优先级判断是否切换
         return shouldSwitchBasedOnPriority(SegmentVariables.Direction.UPSTREAM);
@@ -519,22 +515,25 @@ public class SegmentStateMachine {
             return SegmentVariables.Direction.DOWNSTREAM;
         }
 
-        // 如果两个方向都有请求，基于优先级得分判断
+        // 如果两个方向都有请求,或者都无请求，使用交替策略，暂时不使用得分，后期可尝试基于优先级得分判断
         if (variables.isUpstreamRequest() && variables.isDownstreamRequest()) {
-            double upstreamScore = variables.getPriorityScoreUpstream();
-            double downstreamScore = variables.getPriorityScoreDownstream();
 
-            // 如果得分相近，采用交替策略
-            if (Math.abs(upstreamScore - downstreamScore) < SegmentConstants.PRIORITY_SCORE_THRESHOLD) {
-                return alternateDirection();
-            }
-
-            return upstreamScore > downstreamScore ?
-                    SegmentVariables.Direction.UPSTREAM : SegmentVariables.Direction.DOWNSTREAM;
+            return alternateDirection();
+//            double upstreamScore = variables.getPriorityScoreUpstream();
+//            double downstreamScore = variables.getPriorityScoreDownstream();
+//
+//            // 如果得分相近，采用交替策略
+//            if (Math.abs(upstreamScore - downstreamScore) < SegmentConstants.PRIORITY_SCORE_THRESHOLD) {
+//                return alternateDirection();
+//            }
+//
+//            return upstreamScore > downstreamScore ?
+//                    SegmentVariables.Direction.UPSTREAM : SegmentVariables.Direction.DOWNSTREAM;
         }
 
-        // 如果都没有请求，返回NONE
-        return SegmentVariables.Direction.NONE;
+        // 如果都没有请求，返回交替方向
+        return alternateDirection();
+        //return SegmentVariables.Direction.NONE;
     }
 
     /**
@@ -577,26 +576,27 @@ public class SegmentStateMachine {
      * 检查事件是否适用于当前状态
      */
     private boolean isEventApplicable(SegmentEvent event, SegmentState state) {
-        // 系统事件在所有状态下都适用
+        // 系统事件在所有状态下都适用 - 不存在这种状态，暂时禁用，以后根据需求确定是否添加
 //        if (event.isSystemEvent()) {
 //            return true;
 //        }
-//
-//        // 故障事件在所有非故障状态下都适用
+
+        // 故障事件在所有非故障状态下都适用，路段状态机没有故障状态，这个条件暂时也用不上
 //        if (event == SegmentEvent.FAULT_DETECTED && state != SegmentState.FAULT_MODE) {
 //            return true;
 //        }
-//
-//        // 恢复事件只在故障状态下适用
+
+        // 恢复事件只在故障状态下适用，不存在恢复请求，该条件目前不适用
 //        if (event == SegmentEvent.RECOVERY_REQUEST) {
 //            return state == SegmentState.FAULT_MODE;
 //        }
-//
-//        // 车辆事件在运行状态下适用
-//        if (event == SegmentEvent.VEHICLE_ENTER || event == SegmentEvent.VEHICLE_EXIT) {
-//            return state != SegmentState.FAULT_MODE && state != SegmentState.MAINTENANCE;
-//        }
-        logger.info("Pending");
+
+        // 车辆事件在运行状态下适用，不存在其它状态，这里应该永远返回true
+        if (event == SegmentEvent.VEHICLE_ENTER_UPSTREAM || event == SegmentEvent.VEHICLE_EXIT_UPSTREAM ||
+        event == SegmentEvent.VEHICLE_EXIT_DOWNSTREAM || event == SegmentEvent.VEHICLE_ENTER_DOWNSTREAM) {
+            //return state != SegmentState.FAULT_MODE && state != SegmentState.MAINTENANCE;
+        }
+
         return true;
     }
 
@@ -649,9 +649,9 @@ public class SegmentStateMachine {
      */
     private boolean shouldTriggerForceSwitch() {
         // 如果绿灯时间过长
-//        if (currentState.isGreenState() && variables.isMaxGreenTimeReached()) {
-//            return true;
-//        }
+        if (currentState.isGreenState() && variables.isGreenTimeout()) {
+            return true;
+        }
 
         // 如果容量达到上限
         if (currentState == SegmentState.UPSTREAM_GREEN &&
@@ -687,13 +687,25 @@ public class SegmentStateMachine {
     }
 
     /**
+     * 同步处理Event
+     * @param event
+     * @param eventData
+     * @return
+     */
+    public boolean processSegmentEvent(SegmentEvent event, Map<String, Object> eventData) {
+        return processEvent(event, eventData);
+    }
+    /**
      * 处理车辆进入事件
      */
     public void onVehicleEnter(String vehicleId, SegmentVariables.Direction direction) {
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("vehicleId", vehicleId);
         eventData.put("direction", direction);
-        //postEvent(SegmentEvent.VEHICLE_ENTER, eventData);
+        switch (direction){
+            case UPSTREAM -> { postEvent(SegmentEvent.VEHICLE_ENTER_UPSTREAM, eventData); }
+            default -> { postEvent(SegmentEvent.VEHICLE_ENTER_DOWNSTREAM, eventData); }
+        }
     }
 
     /**
@@ -703,7 +715,10 @@ public class SegmentStateMachine {
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("vehicleId", vehicleId);
         eventData.put("direction", direction);
-        //postEvent(SegmentEvent.VEHICLE_EXIT, eventData);
+        switch (direction){
+            case UPSTREAM -> { postEvent(SegmentEvent.VEHICLE_EXIT_UPSTREAM, eventData); }
+            default -> { postEvent(SegmentEvent.VEHICLE_EXIT_DOWNSTREAM, eventData); }
+        }
     }
 
     /**

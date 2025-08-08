@@ -3,14 +3,24 @@ package com.traffic.config.entity;
 import javax.xml.bind.annotation.XmlElement;
 
 public class Segment {
+    private int segmentId;
     private String name;
-    private String sigid;
+    private String upsigid;
+    private String downsigid;
     private int allred;
     private int upctrl;
     private int downctrl;
     private int inzone;
     private int outzone;
 
+    @XmlElement(name = "segmentId")
+    public int getSegmentId() {
+        return segmentId;
+    }
+
+    public void setSegmentId(int segmentId) {
+        this.segmentId = segmentId;
+    }
     @XmlElement(name = "name")
     public String getName() {
         return name;
@@ -20,15 +30,22 @@ public class Segment {
         this.name = name;
     }
 
-    @XmlElement(name = "sigid")
-    public String getSigid() {
-        return sigid;
+    @XmlElement(name = "upsigid")
+    public String getUpsigid() {
+        return upsigid;
     }
 
-    public void setSigid(String sigid) {
-        this.sigid = sigid;
+    public void setUpsigid(String upsigid) {
+        this.upsigid = upsigid;
+    }
+    @XmlElement(name="downsigid")
+    public String getDownsigid() {
+        return downsigid;
     }
 
+    public void setDownsigid(String downsigid) {
+        this.downsigid = downsigid;
+    }
     @XmlElement(name = "allred")
     public int getAllred() {
         return allred;

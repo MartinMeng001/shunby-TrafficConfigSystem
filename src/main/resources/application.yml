@@ -6,6 +6,8 @@ server:
 spring:
   application:
     name: traffic-config-system
+  profiles:
+    active: default # 不包含statemachine-v2，所以statemachinev2不会启动
 
 # 配置文件路径
 traffic:
