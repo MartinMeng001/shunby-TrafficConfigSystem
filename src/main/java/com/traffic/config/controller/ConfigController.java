@@ -106,8 +106,8 @@ public class ConfigController {
     public ResponseEntity<String> addSegment(@RequestBody Segment segment) {
         try {
             // 检查信号灯ID是否已存在
-            if (configService.getSegmentBySigid(segment.getSigid()).isPresent()) {
-                return ResponseEntity.badRequest().body("信号灯ID已存在: " + segment.getSigid());
+            if (configService.getSegmentBySigid(segment.getUpsigid()).isPresent()) {
+                return ResponseEntity.badRequest().body("信号灯ID已存在: " + segment.getUpsigid());
             }
 
             configService.addSegment(segment);
@@ -124,7 +124,7 @@ public class ConfigController {
     public ResponseEntity<String> updateSegment(@PathVariable String sigid, @RequestBody Segment segment) {
         try {
             // 确保请求体中的sigid与路径参数一致
-            segment.setSigid(sigid);
+            segment.setUpsigid(sigid);
 
             boolean updated = configService.updateSegment(sigid, segment);
             if (updated) {

@@ -120,6 +120,7 @@ public class SystemVariables {
      */
     private boolean autoRecoveryEnabled;
 
+
     // ==================== 路段清空相关变量 (Segment Clearance Variables) ====================
 
     /**

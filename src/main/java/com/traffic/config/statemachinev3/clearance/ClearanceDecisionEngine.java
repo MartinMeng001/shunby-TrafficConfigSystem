@@ -113,6 +113,9 @@ public class ClearanceDecisionEngine {
         }
 
         // 4. 默认为保守状态（需要保守清空）
+//        if(isCONSERVATIVECondition(context)) {
+//            return ClearanceDecision.CONSERVATIVE;
+//        }
         return ClearanceDecision.CONSERVATIVE;
     }
 
@@ -123,19 +126,18 @@ public class ClearanceDecisionEngine {
     private boolean shouldWait(ClearanceContext context) {
         // 车辆ID集合不为空且计数器严重不匹配
         boolean severeCounterMismatch = !context.vehicleIds.isEmpty() &&
-                Math.abs(context.inCounter - context.outCounter) > 2;
+                Math.abs(context.inCounter - context.outCounter) > 1;
 
-        // 传感器故障率过高
-        boolean sensorCriticalFailure = context.sensorFailureRate > 0.5;
+        // 传感器故障率过高, 不是目前算法规定的条件
+        // boolean sensorCriticalFailure = context.sensorFailureRate > 0.5;
 
-        // 存在严重的逻辑错误
-        boolean severeLogicError = context.consecutiveErrors > SegmentConstants.MAX_CONSECUTIVE_ERRORS / 2;
+        // 存在严重的逻辑错误 不是目前算法规定的条件
+        // boolean severeLogicError = context.consecutiveErrors > SegmentConstants.MAX_CONSECUTIVE_ERRORS / 2;
 
-        // 健康度过低
-        boolean criticalHealth = context.segmentHealthScore < SegmentConstants.CRITICAL_HEALTH_THRESHOLD;
+        // 健康度过低, 先不考虑健康度问题
+        //boolean criticalHealth = context.segmentHealthScore < SegmentConstants.CRITICAL_HEALTH_THRESHOLD;
 
-        return severeCounterMismatch || sensorCriticalFailure ||
-                severeLogicError || criticalHealth;
+        return severeCounterMismatch;// || criticalHealth|| sensorCriticalFailure ||severeLogicError
     }
 
     /**
@@ -150,16 +152,16 @@ public class ClearanceDecisionEngine {
         boolean countersMatch = context.inCounter == context.outCounter;
 
         // 传感器状态良好
-        boolean sensorsHealthy = context.sensorFailureRate < SegmentConstants.SENSOR_ERROR_RATE_THRESHOLD;
+        //boolean sensorsHealthy = context.sensorFailureRate < SegmentConstants.SENSOR_ERROR_RATE_THRESHOLD;
 
         // 健康度良好
-        boolean healthGood = context.segmentHealthScore >= SegmentConstants.NORMAL_HEALTH_THRESHOLD;
+        //boolean healthGood = context.segmentHealthScore >= SegmentConstants.NORMAL_HEALTH_THRESHOLD;
 
         // 没有连续错误
-        boolean noRecentErrors = context.consecutiveErrors == 0;
+        //boolean noRecentErrors = context.consecutiveErrors == 0;
 
-        return vehicleIdsEmpty && countersMatch && sensorsHealthy &&
-                healthGood && noRecentErrors;
+        return vehicleIdsEmpty && countersMatch;//&& sensorsHealthy &&
+                //healthGood && noRecentErrors;
     }
 
     /**
@@ -167,25 +169,48 @@ public class ClearanceDecisionEngine {
      * 条件：存在一些异常但不严重
      */
     private boolean isWarningCondition(ClearanceContext context) {
-        // 车辆ID集合为空但计数器轻微不匹配
+        // 车辆ID集合为空但计数器不匹配
         boolean minorCounterMismatch = context.vehicleIds.isEmpty() &&
-                Math.abs(context.inCounter - context.outCounter) <= 1;
+                Math.abs(context.inCounter - context.outCounter) >= 1;
 
         // 传感器轻微降级
-        boolean minorSensorIssues = context.sensorFailureRate > SegmentConstants.SENSOR_ERROR_RATE_THRESHOLD &&
-                context.sensorFailureRate <= 0.3;
+        //boolean minorSensorIssues = context.sensorFailureRate > SegmentConstants.SENSOR_ERROR_RATE_THRESHOLD &&
+         //       context.sensorFailureRate <= 0.3;
 
         // 健康度中等
-        boolean moderateHealth = context.segmentHealthScore >= SegmentConstants.CRITICAL_HEALTH_THRESHOLD &&
-                context.segmentHealthScore < SegmentConstants.NORMAL_HEALTH_THRESHOLD;
+        //boolean moderateHealth = context.segmentHealthScore >= SegmentConstants.CRITICAL_HEALTH_THRESHOLD &&
+        //        context.segmentHealthScore < SegmentConstants.NORMAL_HEALTH_THRESHOLD;
 
         // 有少量错误但不严重
-        boolean minorErrors = context.consecutiveErrors > 0 &&
-                context.consecutiveErrors <= SegmentConstants.MAX_CONSECUTIVE_ERRORS / 2;
+        //boolean minorErrors = context.consecutiveErrors > 0 &&
+        //        context.consecutiveErrors <= SegmentConstants.MAX_CONSECUTIVE_ERRORS / 2;
 
-        return minorCounterMismatch || minorSensorIssues || moderateHealth || minorErrors;
+        return minorCounterMismatch;//|| minorSensorIssues || moderateHealth || minorErrors;
     }
 
+    /**
+     * 判断是否为保守清空状态
+     * 条件：存在一些异常但不严重
+     */
+    private boolean isCONSERVATIVECondition(ClearanceContext context) {
+        // 车辆ID集合为空但计数器不匹配
+        boolean minorCounterMismatch = !context.vehicleIds.isEmpty() &&
+                Math.abs(context.inCounter - context.outCounter) == 0;
+
+        // 传感器轻微降级
+        //boolean minorSensorIssues = context.sensorFailureRate > SegmentConstants.SENSOR_ERROR_RATE_THRESHOLD &&
+        //       context.sensorFailureRate <= 0.3;
+
+        // 健康度中等
+        //boolean moderateHealth = context.segmentHealthScore >= SegmentConstants.CRITICAL_HEALTH_THRESHOLD &&
+        //        context.segmentHealthScore < SegmentConstants.NORMAL_HEALTH_THRESHOLD;
+
+        // 有少量错误但不严重
+        //boolean minorErrors = context.consecutiveErrors > 0 &&
+        //        context.consecutiveErrors <= SegmentConstants.MAX_CONSECUTIVE_ERRORS / 2;
+
+        return minorCounterMismatch;//|| minorSensorIssues || moderateHealth || minorErrors;
+    }
     /**
      * 合并双方向清空决策
      * 优先级：WAIT > CONSERVATIVE > WARNING > SAFE

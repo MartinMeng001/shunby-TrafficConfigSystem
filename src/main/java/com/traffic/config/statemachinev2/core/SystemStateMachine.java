@@ -484,13 +484,14 @@ public class SystemStateMachine {
      */
     private boolean performSystemSelfCheck() {
         // 实现系统自检逻辑
+        // 简化实现
         if(crossInfoManager.checkHealthStatus()) {
             logger.debug("执行系统自检 成功");
-            return true; // 简化实现
+            return true;
         }else{
             logger.debug("执行系统自检 失败，继续等待");
-            return true; // 简化实现
         }
+        return false; // 简化实现
     }
 
     /**

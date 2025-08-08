@@ -385,11 +385,11 @@ public class SegmentVariables {
      * 重置所有计时器
      * 用于系统重置或故障恢复时
      */
-    public void resetAllTimers() {
-        this.greenStartTime = null;
-        this.redStartTime = null;
-        this.conservativeTimerStart = null;
-        this.lastSwitchTime = LocalDateTime.now();
+    public void resetAllTimers(LocalDateTime now) {
+        this.greenStartTime = now;
+        this.redStartTime = now;
+        this.conservativeTimerStart = now;
+        this.lastSwitchTime = now;
 
         // 重置所有时间相关的状态
         this.upstreamRequestTime = null;
@@ -493,6 +493,18 @@ public class SegmentVariables {
         }
         long duration = java.time.Duration.between(conservativeTimerStart, LocalDateTime.now()).getSeconds();
         return duration >= SegmentConstants.CONSERVATIVE_CLEAR_TIME;
+    }
+
+    /**
+     * 检查最大全红时间是否到期
+     * @return 是否到期
+     */
+    public boolean isMaxTimerExpired() {
+        if (conservativeTimerStart == null) {
+            return false;
+        }
+        long duration = java.time.Duration.between(conservativeTimerStart, LocalDateTime.now()).getSeconds();
+        return duration >= SegmentConstants.MAX_RED_TIME;
     }
 
     /**
@@ -2179,7 +2191,7 @@ public class SegmentVariables {
         faultDetected = false;
 
         // 重置时间相关状态
-        resetAllTimers();
+        resetAllTimers(LocalDateTime.now());
 
         // 记录紧急恢复事件
         logEmergencyRecovery();

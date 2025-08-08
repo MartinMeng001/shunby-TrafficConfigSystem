@@ -1,8 +1,10 @@
 package com.traffic.config.service;
 
+import com.traffic.config.entity.DetectPoint;
 import com.traffic.config.entity.GlobalConfig;
 import com.traffic.config.entity.Segment;
 import com.traffic.config.entity.SingleLane;
+import com.traffic.config.exception.ConfigException;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +17,7 @@ public interface ConfigService {
      * @return 单车道配置对象
      * @throws ConfigException 配置加载失败时抛出
      */
-    SingleLane loadConfig();
+    SingleLane loadConfig() throws ConfigException;
 
     /**
      * 保存配置到文件
@@ -48,6 +50,13 @@ public interface ConfigService {
     List<Segment> getAllSegments();
 
     /**
+     * 获取所有检测点配置
+     *
+     * @return 路段配置列表
+     */
+    List<DetectPoint> getAllDetectPoints();
+
+    /**
      * 根据信号灯ID获取路段配置
      *
      * @param sigid 信号灯ID
@@ -56,12 +65,28 @@ public interface ConfigService {
     Optional<Segment> getSegmentBySigid(String sigid);
 
     /**
+     * 根据路段ID获取路段配置
+     *
+     * @param segmentId 路段ID
+     * @return 路段配置，如果不存在则返回Optional.empty()
+     */
+    Optional<Segment> getSegmentBySegmentId(int segmentId);
+
+    /**
      * 根据名称获取路段配置
      *
      * @param name 路段名称
      * @return 路段配置，如果不存在则返回Optional.empty()
      */
     Optional<Segment> getSegmentByName(String name);
+
+    /**
+     * 根据索引获取检测点配置
+     *
+     * @param index 检测点编号
+     * @return 路段配置，如果不存在则返回Optional.empty()
+     */
+    Optional<DetectPoint> getDetectPointByIndex(int index);
 
     /**
      * 更新路段配置
@@ -89,6 +114,26 @@ public interface ConfigService {
     boolean deleteSegment(String sigid);
 
     /**
+     * 添加一个DetectPoint配置
+     * @param detectPoint 要添加的DetectPoint对象
+     */
+    void addDetectPoint(DetectPoint detectPoint);
+
+    /**
+     * 更新一个DetectPoint配置
+     * @param index 要更新的DetectPoint的索引
+     * @param updatedDetectPoint 包含更新信息的DetectPoint对象
+     * @return 如果更新成功，返回true；否则返回false
+     */
+    boolean updateDetectPoint(int index, DetectPoint updatedDetectPoint);
+
+    /**
+     * 删除一个DetectPoint配置
+     * @param index 要删除的DetectPoint的索引
+     * @return 如果删除成功，返回true；否则返回false
+     */
+    boolean deleteDetectPoint(int index);
+    /**
      * 验证路段配置
      *
      * @param segment 路段配置
@@ -104,6 +149,13 @@ public interface ConfigService {
      */
     void validateGlobalConfig(GlobalConfig globalConfig);
 
+    /**
+     * 验证车辆检测配置
+     *
+     * @param detectPoint 车辆检测配置
+     * @throws ConfigException 验证失败时抛出
+     */
+    void validateDetectPoint(DetectPoint detectPoint);
     /**
      * 强制刷新配置缓存
      */

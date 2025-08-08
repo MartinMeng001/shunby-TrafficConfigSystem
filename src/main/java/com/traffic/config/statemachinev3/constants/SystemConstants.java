@@ -17,7 +17,7 @@ public final class SystemConstants {
     /**
      * 系统全红过渡时间（秒）
      */
-    public static final int TRANSITION_TIME = 5;
+    public static final int TRANSITION_TIME = 60;
 
     /**
      * 错误统计时间窗口（秒） - 60分钟
@@ -27,7 +27,7 @@ public final class SystemConstants {
     /**
      * 系统初始化延迟（秒）
      */
-    public static final int SYSTEM_INIT_DELAY = 2;
+    public static final int SYSTEM_INIT_DELAY = 5;
 
     /**
      * 恢复条件检查间隔（秒）

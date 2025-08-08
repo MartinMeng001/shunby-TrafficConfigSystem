@@ -127,25 +127,25 @@ public class SegmentGuards {
             return false;
         }
 
-        // 检查目标方向是否有通行请求
-        boolean hasTargetRequest = switch (targetState) {
-            case UPSTREAM_GREEN -> variables.isUpstreamRequest();
-            case DOWNSTREAM_GREEN -> variables.isDownstreamRequest();
-            default -> false;
-        };
+        // 检查目标方向是否有通行请求, 这个条件不应当作为限制条件，但可以作为触发条件
+//        boolean hasTargetRequest = switch (targetState) {
+//            case UPSTREAM_GREEN -> variables.isUpstreamRequest();
+//            case DOWNSTREAM_GREEN -> variables.isDownstreamRequest();
+//            default -> false;
+//        };
 
         // 检查清空条件是否满足
         boolean clearanceConditionMet = checkClearanceConditions(variables);
 
-        // 检查优先级判断
-        SegmentVariables.Direction priorityDirection = variables.determinePriorityDirection();
-        boolean priorityMatches = switch (targetState) {
-            case UPSTREAM_GREEN -> priorityDirection == SegmentVariables.Direction.UPSTREAM;
-            case DOWNSTREAM_GREEN -> priorityDirection == SegmentVariables.Direction.DOWNSTREAM;
-            default -> false;
-        };
-
-        return hasTargetRequest && clearanceConditionMet && priorityMatches;
+        // 检查优先级判断，优先级判断，这里不应当再进行判断
+//        SegmentVariables.Direction priorityDirection = variables.determinePriorityDirection();
+//        boolean priorityMatches = switch (targetState) {
+//            case UPSTREAM_GREEN -> priorityDirection == SegmentVariables.Direction.UPSTREAM;
+//            case DOWNSTREAM_GREEN -> priorityDirection == SegmentVariables.Direction.DOWNSTREAM;
+//            default -> false;
+//        };
+        return  clearanceConditionMet;
+        //return hasTargetRequest && clearanceConditionMet && priorityMatches;
     }
 
     /**
@@ -159,7 +159,7 @@ public class SegmentGuards {
         return switch (overallDecision) {
             case SAFE, WARNING -> true;
             case CONSERVATIVE -> variables.isConservativeTimerExpired();
-            case WAIT -> false;
+            case WAIT -> variables.isMaxTimerExpired();
         };
     }
 

@@ -2,8 +2,13 @@ package com.traffic.config.statemachinev3.actions;
 
 import com.traffic.config.statemachinev3.enums.system.SystemStateV3;
 import com.traffic.config.statemachinev3.enums.system.SystemEventV3;
+import com.traffic.config.statemachinev3.events.AllClearCtrlEvent;
+import com.traffic.config.statemachinev3.events.AllRedCtrlEvent;
+import com.traffic.config.statemachinev3.events.StateMachineActionEvent;
+import com.traffic.config.statemachinev3.utils.SpringContextUtil;
 import com.traffic.config.statemachinev3.variables.SystemVariables;
 import com.traffic.config.statemachinev3.constants.SystemConstants;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -17,6 +22,7 @@ import java.util.logging.Logger;
  * @author System
  * @version 3.0.0
  */
+//@Component
 public class SystemActions {
 
     private static final Logger logger = Logger.getLogger(SystemActions.class.getName());
@@ -63,6 +69,7 @@ public class SystemActions {
         // 检测系统状态
         variables.setCommunicationStatus(detectCommunicationStatus());
         variables.setPowerStatus(detectPowerStatus());
+        variables.setConfigurationLoaded(false);
 
         // 执行系统自检
         executeSystemSelfCheck(variables);
@@ -93,14 +100,16 @@ public class SystemActions {
         variables.setLastClearanceCheckTime(now);
 
         // 重置清空相关变量
+        variables.setClearTimeoutCount(0);
         variables.setClearDetectionActive(true);
+        variables.setAllSignalRed(false);
 
         // 设置控制模式
-        variables.setCurrentControlMode(SystemVariables.ControlMode.MANUAL);
+        variables.setCurrentControlMode(SystemVariables.ControlMode.MANUAL);    // 因为还不能进入感应模式，此时信号灯的状态是可手动控制的
         variables.setInductiveAlgorithmActive(false);
 
         // 启动全红信号
-        activateAllRedSignals(variables);
+        activateAllRedSignals(currentState, event, variables);
 
         // 激活清空检测
         activateClearanceDetection(variables);
@@ -179,6 +188,9 @@ public class SystemActions {
 
         // 启动降级控制模式
         startDegradedControlMode(variables);
+        // 取消管控让信号机
+        publishEvent(new AllClearCtrlEvent("AllClearCtrlEvent", currentState, event, variables));
+        // 检测恢复情况
 
         // 通知管理中心
         notifyManagementCenter("系统进入降级模式", variables);
@@ -581,7 +593,7 @@ public class SystemActions {
      */
     private static SystemVariables.CommunicationStatus detectCommunicationStatus() {
         // 简化实现 - 实际应该检测网络连接状态
-        return SystemVariables.CommunicationStatus.NORMAL;
+        return SystemVariables.CommunicationStatus.FAILED;
     }
 
     /**
@@ -615,9 +627,13 @@ public class SystemActions {
      * 启动全红信号
      * @param variables 系统变量
      */
-    private static void activateAllRedSignals(SystemVariables variables) {
+    private static void activateAllRedSignals(SystemStateV3 currentState,
+                                              SystemEventV3 event,
+                                              SystemVariables variables) {
         // 简化实现 - 实际应该控制所有信号灯显示红灯
         logger.info("启动全红信号");
+        variables.setMaxRetryNumsAllCtrl(3);
+        publishEvent(new AllRedCtrlEvent("AllRedCtrlEvent", currentState, event, variables));
     }
 
     /**
@@ -636,6 +652,7 @@ public class SystemActions {
     private static void resetAllSegmentClearanceStates(SystemVariables variables) {
         // 简化实现 - 实际应该重置所有路段的清空状态
         logger.info("重置所有路段清空状态");
+        variables.resetSegmentClearanceStates();
     }
 
     /**
@@ -643,7 +660,7 @@ public class SystemActions {
      * @param variables 系统变量
      */
     private static void startInductiveControlAlgorithm(SystemVariables variables) {
-        // 简化实现 - 实际应该启动感应控制算法
+        // 简化实现 - 实际应该启动感应控制算法, 具体启动在TopLevelStateMachine内实现
         logger.info("启动感应控制算法");
     }
 
@@ -664,6 +681,7 @@ public class SystemActions {
     private static void startDegradedControlMode(SystemVariables variables) {
         // 简化实现 - 实际应该启动降级控制逻辑
         logger.info("启动降级控制模式");
+
     }
 
     /**
@@ -870,5 +888,21 @@ public class SystemActions {
 
     private static void recordPreResetState(SystemStateV3 currentState, SystemVariables variables) {
         logger.info("记录重置前状态: " + currentState.getChineseName());
+    }
+
+    /**
+     * 发布事件的辅助方法
+     */
+    private static void publishEvent(StateMachineActionEvent event) {
+        if (SpringContextUtil.isContextAvailable()) {
+            try {
+                ApplicationEventPublisher publisher = SpringContextUtil.getBean(ApplicationEventPublisher.class);
+                publisher.publishEvent(event);
+            } catch (Exception e) {
+                logger.warning("发布状态机事件失败: " + e.getMessage());
+            }
+        } else {
+            logger.warning("Spring上下文不可用，无法发布增强事件");
+        }
     }
 }

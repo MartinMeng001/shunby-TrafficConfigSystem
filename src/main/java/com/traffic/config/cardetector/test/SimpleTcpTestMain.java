@@ -57,7 +57,7 @@ public class SimpleTcpTestMain {
             // 等待
             while (tcpServer.isRunning()) {
                 Thread.sleep(1000);
-                System.out.print(".");
+                //System.out.print(".");
                 System.out.flush();
             }
 
@@ -108,15 +108,15 @@ public class SimpleTcpTestMain {
                         if (vehicleDataParser.canParse(message)) {
                             VehicleData vehicleData = vehicleDataParser.parse(message);
 
-                            System.out.println("解析结果:");
-                            System.out.println("  数据类型: " + vehicleData.getDataType());
-                            System.out.println("  信号机IP: " + vehicleData.getSignalIp());
-                            System.out.println("  车道编号: " + vehicleData.getLaneNumber());
-                            System.out.println("  车牌号: " + vehicleData.getLicensePlate());
-                            System.out.println("  方向: " + vehicleData.getDirection().getDescription());
-                            System.out.println("  排队长度: " + vehicleData.getQueueLength() + "m");
-                            System.out.println("  速度: " + vehicleData.getSpeed() + "km/h");
-                            System.out.println("  时间戳: " + vehicleData.getTimestamp());
+//                            System.out.println("解析结果:");
+//                            System.out.println("  数据类型: " + vehicleData.getDataType());
+//                            System.out.println("  信号机IP: " + vehicleData.getSignalIp());
+//                            System.out.println("  车道编号: " + vehicleData.getLaneNumber());
+//                            System.out.println("  车牌号: " + vehicleData.getLicensePlate());
+//                            System.out.println("  方向: " + vehicleData.getDirection().getDescription());
+//                            System.out.println("  排队长度: " + vehicleData.getQueueLength() + "m");
+//                            System.out.println("  速度: " + vehicleData.getSpeed() + "km/h");
+//                            System.out.println("  时间戳: " + vehicleData.getTimestamp());
 
                             System.out.println("✓ 车辆数据解析成功");
                         } else {
@@ -132,6 +132,7 @@ public class SimpleTcpTestMain {
                 System.out.println("原始数据: " + formatBytes(message.getData()));
 
             } catch (DataParseException e) {
+                System.out.println("原始数据: " + formatBytes(message.getData()));
                 System.err.println("✗ 数据解析失败: " + e.getMessage());
             } catch (Exception e) {
                 System.err.println("✗ 处理消息时出错: " + e.getMessage());

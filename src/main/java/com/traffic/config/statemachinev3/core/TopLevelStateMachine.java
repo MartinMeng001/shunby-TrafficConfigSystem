@@ -1,5 +1,7 @@
 package com.traffic.config.statemachinev3.core;
 
+import com.traffic.config.service.ConfigService;
+import com.traffic.config.signalplatform.platformbase.CrossInfoManager;
 import com.traffic.config.statemachinev3.enums.system.SystemStateV3;
 import com.traffic.config.statemachinev3.enums.system.SystemEventV3;
 import com.traffic.config.statemachinev3.enums.segment.ClearanceDecision;
@@ -9,6 +11,8 @@ import com.traffic.config.statemachinev3.guards.SystemGuards;
 import com.traffic.config.statemachinev3.actions.SystemActions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,6 +36,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author System
  * @version 3.0.0
  */
+@Component
 public class TopLevelStateMachine {
 
     //private static final Logger logger = Logger.getLogger(TopLevelStateMachine.class.getName());
@@ -69,6 +74,12 @@ public class TopLevelStateMachine {
      */
     private final List<SystemStateTransitionRecord> transitionHistory;
 
+    @Autowired
+    private CrossInfoManager crossInfoManager;
+
+    @Autowired
+    private ConfigService configService;
+
     // ==================== 构造函数和初始化 ====================
 
     /**
@@ -95,8 +106,8 @@ public class TopLevelStateMachine {
     private void initializeSegmentStateMachines() {
         for (int i = 1; i <= SystemConstants.TOTAL_SEGMENT_COUNT; i++) {
             SegmentStateMachine segment = new SegmentStateMachine(i);
+            //logger.debug("初始化路段状态机 - 路段ID: {}", i);
             segmentStateMachines.add(segment);
-            logger.debug("初始化路段状态机 - 路段ID: {}", i);
         }
     }
 
@@ -110,9 +121,9 @@ public class TopLevelStateMachine {
             isRunning = true;
 
             // 启动所有路段状态机
-            for (SegmentStateMachine segment : segmentStateMachines) {
-                segment.start();
-            }
+//            for (SegmentStateMachine segment : segmentStateMachines) {
+//                segment.start();
+//            }
 
             // 发送系统启动事件
             postEvent(SystemEventV3.TIMER_TICK, null);
@@ -143,9 +154,9 @@ public class TopLevelStateMachine {
     /**
      * 处理定时器滴答事件 - 系统的心跳
      */
-    public void processTimerTick() {
+    public boolean processTimerTick() {
         if (!isRunning) {
-            return;
+            return false;
         }
 
         try {
@@ -164,12 +175,14 @@ public class TopLevelStateMachine {
             // 5. 检查并触发自动事件
             checkAndTriggerAutoEvents();
 
-            // 6. 更新系统健康度
-            updateSystemHealth();
+            // 6. 更新系统健康度 - 这里通过系统事件处理，不需要每次都执行
+            // updateSystemHealth();
 
+            return true;
         } catch (Exception e) {
             logger.warn("系统状态机处理定时器事件异常: {}", e.getMessage());
             variables.incrementConsecutiveFaults();
+            return false;
         }
     }
 
@@ -209,7 +222,7 @@ public class TopLevelStateMachine {
      * 处理单个系统事件
      * 实现系统级状态转换函数 δ_sys: Q_sys × Σ_sys × V_sys* → Q_sys
      */
-    private void processSystemEvent(SystemEventV3 event, Map<String, Object> eventData) {
+    private boolean processSystemEvent(SystemEventV3 event, Map<String, Object> eventData) {
         SystemStateV3 oldState = currentState;
         LocalDateTime eventTime = LocalDateTime.now();
 
@@ -217,14 +230,14 @@ public class TopLevelStateMachine {
             // 1. 确定目标状态
             SystemStateV3 targetState = determineSystemTargetState(event);
             if (targetState == null) {
-                return; // 无状态变化
+                return true; // 无状态变化, 有些无状态变化，也需要执行一些动作，这里只处理不需要任何动作的情况
             }
 
             // 2. 检查守护条件 G_sys(q, σ, v)
             if (!checkSystemGuardCondition(event, targetState)) {
                 logger.debug("系统状态转换被守护条件阻止: {} -> {} (事件: {})",
                         currentState.getChineseName(), targetState.getChineseName(), event.getChineseName());
-                return;
+                return false;
             }
 
             // 3. 执行动作函数 A_sys(q, σ, v)
@@ -238,9 +251,12 @@ public class TopLevelStateMachine {
             // 5. 记录状态转换
             recordSystemStateTransition(oldState, currentState, event, eventTime);
 
+            return true;
+
         } catch (Exception e) {
             logger.warn("处理系统事件 {} 时发生异常: {}", event.getChineseName(), e.getMessage());
             variables.incrementConsecutiveFaults();
+            return false;
         }
     }
 
@@ -259,7 +275,7 @@ public class TopLevelStateMachine {
                     return SystemStateV3.ALL_RED_TRANSITION;
                 }
             }
-            case TRANSITION_COMPLETE -> {
+            case TRANSITION_COMPLETE, RECOVERY_VERIFIED -> {
                 if (currentState == SystemStateV3.ALL_RED_TRANSITION) {
                     return SystemStateV3.INDUCTIVE_MODE;
                 }
@@ -282,11 +298,6 @@ public class TopLevelStateMachine {
                     return SystemStateV3.ALL_RED_TRANSITION;
                 }
             }
-            case RECOVERY_VERIFIED -> {
-                if (currentState == SystemStateV3.ALL_RED_TRANSITION) {
-                    return SystemStateV3.INDUCTIVE_MODE;
-                }
-            }
             case MAINTENANCE_REQUEST -> {
                 if (currentState == SystemStateV3.INDUCTIVE_MODE || currentState == SystemStateV3.DEGRADED_MODE) {
                     return SystemStateV3.MAINTENANCE_MODE;
@@ -300,6 +311,12 @@ public class TopLevelStateMachine {
             case SYSTEM_RESET -> {
                 return SystemStateV3.SYSTEM_INIT;
             }
+            case HEALTH_SCORE_UPDATE -> {
+                return currentState;
+            }
+            default -> {// SEGMENT_CLEARANCE_UPDATE, ALL_SEGMENTS_CLEARED, CLEARANCE_TIMEOUT, CONSERVATIVE_CLEAR_TRIGGERED
+
+            }
         }
         return null;
     }
@@ -311,6 +328,13 @@ public class TopLevelStateMachine {
         switch (currentState) {
             case SYSTEM_INIT -> {
                 // 检查初始化是否完成
+                if(!variables.isCommunicationNormal()){
+                    variables.setCommunicationNormal(performSystemSelfCheck());
+                }
+                if(!variables.isConfigurationLoaded()) {
+                    if(verifyConfigurationLoaded())
+                        variables.setCommunicationStatus(SystemVariables.CommunicationStatus.NORMAL);
+                }
                 if (variables.isSystemInitTimeout()) {
                     return SystemStateV3.ALL_RED_TRANSITION;
                 }
@@ -318,6 +342,7 @@ public class TopLevelStateMachine {
             case ALL_RED_TRANSITION -> {
                 // 检查过渡是否完成或超时
                 if (variables.isTransitionComplete()) {
+                    variables.setSegmentsAllReady(true);
                     return SystemStateV3.INDUCTIVE_MODE;
                 } else if (variables.isTransitionTimeout()) {
                     return SystemStateV3.DEGRADED_MODE;
@@ -406,6 +431,12 @@ public class TopLevelStateMachine {
             }
             case SYSTEM_RESET -> {
                 SystemActions.executeEnterSystemInit(currentState, event, variables);
+            }
+            case HEALTH_SCORE_UPDATE -> {
+                updateSystemHealth();
+            }
+            default -> {
+                logger.debug("事件 {} 无需特殊动作处理", event.getChineseName());
             }
         }
 
@@ -668,6 +699,11 @@ public class TopLevelStateMachine {
         // 在非感应模式下，可以考虑暂停某些路段状态机
         else if (newState == SystemStateV3.EMERGENCY_MODE || newState == SystemStateV3.MAINTENANCE_MODE) {
             // 这里可以根据需要暂停或调整路段状态机
+            for (SegmentStateMachine segment : segmentStateMachines) {
+                if (segment.isRunning()) {
+                    segment.stop();
+                }
+            }
         }
     }
 
@@ -688,6 +724,16 @@ public class TopLevelStateMachine {
         } catch (Exception e) {
             logger.error("添加系统事件到队列失败: {}", e.getMessage());
         }
+    }
+
+    /**
+     * 同步处理Event
+     * @param eventV3
+     * @param eventData
+     * @return
+     */
+    public boolean processEvent(SystemEventV3 eventV3, Map<String, Object> eventData){
+        return processSystemEvent(eventV3, eventData);
     }
 
     /**
@@ -783,6 +829,42 @@ public class TopLevelStateMachine {
         }
     }
 
+    // ==================== 辅助方法 =====================
+    /**
+     * 验证配置已加载
+     */
+    private boolean verifyConfigurationLoaded() {
+        // 验证配置文件是否正确加载
+        if(configService.isValidConfig()) {
+            logger.debug("验证配置加载状态");
+            return true; // 简化实现
+        }else{
+            logger.debug("验证配置加载失败");
+            return false; // 简化实现
+        }
+    }
+    /**
+     * 系统自检
+     */
+    private boolean performSystemSelfCheck() {
+        // 实现系统自检逻辑
+        // 简化实现
+        if(crossInfoManager.checkHealthStatus()) {
+            logger.debug("执行系统自检 成功");
+            return true;
+        }else{
+            logger.debug("执行系统自检 失败，继续等待");
+        }
+        return false; // 简化实现
+    }
+    /**
+     * 设置所有信号灯为红灯
+     */
+    private void setAllTrafficLightsToRed() {
+        logger.info("设置所有信号灯为红灯");
+        // 实现信号灯控制逻辑
+        crossInfoManager.controlAllCrossesToAllRed(3);
+    }
     // ==================== 内部类定义 ====================
 
     /**

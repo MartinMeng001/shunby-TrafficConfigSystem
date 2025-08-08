@@ -32,22 +32,23 @@ public class SystemGuards {
                                                       SystemVariables variables) {
         // 只在系统初始化状态下检查
         if (currentState != SystemStateV3.SYSTEM_INIT) {
+            System.out.println("current state is " + currentState.getChineseName()+", not SYSTEM_INIT");
             return false;
         }
 
         // 检查初始化时间是否足够
         boolean timeRequirementMet = variables.getCurrentStateDurationSeconds() >= SystemConstants.SYSTEM_INIT_DELAY;
 
-        // 检查系统健康度是否达标
-        boolean healthRequirementMet = variables.getSystemHealthScore() >= SystemConstants.NORMAL_HEALTH_THRESHOLD;
+        // 检查系统健康度是否达标, 健康度暂时只作为一个参考指标，不作为动作条件
+        // boolean healthRequirementMet = variables.getSystemHealthScore() >= SystemConstants.NORMAL_HEALTH_THRESHOLD;
 
         // 检查通信和电源状态
         boolean systemStatusNormal = variables.isCommunicationNormal() && variables.isPowerStatusNormal();
 
         // 检查配置加载是否成功（简化实现）
-        boolean configLoaded = variables.getSegmentCount() > 0;
-
-        return timeRequirementMet && healthRequirementMet && systemStatusNormal && configLoaded;
+        boolean configLoaded = variables.isConfigurationLoaded();
+        //return timeRequirementMet && healthRequirementMet && systemStatusNormal && configLoaded;
+        return timeRequirementMet && systemStatusNormal && configLoaded;
     }
 
     /**
@@ -67,6 +68,9 @@ public class SystemGuards {
             return false;
         }
 
+        // 检查是否处于全红状态
+        boolean allSignalRed = variables.isAllSignalRed();
+
         // 检查过渡时间是否足够
         boolean timeRequirementMet = variables.getTransitionDurationSeconds() >= SystemConstants.TRANSITION_TIME;
 
@@ -79,7 +83,7 @@ public class SystemGuards {
         // 检查系统健康度
         boolean systemHealthy = !variables.isCriticalFault();
 
-        return timeRequirementMet && segmentsClearanceMet && timeoutCountAcceptable && systemHealthy;
+        return allSignalRed && timeRequirementMet && segmentsClearanceMet && timeoutCountAcceptable && systemHealthy;
     }
 
     /**

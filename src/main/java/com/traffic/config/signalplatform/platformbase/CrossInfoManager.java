@@ -4,9 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.traffic.config.entity.Region;
+import com.traffic.config.entity.Segment;
+import com.traffic.config.service.ConfigService;
 import com.traffic.config.service.event.SignalListEvent;
 import com.traffic.config.signalplatform.platformbase.entity.CrossInfo;
 import com.traffic.config.signalplatform.platformbase.enums.ControlPhase;
+import com.traffic.config.statemachinev3.events.AllClearCtrlEvent;
+import com.traffic.config.statemachinev3.events.AllRedCtrlEvent;
+import com.traffic.config.statemachinev3.events.GreenCtrlEvent;
+import com.traffic.config.statemachinev3.events.RedCtrlEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +25,7 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -31,7 +38,10 @@ public class CrossInfoManager {
     private TaskScheduler taskScheduler;
 
     @Autowired
-    WebServiceClient webServiceClient;
+    private WebServiceClient webServiceClient;
+
+    @Autowired
+    private ConfigService configService;
 
     // 用于存储 webServiceClient 的最新连接状态
     private volatile boolean webServiceClientLastConnected = false;
@@ -89,7 +99,8 @@ public class CrossInfoManager {
             logger.warn("Can't Guard, Invalid crossid: " + crossInfo.getCrossid());
             return false;
         }
-        return 1 == webServiceClient.guardControl(crossInfo.getDevBasicInfo().getIp4G(), guardMode, 0);
+        //return 1 == webServiceClient.guardControl(crossInfo.getDevBasicInfo().getIp4G(), guardMode, 0);
+        return 1 == webServiceClient.guardControl(crossInfo.getDevBasicInfo().getIp(), guardMode, 0);
     }
     /**
      * Attempts to guard a cross by its signal ID with a retry mechanism.
@@ -137,6 +148,63 @@ public class CrossInfoManager {
         return false;
     }
 
+    @EventListener
+    @Async("systemStateMachineV3Executor")
+    public void handleAllRedCtrl(AllRedCtrlEvent event){
+        if(controlAllCrossesToAllRed(event.getVariables().getMaxRetryNumsAllCtrl())){
+            event.getVariables().setAllSignalRed(true);
+        }
+    }
+
+    @EventListener
+    @Async("systemStateMachineV3Executor")
+    public void handleAllRedCtrl(AllClearCtrlEvent event){
+        if(controlAllCrossesToAll(event.getVariables().getMaxRetryNumsAllCtrl(), ControlPhase.CANCEL_GUARD.getValue())){
+            event.getVariables().setAllSignalRed(false);
+        }
+    }
+
+    @EventListener
+    @Async("systemStateMachineV3Executor")
+    public void handleGreenCtrl(GreenCtrlEvent event){
+        int segmentId = event.getVariables().getSegmentId();
+        Optional<Segment> segment = configService.getSegmentBySegmentId(segmentId);
+        if(segment.isEmpty()) return;
+        Segment seg = segment.get();
+        int ctrlUp = seg.getUpctrl();
+        int ctrlDown = seg.getDownctrl();
+        String upsigid = seg.getUpsigid();
+        String downsigid = seg.getDownsigid();
+        switch(event.getCurrentState()){
+            case UPSTREAM_GREEN -> {
+                // 上行变绿
+                guardCrossBySigid(upsigid, ctrlUp);
+                // 下行变红
+                guardCrossBySigid(downsigid, ControlPhase.ALL_RED.getValue());
+            }
+            case DOWNSTREAM_GREEN -> {
+                // 上行变红
+                guardCrossBySigid(upsigid, ControlPhase.ALL_RED.getValue());
+                // 下行变绿
+                guardCrossBySigid(downsigid, ctrlDown);
+            }
+        }
+    }
+    @EventListener
+    @Async("systemStateMachineV3Executor")
+    public void handleRedCtrl(RedCtrlEvent event){
+        int segmentId = event.getVariables().getSegmentId();
+        Optional<Segment> segment = configService.getSegmentBySegmentId(segmentId);
+        if(segment.isEmpty()) return;
+        Segment seg = segment.get();
+        int ctrlUp = seg.getUpctrl();
+        int ctrlDown = seg.getDownctrl();
+        String upsigid = seg.getUpsigid();
+        String downsigid = seg.getDownsigid();
+        guardCrossBySigid(upsigid, ControlPhase.ALL_RED.getValue());
+        guardCrossBySigid(downsigid, ControlPhase.ALL_RED.getValue());
+    }
+
     /**
      * 遍历 crossInfoMap，将所有路口设置为全红模式。
      *
@@ -169,6 +237,41 @@ public class CrossInfoManager {
         }
 
         logger.info("全红控制操作完成。成功 {} 个路口，失败 {} 个路口。", allRedCount, failedCount);
+        if(failedCount==0) return true;
+        return false;
+    }
+    /**
+     * 遍历 crossInfoMap，将所有路口设置为全红模式。
+     *
+     * @param maxRetries 每个路口控制失败时的最大重试次数。
+     */
+    public boolean controlAllCrossesToAll(int maxRetries, int mode) {
+        logger.info("开始遍历 crossInfoMap，对所有路口进行控制...");
+
+        // 使用一个副本进行遍历，以避免在遍历过程中对原始 Map 进行修改
+        Map<String, CrossInfo> crossInfoMapCopy = new HashMap<>(crossInfoMap);
+
+        if (crossInfoMapCopy.isEmpty()) {
+            logger.warn("crossInfoMap 为空，没有路口需要控制。");
+            return false;
+        }
+
+        int allCtrlCount = 0;
+        int failedCount = 0;
+
+        for (Map.Entry<String, CrossInfo> entry : crossInfoMapCopy.entrySet()) {
+            String sigid = entry.getKey();
+            // 调用已经封装好的 guardCrossBySigidWithRetry 方法
+            // 模式参数使用 ControlPhase.ALL_RED.getValue()
+            if (guardCrossBySigidWithRetry(sigid, mode, maxRetries)) {
+                allCtrlCount++;
+            } else {
+                failedCount++;
+                logger.error("对路口 {} 进行控制失败。", sigid);
+            }
+        }
+
+        logger.info("控制操作完成。成功 {} 个路口，失败 {} 个路口。", allCtrlCount, failedCount);
         if(failedCount==0) return true;
         return false;
     }
