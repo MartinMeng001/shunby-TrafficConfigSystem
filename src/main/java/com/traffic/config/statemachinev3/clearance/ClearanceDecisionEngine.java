@@ -81,8 +81,8 @@ public class ClearanceDecisionEngine {
         ClearanceDecision overallDecision = combineDirectionalDecisions(
                 upstreamDecision, downstreamDecision);
 
-        logger.debug("路段 {} 综合清空决策: 上行={}, 下行={}, 综合={}",
-                variables.getSegmentId(), upstreamDecision, downstreamDecision, overallDecision);
+        //logger.debug("路段 {} 综合清空决策: 上行={}, 下行={}, 综合={}",
+        //        variables.getSegmentId(), upstreamDecision, downstreamDecision, overallDecision);
 
         return overallDecision;
     }
@@ -368,12 +368,12 @@ public class ClearanceDecisionEngine {
      */
     private void logClearanceDecision(String direction, ClearanceDecision decision,
                                       ClearanceContext context, SegmentVariables variables) {
-        logger.debug("路段 {} {} 清空决策: {} - 车辆数: {}, 进入计数: {}, 离开计数: {}, " +
-                        "健康度: {}, 传感器故障率: {:.2f}%, 连续错误: {}",
-                variables.getSegmentId(), direction, decision,
-                context.vehicleIds.size(), context.inCounter, context.outCounter,
-                context.segmentHealthScore, context.sensorFailureRate * 100,
-                context.consecutiveErrors);
+        //logger.debug("路段 {} {} 清空决策: {} - 车辆数: {}, 进入计数: {}, 离开计数: {}, " +
+        //                "健康度: {}, 传感器故障率: {:.2f}%, 连续错误: {}",
+//                variables.getSegmentId(), direction, decision,
+//                context.vehicleIds.size(), context.inCounter, context.outCounter,
+//                context.segmentHealthScore, context.sensorFailureRate * 100,
+//                context.consecutiveErrors);
     }
 
     /**

@@ -36,7 +36,24 @@ public enum SegmentState {
      * - 持续条件：清空时间不超过 max_red_time
      * - 清空目标：所有车辆安全离开路段
      */
-    ALL_RED_CLEAR("全红清空", "RC", "所有方向红灯，等待路段清空", SignalState.ALL_RED);
+    ALL_RED_CLEAR("全红清空", "RC", "所有方向红灯，等待路段清空", SignalState.ALL_RED),
+
+    /**
+     * 黄闪故障状态
+     * - 上行下行均为黄闪，不再进行感应控制，但仍对上行和下行的车辆进行统计
+     * - 不变量：upstream_signal = YELLOWFLASH ∧ downstream_signal = YELLOWFLASH
+     * - 持续条件：等待人工解除，
+     * - 目标：等待人工解除
+     */
+    ALL_YELLOWFLASH_MANUAL("黄闪", "YF", "所有方向黄灯，等待人工处理", SignalState.ALL_YELLOWFLASH),
+    /**
+     * 空转状态，非感应状态
+     * - 上行下行均为不受平台控制，不再进行感应控制，但仍对上行和下行的车辆进行统计
+     * - 不变量：upstream_signal = NOCTRL ∧ downstream_signal = NOCTRL
+     * - 持续条件：等待上位状态机取消
+     * - 目标：等待上位状态机取消
+     */
+    ALL_NOCTRL("空转", "NC", "不控制信号灯灯色，由信号机控制", SignalState.NOCTRL);
 
     // ==================== 信号状态枚举 ====================
 
@@ -46,7 +63,9 @@ public enum SegmentState {
     public enum SignalState {
         UPSTREAM_ACTIVE("上行通行", true, false),
         DOWNSTREAM_ACTIVE("下行通行", false, true),
-        ALL_RED("全红", false, false);
+        ALL_RED("全红", false, false),
+        ALL_YELLOWFLASH("黄闪", false, false),
+        NOCTRL("空转", false, false);
 
         private final String description;
         private final boolean upstreamGreen;
@@ -166,6 +185,14 @@ public enum SegmentState {
         return this == ALL_RED_CLEAR;
     }
 
+    public boolean isYellowFlashState(){
+        return this == ALL_YELLOWFLASH_MANUAL;
+    }
+
+    public boolean isNoCtrlState(){
+        return this == ALL_NOCTRL;
+    }
+
     /**
      * 判断是否为上行状态
      * @return 是否为上行状态
@@ -233,6 +260,8 @@ public enum SegmentState {
             case UPSTREAM_GREEN -> new SegmentState[]{ALL_RED_CLEAR};
             case DOWNSTREAM_GREEN -> new SegmentState[]{ALL_RED_CLEAR};
             case ALL_RED_CLEAR -> new SegmentState[]{UPSTREAM_GREEN, DOWNSTREAM_GREEN};
+            case ALL_YELLOWFLASH_MANUAL -> new SegmentState[]{ALL_YELLOWFLASH_MANUAL};
+            case ALL_NOCTRL -> new SegmentState[]{ALL_NOCTRL};
         };
     }
 
@@ -259,7 +288,7 @@ public enum SegmentState {
         return switch (this) {
             case UPSTREAM_GREEN -> DOWNSTREAM_GREEN;
             case DOWNSTREAM_GREEN -> UPSTREAM_GREEN;
-            case ALL_RED_CLEAR -> null;
+            case ALL_RED_CLEAR, ALL_YELLOWFLASH_MANUAL, ALL_NOCTRL -> null;
         };
     }
 

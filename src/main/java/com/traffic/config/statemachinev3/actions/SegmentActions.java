@@ -1,5 +1,6 @@
 package com.traffic.config.statemachinev3.actions;
 
+import com.traffic.config.service.event.EventBusService;
 import com.traffic.config.statemachinev3.enums.segment.SegmentState;
 import com.traffic.config.statemachinev3.enums.segment.SegmentEvent;
 import com.traffic.config.statemachinev3.enums.segment.ClearanceDecision;
@@ -227,6 +228,15 @@ public class SegmentActions {
 
         logger.info("路段 {} 进入空闲状态 - 系统初始化完成", variables.getSegmentId());
     }
+    public static void executeGreenTimeout(SegmentState currentState,
+                                           SegmentState targetState,
+                                           SegmentEvent event,
+                                           SegmentVariables variables){
+        switch (variables.getLastServedDirection()){
+            case DOWNSTREAM -> variables.clearDownstreamMeetingzone();
+            case UPSTREAM -> variables.clearUpstreamMeetingzone();
+        }
+    }
 
     // ==================== 车辆事件处理动作 ====================
 
@@ -245,36 +255,30 @@ public class SegmentActions {
                                            SegmentVariables variables,
                                            String vehicleId,
                                            SegmentVariables.Direction direction) {
+        String vehicledid = validateVehicleId(vehicleId);
         LocalDateTime now = LocalDateTime.now();
-
-        // 检查容量限制
-        if (!checkCapacityLimit(direction, variables)) {
-            recordVehicleEntryError(vehicleId, direction, "容量超限", variables);
-            variables.incrementCounterMismatchErrors();
-            return;
-        }
-        // 有车牌需要记录车牌，不管有无车牌都需要记录过车数
-        if(validateVehicleId(vehicleId)) {
-            // 验证车辆进入条件
-            if (!validateVehicleEntry(vehicleId, direction, variables)) {
-                recordVehicleEntryError(vehicleId, direction, "车辆进入验证失败", variables);
-                return;
+        switch (direction){
+            case UPSTREAM -> {
+                variables.addUpstreamVehicle(vehicledid);
+                // 要将该车辆从等待区中删除
+                variables.outUpstreamMeetingzone(vehicledid);
             }
-            // 添加车辆记录
-            addVehicleRecord(vehicleId, direction, variables);
+            case DOWNSTREAM -> {
+                variables.addDownstreamVehicle(vehicledid);
+                // 要将该车辆从等待区中删除
+                variables.outDownstreamMeetingzone(vehicledid);
+            }
         }
-        // 增加计数器
-        incrementDirectionCounter(direction, variables, true);
 
-        // 记录车辆进入时间
-        variables.recordVehicleEntryTime(vehicleId, now);
+        // 检查是否冲突,其实不应该产生这种情况
+        if(checkCrashLimit(direction, variables)){
+            recordVehicleEntryError(vehicledid, direction, "冲突", variables);
+            variables.incrementCounterMismatchErrors();
+            variables.addUpstreamVehicle(vehicledid);
+        }
 
-        // 生成通行请求（如果需要）
-        generateTrafficRequestIfNeeded(direction, variables);
-
-        // 更新统计信息
-        variables.incrementTotalVehiclesServed();
-        updatePerformanceMetrics(variables);
+        // 生成通行请求（如果需要）,这里应该是执行器要做得动作，而不是事件检查需要处理的。
+        // generateTrafficRequestIfNeeded(direction, variables);
 
         // 记录事件
         logger.debug("路段 {} 车辆进入 - ID: {}, 方向: {}, 当前状态: {}",
@@ -297,32 +301,18 @@ public class SegmentActions {
                                           String vehicleId,
                                           SegmentVariables.Direction direction) {
         LocalDateTime now = LocalDateTime.now();
-
-        if(validateVehicleId(vehicleId)) {
-            // 验证车辆离开条件
-            if (!validateVehicleExit(vehicleId, direction, variables)) {
-                recordVehicleExitError(vehicleId, direction, "车辆离开验证失败", variables);
-                return;
+        String vehicledid = validateVehicleId(vehicleId);
+        switch (direction){
+            case UPSTREAM -> {
+                variables.removeUpstreamVehicle(vehicledid);
+                // 该车辆进入下行等待区中
+                variables.inUpstreamMeetingzoneNext(vehicledid);
             }
-
-            // 移除车辆记录
-            removeVehicleRecord(vehicleId, direction, variables);
+            case DOWNSTREAM -> {
+                variables.removeDownstreamVehicle(vehicledid);
+                variables.inDownstreamMeetingzoneNext(vehicledid);
+            }
         }
-
-        // 增加出口计数器
-        incrementDirectionCounter(direction, variables, false);
-
-        // 计算并更新等待时间
-        updateVehicleWaitingTime(vehicleId, variables);
-
-        // 清除车辆进入时间记录
-        variables.removeVehicleEntryTime(vehicleId);
-
-        // 检查是否需要清除通行请求
-        checkAndClearRequestIfNeeded(direction, variables);
-
-        // 更新性能统计
-        updatePerformanceMetrics(variables);
 
         // 记录事件
         logger.debug("路段 {} 车辆离开 - ID: {}, 方向: {}, 当前状态: {}",
@@ -529,12 +519,13 @@ public class SegmentActions {
         return !variables.getUpstreamVehicleIds().contains(vehicleId) &&
                 !variables.getDownstreamVehicleIds().contains(vehicleId);
     }
-    private static boolean validateVehicleId(String vehicleId){
+    private static String validateVehicleId(String vehicleId){
         // 检查车辆ID是否为空
         if (vehicleId == null || vehicleId.trim().isEmpty()) {
-            return false;
+            return "";
         }
-        return true;
+        if("无车牌".equals(vehicleId)) return "";
+        return vehicleId;
     }
 
     /**
@@ -561,6 +552,16 @@ public class SegmentActions {
         return switch (direction) {
             case UPSTREAM -> variables.getUpstreamVehicleIds().size() < variables.getUpstreamCapacity();
             case DOWNSTREAM -> variables.getDownstreamVehicleIds().size() < variables.getDownstreamCapacity();
+            case NONE -> false;
+        };
+    }
+    /**
+     * 检查车辆冲突
+     */
+    private static boolean checkCrashLimit(SegmentVariables.Direction direction, SegmentVariables variables){
+        return switch (direction){
+            case UPSTREAM -> variables.hasRequestByDirection(SegmentVariables.Direction.DOWNSTREAM);
+            case DOWNSTREAM -> variables.hasRequestByDirection(SegmentVariables.Direction.UPSTREAM);
             case NONE -> false;
         };
     }
@@ -1249,16 +1250,23 @@ public class SegmentActions {
     /**
      * 发布事件的辅助方法
      */
+//    private static void publishEvent(SegmentMachineActionEvent event) {
+//        if (SpringContextUtil.isContextAvailable()) {
+//            try {
+//                ApplicationEventPublisher publisher = SpringContextUtil.getBean(ApplicationEventPublisher.class);
+//                publisher.publishEvent(event);
+//            } catch (Exception e) {
+//                logger.warn("发布状态机事件失败: {}", e.getMessage());
+//            }
+//        } else {
+//            logger.warn("Spring上下文不可用，无法发布控制信号机事件");
+//        }
+//    }
     private static void publishEvent(SegmentMachineActionEvent event) {
-        if (SpringContextUtil.isContextAvailable()) {
-            try {
-                ApplicationEventPublisher publisher = SpringContextUtil.getBean(ApplicationEventPublisher.class);
-                publisher.publishEvent(event);
-            } catch (Exception e) {
-                logger.warn("发布状态机事件失败: {}", e.getMessage());
-            }
+        if (EventBusService.isReady()) {
+            EventBusService.publishStatic(event);
         } else {
-            logger.warn("Spring上下文不可用，无法发布控制信号机事件");
+            logger.warn("事件总线未就绪，无法发布事件");
         }
     }
 }

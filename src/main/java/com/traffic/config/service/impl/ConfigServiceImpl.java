@@ -227,7 +227,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Optional<Segment> getSegmentBySegmentId(int segmentId) {
         return getAllSegments().stream()
-                .filter(segment -> segmentId == segmentId)
+                .filter(segment -> segment.getSegmentId() == segmentId)
                 .findFirst();
     }
 

@@ -1,5 +1,6 @@
 package com.traffic.config.statemachinev3.actions;
 
+import com.traffic.config.service.event.EventBusService;
 import com.traffic.config.statemachinev3.enums.system.SystemStateV3;
 import com.traffic.config.statemachinev3.enums.system.SystemEventV3;
 import com.traffic.config.statemachinev3.events.AllClearCtrlEvent;
@@ -893,16 +894,23 @@ public class SystemActions {
     /**
      * 发布事件的辅助方法
      */
+//    private static void publishEvent(StateMachineActionEvent event) {
+//        if (SpringContextUtil.isContextAvailable()) {
+//            try {
+//                ApplicationEventPublisher publisher = SpringContextUtil.getBean(ApplicationEventPublisher.class);
+//                publisher.publishEvent(event);
+//            } catch (Exception e) {
+//                logger.warning("发布状态机事件失败: " + e.getMessage());
+//            }
+//        } else {
+//            logger.warning("Spring上下文不可用，无法发布增强事件");
+//        }
+//    }
     private static void publishEvent(StateMachineActionEvent event) {
-        if (SpringContextUtil.isContextAvailable()) {
-            try {
-                ApplicationEventPublisher publisher = SpringContextUtil.getBean(ApplicationEventPublisher.class);
-                publisher.publishEvent(event);
-            } catch (Exception e) {
-                logger.warning("发布状态机事件失败: " + e.getMessage());
-            }
+        if (EventBusService.isReady()) {
+            EventBusService.publishStatic(event);
         } else {
-            logger.warning("Spring上下文不可用，无法发布增强事件");
+            logger.warning("事件总线未就绪，无法发布事件");
         }
     }
 }

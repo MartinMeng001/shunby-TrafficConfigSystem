@@ -3,6 +3,7 @@ package com.traffic.config.cardetector.tcp;
 import com.traffic.config.cardetector.manager.ConnectionManager;
 import com.traffic.config.cardetector.manager.DataAccessManager;
 import com.traffic.config.cardetector.model.ProtocolMessage;
+import com.traffic.config.util.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class TcpClientHandler {
                         // 如果是心跳消息，需要回复
                         if (isHeartbeatMessage(message)) {
                             sendHeartbeatResponse(outputStream, message);
-                            //dataAccessManager.processMessage(message);  // 可选的功能，心跳消息也可以处理一下
+                            dataAccessManager.processMessage(message);  // 可选的功能，心跳消息也可以处理一下
                         }else{
                             // 处理消息
                             dataAccessManager.processMessage(message);
@@ -89,7 +90,8 @@ public class TcpClientHandler {
         boolean isEscaped = false;
 
         while ((b = inputStream.read()) != -1) {
-            if (b == 0x5C) { // 遇到转义字符
+            //System.out.printf("%02X ", b);
+            if (b == 0x5C && !isEscaped) { // 遇到转义字符
                 isEscaped = true;
                 continue; // 继续读取下一个字节
             }
@@ -105,7 +107,7 @@ public class TcpClientHandler {
                 unescapedDataBuffer.write(b);
             }
         }
-
+        //System.out.println("");
         if (b == -1) {
             throw new IOException("连接意外关闭，未找到结束字节");
         }
@@ -128,6 +130,7 @@ public class TcpClientHandler {
         // 所以 unescapedData 的总长度应该是：2 (长度字段) + dataLength
         if (unescapedData.length != dataLength + 2) {
             log.warn("报文长度验证失败。报文头长度: {}, 实际反转义后数据总长度: {}", dataLength, unescapedData.length - 2);
+            log.info(DataUtil.formatBytes(unescapedData));
             return null;
         }
 

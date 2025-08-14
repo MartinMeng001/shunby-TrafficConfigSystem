@@ -25,7 +25,7 @@ public final class SegmentConstants {
      * 最大全红时间（秒）
      */
     public static final int MAX_RED_TIME = 60;
-
+    public static final int MIN_RED_TIME = 5;
     /**
      * 保守清空时长（秒）
      */
@@ -56,12 +56,12 @@ public final class SegmentConstants {
     /**
      * 默认上行会车区容量
      */
-    public static final int DEFAULT_UPSTREAM_CAPACITY = 5;
+    public static final int DEFAULT_UPSTREAM_CAPACITY = 2;
 
     /**
      * 默认下行会车区容量
      */
-    public static final int DEFAULT_DOWNSTREAM_CAPACITY = 5;
+    public static final int DEFAULT_DOWNSTREAM_CAPACITY = 2;
 
     /**
      * 最小路段容量
@@ -89,6 +89,10 @@ public final class SegmentConstants {
      * 最大合理等待时间（秒）
      */
     public static final int MAX_REASONABLE_WAIT_TIME = 180;
+    /**
+     * 故障状态到恢复感应时间窗口(秒)
+     */
+    public static final int TIMEWINDOW_INTROUBLE = 3600;
 
     // ==================== 优先级权重常量 (Priority Weight Constants) ====================
 

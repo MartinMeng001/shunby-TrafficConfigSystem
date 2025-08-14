@@ -6,11 +6,11 @@ public class DataUtil {
 
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        for (int i = 0; i < Math.min(bytes.length, 32); i++) {
+        for (int i = 0; i < Math.min(bytes.length, 128); i++) {
             if (i > 0) sb.append(", ");
             sb.append(String.format("0x%02X", bytes[i] & 0xFF));
         }
-        if (bytes.length > 32) {
+        if (bytes.length > 128) {
             sb.append(", ...(" + bytes.length + " bytes)");
         }
         sb.append("]");

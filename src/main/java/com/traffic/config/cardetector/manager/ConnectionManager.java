@@ -8,25 +8,70 @@ import java.net.Socket;
 import java.time.LocalDateTime;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class ConnectionManager {
     private static final Logger log = LoggerFactory.getLogger(ConnectionManager.class);
 
     private final ConcurrentMap<String, ClientConnection> connections = new ConcurrentHashMap<>();
+    private final AtomicLong connectionCounter = new AtomicLong(0);
 
     public void addConnection(Socket socket) {
-        String clientId = socket.getRemoteSocketAddress().toString();
+        String remoteAddress = socket.getRemoteSocketAddress().toString();
+
+        // 关键改进：先清理相同地址的旧连接
+        cleanupStaleConnections(remoteAddress);
+
+        // 使用唯一ID避免冲突
+        String uniqueClientId = remoteAddress + "#" + connectionCounter.incrementAndGet();
         ClientConnection connection = new ClientConnection(socket, LocalDateTime.now());
-        connections.put(clientId, connection);
-        log.info("添加客户端连接: {}, 当前连接数: {}", clientId, connections.size());
+        connections.put(uniqueClientId, connection);
+
+        log.info("添加客户端连接: {} (唯一ID: {}), 当前连接数: {}", remoteAddress, uniqueClientId, connections.size());
+    }
+
+    private void cleanupStaleConnections(String remoteAddress) {
+        // 清理相同远程地址的所有旧连接
+        connections.entrySet().removeIf(entry -> {
+            if (entry.getKey().startsWith(remoteAddress + "#")) {
+                ClientConnection oldConn = entry.getValue();
+                try {
+                    if (!oldConn.getSocket().isClosed()) {
+                        oldConn.getSocket().close();
+                        log.info("清理旧连接: {}", entry.getKey());
+                    }
+                } catch (IOException e) {
+                    log.debug("清理旧连接时出错: {}", e.getMessage());
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
     public void removeConnection(Socket socket) {
-        String clientId = socket.getRemoteSocketAddress().toString();
-        connections.remove(clientId);
-        log.info("移除客户端连接: {}, 当前连接数: {}", clientId, connections.size());
+        String remoteAddress = socket.getRemoteSocketAddress().toString();
+        connections.entrySet().removeIf(entry -> {
+            if (entry.getValue().getSocket() == socket) {
+                log.info("移除客户端连接: {}, 当前连接数: {}", entry.getKey(), connections.size() - 1);
+                return true;
+            }
+            return false;
+        });
     }
+//    public void addConnection(Socket socket) {
+//        String clientId = socket.getRemoteSocketAddress().toString();
+//        ClientConnection connection = new ClientConnection(socket, LocalDateTime.now());
+//        connections.put(clientId, connection);
+//        log.info("添加客户端连接: {}, 当前连接数: {}", clientId, connections.size());
+//    }
+
+//    public void removeConnection(Socket socket) {
+//        String clientId = socket.getRemoteSocketAddress().toString();
+//        connections.remove(clientId);
+//        log.info("移除客户端连接: {}, 当前连接数: {}", clientId, connections.size());
+//    }
 
     public void closeAllConnections() {
         log.info("关闭所有客户端连接，总数: {}", connections.size());
