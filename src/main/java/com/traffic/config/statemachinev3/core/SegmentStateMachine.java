@@ -184,40 +184,43 @@ public class SegmentStateMachine {
         try {
             // 1. 检查事件是否适用于当前状态
             if (!isEventApplicable(event, currentState)) {
-                logger.debug("路段 {} 事件 {} 不适用于当前状态 {}",
+                if(variables.hasVehicle())
+                    logger.debug("路段 {} 事件 {} 不适用于当前状态 {}",
                         variables.getSegmentId(), event.getChineseName(), currentState.getChineseName());
                 return false;
             }
-
+            if(variables.hasVehicle()){
+                logger.info(variables.getRequestStatusSummary());
+                logger.info(variables.getStatusSummary());
+            }
             // 2. 确定目标状态, 每种条件都应该有一个明确的状态需求
             SegmentState targetState = determineTargetState(event, currentState);
             if (targetState == null) {
-                logger.debug("路段 {} 事件 {} 无法确定目标状态",
+                if(variables.hasVehicle())
+                    logger.debug("路段 {} 事件 {} 无法确定目标状态",
                         variables.getSegmentId(), event.getChineseName());
                 return false;
             }
-
             // 3. 检查守护条件 G(q, σ, v)，状态切换需要检查条件是否允许
             if (!checkGuardCondition(event, targetState)) {
-                logger.debug("路段 {} 状态转换被守护条件阻止: {} -> {}, event:{}",
+                if(variables.hasVehicle())
+                    logger.debug("路段 {} 状态转换被守护条件阻止: {} -> {}, event:{}",
                         variables.getSegmentId(), currentState.getChineseName(), targetState.getChineseName(), event.getChineseName());
                 return false;
             }
-
             // 4. 执行动作函数 A(q, σ, v)
             executeAction(event, targetState, eventData);
-
             // 5. 状态转换 q' = δ(q, σ, v)
             if (targetState != currentState) {
                 transitionToState(targetState, event);
+                // 6. 记录状态转换
+                recordStateTransition(oldState, currentState, event, eventTime);
             }
-
-            // 6. 记录状态转换
-            recordStateTransition(oldState, currentState, event, eventTime);
 
             return true;
         } catch (Exception e) {
-            logger.warn("路段 {} 处理事件 {} 时发生异常: {}", variables.getSegmentId(), event.getChineseName(), e.getMessage());
+            e.printStackTrace();
+            //logger.warn("路段 {} 处理事件 {} 时发生异常: {}", variables.getSegmentId(), event.getChineseName(), e.getMessage());
             variables.incrementConsecutiveErrors();
             return false;
         }

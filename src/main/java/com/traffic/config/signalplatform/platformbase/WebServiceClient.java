@@ -210,7 +210,7 @@ public class WebServiceClient {
             logger.info("Guard:{}", JSON.toJSONString(guard));
             String result = callWebService("SetGuardControl", params);
             JSONObject obj = JSON.parseObject(result);
-
+            if(obj==null) return 0;
             return "ok".equals(obj.getString("success")) ? 1 : 0;
         } catch (Exception e) {
             logger.error("设置手动控制失败", e);
@@ -299,8 +299,10 @@ public class WebServiceClient {
         try {
             int iStart = xmlStr.indexOf("<" + tag + ">") + tag.length() + 2;
             int iEnd = xmlStr.indexOf("</" + tag + ">");
+            if(iStart == -1 || iEnd == -1) return "";
             return xmlStr.substring(iStart, iEnd);
         } catch (Exception e) {
+            System.out.println("[ERRORDATA]"+xmlStr);
             logger.error("解析XML响应失败", e);
             return "";
         }

@@ -23,6 +23,7 @@ public class MeetingArea {
      */
     public void vehicleEntered(String licensePlate) {
         if (licensePlate != null && !licensePlate.isEmpty()) {
+            if(this.licensePlates.contains(licensePlate)) return;   // 会车区已经有该车，不需要重复加入
             this.licensePlates.add(licensePlate);
         }
         vehicleCount.incrementAndGet();
@@ -37,6 +38,7 @@ public class MeetingArea {
     public void vehicleExited(String licensePlate) {
         if (this.vehicleCount.get() > 0) {
             if (licensePlate != null && !licensePlate.isEmpty()) {
+                if(!this.licensePlates.contains(licensePlate)) return;  // 会车区已经没有该车，不需要重复删除
                 this.licensePlates.remove(licensePlate);
             }
             this.vehicleCount.decrementAndGet();

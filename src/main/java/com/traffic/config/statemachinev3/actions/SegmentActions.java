@@ -53,7 +53,7 @@ public class SegmentActions {
             default -> SegmentVariables.Direction.NONE;
         };
 
-        publishEvent(new GreenCtrlEvent("GreenCtrlEvent", targetState, event, variables));
+        //publishEvent(new GreenCtrlEvent("GreenCtrlEvent", targetState, event, variables));
         // 开始绿灯计时
         variables.startGreenTimer(direction);
 
@@ -67,7 +67,7 @@ public class SegmentActions {
         resetDirectionWaitingTime(direction, variables);
 
         // 清除对应方向的通行请求
-        clearDirectionRequest(direction, variables);
+        // clearDirectionRequest(direction, variables);
 
         // 更新性能统计
         variables.updatePerformanceStatistics();
@@ -259,13 +259,14 @@ public class SegmentActions {
         LocalDateTime now = LocalDateTime.now();
         switch (direction){
             case UPSTREAM -> {
+                // 上行车辆
                 variables.addUpstreamVehicle(vehicledid);
-                // 要将该车辆从等待区中删除
+                // 要将该车辆从下行等待区[上行]中删除
                 variables.outUpstreamMeetingzone(vehicledid);
             }
             case DOWNSTREAM -> {
                 variables.addDownstreamVehicle(vehicledid);
-                // 要将该车辆从等待区中删除
+                // 要将该车辆从上行等待区[下行]中删除
                 variables.outDownstreamMeetingzone(vehicledid);
             }
         }
@@ -305,12 +306,15 @@ public class SegmentActions {
         switch (direction){
             case UPSTREAM -> {
                 variables.removeUpstreamVehicle(vehicledid);
-                // 该车辆进入下行等待区中
+                // 该车辆进入上行等待区中
                 variables.inUpstreamMeetingzoneNext(vehicledid);
+                // 从下行等待区中删除该车
+                variables.outUpstreamMeetingzone(vehicledid);
             }
             case DOWNSTREAM -> {
                 variables.removeDownstreamVehicle(vehicledid);
                 variables.inDownstreamMeetingzoneNext(vehicledid);
+                variables.outDownstreamMeetingzone(vehicledid);
             }
         }
 

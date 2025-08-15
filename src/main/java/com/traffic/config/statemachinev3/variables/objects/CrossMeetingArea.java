@@ -20,4 +20,7 @@ public class CrossMeetingArea {
     public MeetingArea getDownMeetingArea() {
         return downMeetingArea;
     }
+    public String toString(){
+        return String.format("WaitAreaId:%d, Vehicles[UP]:%d, Vehicles[DOWN]:%d\r\n", crossMeetingAreaId, upMeetingArea.getCount(), downMeetingArea.getCount());
+    }
 }

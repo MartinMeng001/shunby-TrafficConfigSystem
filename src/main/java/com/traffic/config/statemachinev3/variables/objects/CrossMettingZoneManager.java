@@ -45,24 +45,28 @@ public class CrossMettingZoneManager {
         CrossMeetingArea meetingArea = allCrossMeetingZone.get(crossMeetingZoneId);
         if(meetingArea != null){
             meetingArea.getUpMeetingArea().vehicleEntered(vehicleId);
+            System.out.println("上行会车区增加车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
         }
     }
     public void upVehicleEnterNext(int crossMeetingZoneId, String vehicleId){
         CrossMeetingArea meetingArea  = allCrossMeetingZone.get(crossMeetingZoneId);
         if(meetingArea != null){
             meetingArea.getUpMeetingArea().vehicleEntered(vehicleId);
+            System.out.println("上行会车区增加车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
         }
     }
     public void downVehicleEnter(int crossMeetingZoneId, String vehicleId){
         CrossMeetingArea meetingArea = allCrossMeetingZone.get(crossMeetingZoneId);
         if(meetingArea != null){
             meetingArea.getDownMeetingArea().vehicleEntered(vehicleId);
+            System.out.println("下行会车区增加车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
         }
     }
     public void downVehicleEnterNext(int crossMeetingZoneId, String vehicleId){
         CrossMeetingArea meetingArea = allCrossMeetingZone.get(crossMeetingZoneId);
         if(meetingArea != null){
             meetingArea.getDownMeetingArea().vehicleEntered(vehicleId);
+            System.out.println("下行会车区增加车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
         }
     }
     /**
@@ -72,12 +76,14 @@ public class CrossMettingZoneManager {
         CrossMeetingArea meetingArea = allCrossMeetingZone.get(crossMeetingZoneId);
         if(meetingArea != null){
             meetingArea.getUpMeetingArea().vehicleExited(vehicleId);
+            System.out.println("上行会车区删除车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
         }
     }
     public void downVehicleExit(int crossMeetingZoneId, String vehicleId){
         CrossMeetingArea meetingArea = allCrossMeetingZone.get(crossMeetingZoneId);
         if(meetingArea != null){
             meetingArea.getDownMeetingArea().vehicleExited(vehicleId);
+            System.out.println("下行会车区删除车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
         }
     }
     /**
@@ -108,5 +114,10 @@ public class CrossMettingZoneManager {
             return meetingArea.getDownMeetingArea();
         }
         return null;
+    }
+    public void printAllCrossMeetingZones() {
+        allCrossMeetingZone.forEach((zoneId, meetingArea) -> {
+            System.out.println("会车区ID: " + zoneId + ", 信息: " + meetingArea.toString());
+        });
     }
 }

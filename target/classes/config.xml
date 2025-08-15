@@ -9,7 +9,7 @@
             <Region name="信号机2">18</Region>
             <Region name="信号机3">314850</Region>
             <Region name="信号机4">10</Region>
-            <Region name="出口信号机">105</Region>
+            <Region name="出口信号机">314851</Region>
         </RegionList>
     </global>
     <segments size="4">
@@ -31,8 +31,8 @@
             <inzone>2</inzone>
             <name>路段2</name>
             <outzone>2</outzone>
-            <upsigid>16</upsigid>
-            <downsigid>10</downsigid>
+            <upsigid>18</upsigid>
+            <downsigid>314850</downsigid>
             <upctrl>8</upctrl>
         </segment>
         <segment>
@@ -42,8 +42,8 @@
             <inzone>2</inzone>
             <name>路段3</name>
             <outzone>2</outzone>
-            <upsigid>10</upsigid>
-            <downsigid>8</downsigid>
+            <upsigid>314850</upsigid>
+            <downsigid>10</downsigid>
             <upctrl>8</upctrl>
         </segment>
         <segment>
@@ -54,7 +54,7 @@
             <name>路段4</name>
             <outzone>2</outzone>
             <upsigid>10</upsigid>
-            <downsigid>105</downsigid>
+            <downsigid>314851</downsigid>
             <upctrl>8</upctrl>
         </segment>
     </segments>

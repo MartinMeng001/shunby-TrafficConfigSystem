@@ -292,18 +292,18 @@ public class SegmentVariables {
         this.segmentId = segmentId;
         this.crossMeetingZoneManager = CrossMettingZoneManager.getInstance();
         switch (segmentId){
-            case 1:{
+            case 1->{
                 this.upMeetingZoneCrossId.set(1);
             }
-            case 2:{
+            case 2->{
                 this.upMeetingZoneCrossId.set(2);
                 this.downMeetingZoneCrossId.set(1);
             }
-            case 3:{
+            case 3->{
                 this.upMeetingZoneCrossId.set(3);
                 this.downMeetingZoneCrossId.set(2);
             }
-            case 4:{
+            case 4->{
                 this.downMeetingZoneCrossId.set(3);
             }
         }
@@ -357,7 +357,22 @@ public class SegmentVariables {
         this.crossMeetingZoneManager.registerCrossing(3, SegmentConstants.DEFAULT_UPSTREAM_CAPACITY);
         this.crossMeetingZoneManager.registerCrossing(4, SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY);
     }
-
+    // ==================== 公共方法 =======================
+    public boolean hasVehicle(){
+        if(!isEmptyUpstreamMeetingzone()) return true;
+        if(getUpstreamCounts()>0) return true;
+        if(!isEmptyDownstreamMeetingzone()) return true;
+        if(getUpstreamCounts()>0) return true;
+        return false;
+    }
+    public int getUpstreamCounts(){
+        int result = upstreamInCounter.get()-upstreamOutCounter.get();
+        return result > 0 ? result : 0;
+    }
+    public int getDownstreamCounts(){
+        int result = downstreamInCounter.get()-downstreamOutCounter.get();
+        return result > 0 ? result : 0;
+    }
     // ==================== 时间相关方法 ====================
 
     /**
@@ -559,19 +574,19 @@ public class SegmentVariables {
         crossMeetingZoneManager.upVehicleEnter(upMeetingZoneCrossId.get(), vehicleId);
     }
     public void inUpstreamMeetingzoneNext(String vehicleId){
-        crossMeetingZoneManager.upVehicleEnterNext(downMeetingZoneCrossId.get(), vehicleId);
+        crossMeetingZoneManager.upVehicleEnterNext(upMeetingZoneCrossId.get(), vehicleId);
     }
     public void inDownstreamMeetingzone(String vehicleId){
         crossMeetingZoneManager.downVehicleEnter(downMeetingZoneCrossId.get(), vehicleId);
     }
     public void inDownstreamMeetingzoneNext(String vehicleId){
-        crossMeetingZoneManager.downVehicleEnterNext(upMeetingZoneCrossId.get(), vehicleId);
+        crossMeetingZoneManager.downVehicleEnterNext(downMeetingZoneCrossId.get(), vehicleId);
     }
     public void outUpstreamMeetingzone(String vehicleId){
-        crossMeetingZoneManager.upVehicleExit(upMeetingZoneCrossId.get(), vehicleId);
+        crossMeetingZoneManager.upVehicleExit(downMeetingZoneCrossId.get(), vehicleId);
     }
     public boolean isEmptyUpstreamMeetingzone(){
-        MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(upMeetingZoneCrossId.get());
+        MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(downMeetingZoneCrossId.get());
         if(meetingArea == null) return true;
         return meetingArea.isEmpty();
     }
@@ -581,7 +596,7 @@ public class SegmentVariables {
         if(meetingArea != null) {
             counts = meetingArea.getCount();
         }
-        if(counts+upstreamInCounter.get() < SegmentConstants.DEFAULT_UPSTREAM_CAPACITY) return false;
+        if(counts+getUpstreamCounts() < SegmentConstants.DEFAULT_UPSTREAM_CAPACITY) return false;
         return true;
     }
 
@@ -595,10 +610,10 @@ public class SegmentVariables {
 //        crossMeetingZoneManager.downVehicleEnterNext(downMeetingZoneCrossId.get(), vehicleId);
 //    }
     public void outDownstreamMeetingzone(String vehicleId){
-        crossMeetingZoneManager.downVehicleExit(downMeetingZoneCrossId.get(), vehicleId);
+        crossMeetingZoneManager.downVehicleExit(upMeetingZoneCrossId.get(), vehicleId);
     }
     public boolean isEmptyDownstreamMeetingzone(){
-        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(downMeetingZoneCrossId.get());
+        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(upMeetingZoneCrossId.get());
         if(meetingArea == null) return true;
         return meetingArea.isEmpty();
     }
@@ -608,7 +623,7 @@ public class SegmentVariables {
         if(meetingArea != null) {
             counts = meetingArea.getCount();
         }
-        if(counts+downstreamInCounter.get() < SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY) return false;
+        if(counts+getDownstreamCounts() < SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY) return false;
         return true;
     }
 
@@ -2668,13 +2683,13 @@ public class SegmentVariables {
      */
     public String getRequestStatusSummary() {
         return String.format(
-                "通行请求状态 - 上行: %s(%s), 下行: %s(%s), 优先方向: %s",
+                "路段%d: 通行请求状态 - 上行: %s(%s), 下行: %s(%s), 优先方向: %s", segmentId,
                 upstreamRequest ? "有请求" : "无请求",
                 upstreamRequest && upstreamRequestTime != null ?
-                        String.format("%.1f秒前", java.time.Duration.between(upstreamRequestTime, LocalDateTime.now()).getSeconds()) : "N/A",
+                        String.format("%d秒前", java.time.Duration.between(upstreamRequestTime, LocalDateTime.now()).getSeconds()) : "N/A",
                 downstreamRequest ? "有请求" : "无请求",
                 downstreamRequest && downstreamRequestTime != null ?
-                        String.format("%.1f秒前", java.time.Duration.between(downstreamRequestTime, LocalDateTime.now()).getSeconds()) : "N/A",
+                        String.format("%d秒前", java.time.Duration.between(downstreamRequestTime, LocalDateTime.now()).getSeconds()) : "N/A",
                 determinePriorityDirection().getDescription()
         );
     }
