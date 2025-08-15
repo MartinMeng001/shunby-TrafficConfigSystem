@@ -1,14 +1,19 @@
 package com.traffic.config.statemachinev3.core;
 
+import com.traffic.config.entity.Segment;
 import com.traffic.config.service.ConfigService;
+import com.traffic.config.service.event.EventBusService;
 import com.traffic.config.signalplatform.platformbase.CrossInfoManager;
+import com.traffic.config.statemachinev3.enums.segment.SegmentState;
 import com.traffic.config.statemachinev3.enums.system.SystemStateV3;
 import com.traffic.config.statemachinev3.enums.system.SystemEventV3;
 import com.traffic.config.statemachinev3.enums.segment.ClearanceDecision;
+import com.traffic.config.statemachinev3.events.CustomControlEvent;
 import com.traffic.config.statemachinev3.variables.SystemVariables;
 import com.traffic.config.statemachinev3.constants.SystemConstants;
 import com.traffic.config.statemachinev3.guards.SystemGuards;
 import com.traffic.config.statemachinev3.actions.SystemActions;
+import com.traffic.config.statemachinev3.variables.objects.CrossMettingZoneManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,8 +181,9 @@ public class TopLevelStateMachine {
             checkAndTriggerAutoEvents();
 
             // 6. 更新系统健康度 - 这里通过系统事件处理，不需要每次都执行
-            // updateSystemHealth();
-
+//            updateSystemHealth();
+            // 7. 更新路口信号机状态 - 在路段启动后生效
+            processSegmentStateCtrlInfo();
             return true;
         } catch (Exception e) {
             logger.warn("系统状态机处理定时器事件异常: {}", e.getMessage());
@@ -199,6 +205,52 @@ public class TopLevelStateMachine {
                 markSegmentFaulty(segment.getSegmentId(), e.getMessage());
             }
         }
+    }
+
+    /**
+     * 处理所有信号机状态
+     */
+    private void processSegmentStateCtrlInfo() {
+        SegmentStateMachine lastSegment = null;
+        if (!EventBusService.isReady()) return;
+        for (SegmentStateMachine segment : segmentStateMachines) {
+            try {
+                if(!segment.isRunning()) continue;
+                if(lastSegment == null) {
+                    if(segment.getCurrentState().isDownstreamState()){
+                        EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", null, segment.getCurrentState(),
+                                getSigidBySegmentId(segment.getSegmentId(), false)));
+                    }else if(segment.getCurrentState().isUpstreamState()) {
+                        EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", segment.getCurrentState(), null,
+                                getSigidBySegmentId(segment.getSegmentId(), true)));
+                    }
+                }else{
+                    EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", lastSegment.getCurrentState(), segment.getCurrentState(),
+                            getSigidBySegmentId(lastSegment.getSegmentId(), true)));
+                }
+                lastSegment = segment;
+            } catch (Exception e) {
+                logger.warn("处理路段 {} 状态机异常: {}", segment.getSegmentId(), e.getMessage());
+
+            }
+        }
+        if(lastSegment != null) {
+            if(lastSegment.getCurrentState().isDownstreamState()){
+                EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", null, lastSegment.getCurrentState(),
+                        getSigidBySegmentId(lastSegment.getSegmentId(), false)));
+            }else if(lastSegment.getCurrentState().isUpstreamState()) {
+                EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", lastSegment.getCurrentState(),null,
+                        getSigidBySegmentId(lastSegment.getSegmentId(), true)));
+            }
+        }
+    }
+
+    private String getSigidBySegmentId(int segmentId, boolean isUpstream) {
+        Optional<Segment> segment = configService.getSegmentBySegmentId(segmentId);
+        if(segment.isEmpty()) return "";
+        Segment seg = segment.get();
+        if(isUpstream)return seg.getUpsigid();
+        return seg.getDownsigid();
     }
 
     /**
@@ -246,10 +298,9 @@ public class TopLevelStateMachine {
             // 4. 状态转换
             if (targetState != currentState) {
                 transitionToSystemState(targetState, event);
+                // 5. 记录状态转换
+                recordSystemStateTransition(oldState, currentState, event, eventTime);
             }
-
-            // 5. 记录状态转换
-            recordSystemStateTransition(oldState, currentState, event, eventTime);
 
             return true;
 
@@ -332,8 +383,9 @@ public class TopLevelStateMachine {
                     variables.setCommunicationNormal(performSystemSelfCheck());
                 }
                 if(!variables.isConfigurationLoaded()) {
-                    if(verifyConfigurationLoaded())
+                    if(verifyConfigurationLoaded()) {
                         variables.setCommunicationStatus(SystemVariables.CommunicationStatus.NORMAL);
+                    }
                 }
                 if (variables.isSystemInitTimeout()) {
                     return SystemStateV3.ALL_RED_TRANSITION;
@@ -865,6 +917,7 @@ public class TopLevelStateMachine {
         // 实现信号灯控制逻辑
         crossInfoManager.controlAllCrossesToAllRed(3);
     }
+
     // ==================== 内部类定义 ====================
 
     /**

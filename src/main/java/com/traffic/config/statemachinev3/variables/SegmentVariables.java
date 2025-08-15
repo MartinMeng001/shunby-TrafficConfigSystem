@@ -3,6 +3,8 @@ package com.traffic.config.statemachinev3.variables;
 import com.traffic.config.statemachinev3.enums.segment.ClearanceDecision;
 import com.traffic.config.statemachinev3.enums.segment.SegmentState;
 import com.traffic.config.statemachinev3.constants.SegmentConstants;
+import com.traffic.config.statemachinev3.variables.objects.CrossMettingZoneManager;
+import com.traffic.config.statemachinev3.variables.objects.MeetingArea;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -81,8 +83,15 @@ public class SegmentVariables {
      * 下行离开计数器
      */
     private final AtomicInteger downstreamOutCounter = new AtomicInteger(0);
+    private final AtomicInteger upMeetingZoneCrossId = new AtomicInteger(0);
+    private final AtomicInteger downMeetingZoneCrossId = new AtomicInteger(0);
 
     // ==================== 通行请求管理变量 (Traffic Request Management Variables) ====================
+
+    /**
+     * 会车区
+     */
+    private final CrossMettingZoneManager crossMeetingZoneManager;
 
     /**
      * 上行通行请求标志
@@ -281,6 +290,23 @@ public class SegmentVariables {
      */
     public SegmentVariables(int segmentId) {
         this.segmentId = segmentId;
+        this.crossMeetingZoneManager = CrossMettingZoneManager.getInstance();
+        switch (segmentId){
+            case 1->{
+                this.upMeetingZoneCrossId.set(1);
+            }
+            case 2->{
+                this.upMeetingZoneCrossId.set(2);
+                this.downMeetingZoneCrossId.set(1);
+            }
+            case 3->{
+                this.upMeetingZoneCrossId.set(3);
+                this.downMeetingZoneCrossId.set(2);
+            }
+            case 4->{
+                this.downMeetingZoneCrossId.set(3);
+            }
+        }
         initializeVariables();
     }
 
@@ -326,11 +352,27 @@ public class SegmentVariables {
         this.throughputRate = 0.0;
         this.congestionLevel = 0.0;
 
-        // 容量配置变量初始化
-        this.upstreamCapacity = SegmentConstants.DEFAULT_UPSTREAM_CAPACITY;
-        this.downstreamCapacity = SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY;
+        this.crossMeetingZoneManager.registerCrossing(1, SegmentConstants.DEFAULT_UPSTREAM_CAPACITY);
+        this.crossMeetingZoneManager.registerCrossing(2, SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY);
+        this.crossMeetingZoneManager.registerCrossing(3, SegmentConstants.DEFAULT_UPSTREAM_CAPACITY);
+        this.crossMeetingZoneManager.registerCrossing(4, SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY);
     }
-
+    // ==================== 公共方法 =======================
+    public boolean hasVehicle(){
+        if(!isEmptyUpstreamMeetingzone()) return true;
+        if(getUpstreamCounts()>0) return true;
+        if(!isEmptyDownstreamMeetingzone()) return true;
+        if(getUpstreamCounts()>0) return true;
+        return false;
+    }
+    public int getUpstreamCounts(){
+        int result = upstreamInCounter.get()-upstreamOutCounter.get();
+        return result > 0 ? result : 0;
+    }
+    public int getDownstreamCounts(){
+        int result = downstreamInCounter.get()-downstreamOutCounter.get();
+        return result > 0 ? result : 0;
+    }
     // ==================== 时间相关方法 ====================
 
     /**
@@ -460,6 +502,9 @@ public class SegmentVariables {
     public boolean isMinGreenTimeReached() {
         return getCurrentGreenDurationSeconds() >= SegmentConstants.MIN_GREEN_TIME;
     }
+    public boolean isMinRedTimeReached(){
+        return getCurrentRedDurationSeconds() >= SegmentConstants.MIN_RED_TIME;
+    }
     /**
      * 检查当前是否处于绿灯状态
      * @return 是否处于绿灯状态
@@ -519,15 +564,81 @@ public class SegmentVariables {
     }
 
     // ==================== 车辆管理相关方法 ====================
+    /**
+     * 会车区管理
+     */
+    public void clearUpstreamMeetingzone(){
+        crossMeetingZoneManager.upVehicleClear(upMeetingZoneCrossId.get());
+    }
+    public void inUpstreamMeetingzone(String vehicleId){
+        crossMeetingZoneManager.upVehicleEnter(upMeetingZoneCrossId.get(), vehicleId);
+    }
+    public void inUpstreamMeetingzoneNext(String vehicleId){
+        crossMeetingZoneManager.upVehicleEnterNext(upMeetingZoneCrossId.get(), vehicleId);
+    }
+    public void inDownstreamMeetingzone(String vehicleId){
+        crossMeetingZoneManager.downVehicleEnter(downMeetingZoneCrossId.get(), vehicleId);
+    }
+    public void inDownstreamMeetingzoneNext(String vehicleId){
+        crossMeetingZoneManager.downVehicleEnterNext(downMeetingZoneCrossId.get(), vehicleId);
+    }
+    public void outUpstreamMeetingzone(String vehicleId){
+        crossMeetingZoneManager.upVehicleExit(downMeetingZoneCrossId.get(), vehicleId);
+    }
+    public boolean isEmptyUpstreamMeetingzone(){
+        MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(downMeetingZoneCrossId.get());
+        if(meetingArea == null) return true;
+        return meetingArea.isEmpty();
+    }
+    public boolean isUpMaxCapacity(){
+        MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(upMeetingZoneCrossId.get());
+        int counts = 0;
+        if(meetingArea != null) {
+            counts = meetingArea.getCount();
+        }
+        if(counts+getUpstreamCounts() < SegmentConstants.DEFAULT_UPSTREAM_CAPACITY) return false;
+        return true;
+    }
+
+    public void clearDownstreamMeetingzone(){
+        crossMeetingZoneManager.downVehicleClear(downMeetingZoneCrossId.get());
+    }
+    public void inDownUpstreamMeetingzone(String vehicleId){
+        crossMeetingZoneManager.downVehicleEnter(downMeetingZoneCrossId.get(), vehicleId);
+    }
+//    public void inDownstreamMeetingzoneNext(String vehicleId){
+//        crossMeetingZoneManager.downVehicleEnterNext(downMeetingZoneCrossId.get(), vehicleId);
+//    }
+    public void outDownstreamMeetingzone(String vehicleId){
+        crossMeetingZoneManager.downVehicleExit(upMeetingZoneCrossId.get(), vehicleId);
+    }
+    public boolean isEmptyDownstreamMeetingzone(){
+        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(upMeetingZoneCrossId.get());
+        if(meetingArea == null) return true;
+        return meetingArea.isEmpty();
+    }
+    public boolean isDownMaxCapacity(){
+        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(downMeetingZoneCrossId.get());
+        int counts = 0;
+        if(meetingArea != null) {
+            counts = meetingArea.getCount();
+        }
+        if(counts+getDownstreamCounts() < SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY) return false;
+        return true;
+    }
 
     /**
      * 添加上行车辆
      * @param vehicleId 车辆ID
      */
     public void addUpstreamVehicle(String vehicleId) {
-        upstreamVehicleIds.add(vehicleId);
+
+        if(vehicleId==null || vehicleId.trim().isEmpty());
+        else {
+            upstreamVehicleIds.add(vehicleId);
+            vehicleEntryTimes.put(vehicleId, LocalDateTime.now());
+        }
         upstreamInCounter.incrementAndGet();
-        vehicleEntryTimes.put(vehicleId, LocalDateTime.now());
         totalVehiclesServed.incrementAndGet();
         updateClearanceDecisions();
     }
@@ -537,12 +648,11 @@ public class SegmentVariables {
      * @param vehicleId 车辆ID
      */
     public void removeUpstreamVehicle(String vehicleId) {
-        if (upstreamVehicleIds.remove(vehicleId)) {
-            upstreamOutCounter.incrementAndGet();
-            updateVehicleWaitingTime(vehicleId);
-            vehicleEntryTimes.remove(vehicleId);
-            updateClearanceDecisions();
-        }
+        if(vehicleId!=null && !vehicleId.trim().isEmpty())upstreamVehicleIds.remove(vehicleId);
+        upstreamOutCounter.incrementAndGet();
+        updateVehicleWaitingTime(vehicleId);
+        vehicleEntryTimes.remove(vehicleId);
+        updateClearanceDecisions();
     }
 
     /**
@@ -550,7 +660,7 @@ public class SegmentVariables {
      * @param vehicleId 车辆ID
      */
     public void addDownstreamVehicle(String vehicleId) {
-        downstreamVehicleIds.add(vehicleId);
+        if(vehicleId!=null&&!vehicleId.trim().isEmpty()){downstreamVehicleIds.add(vehicleId);}
         downstreamInCounter.incrementAndGet();
         vehicleEntryTimes.put(vehicleId, LocalDateTime.now());
         totalVehiclesServed.incrementAndGet();
@@ -562,12 +672,12 @@ public class SegmentVariables {
      * @param vehicleId 车辆ID
      */
     public void removeDownstreamVehicle(String vehicleId) {
-        if (downstreamVehicleIds.remove(vehicleId)) {
-            downstreamOutCounter.incrementAndGet();
-            updateVehicleWaitingTime(vehicleId);
-            vehicleEntryTimes.remove(vehicleId);
-            updateClearanceDecisions();
-        }
+        if(vehicleId!=null && !vehicleId.trim().isEmpty()){downstreamVehicleIds.remove(vehicleId);}
+
+        downstreamOutCounter.incrementAndGet();
+        updateVehicleWaitingTime(vehicleId);
+        vehicleEntryTimes.remove(vehicleId);
+        updateClearanceDecisions();
     }
 
     /**
@@ -606,13 +716,13 @@ public class SegmentVariables {
      * @param direction 方向
      * @return 是否达到容量限制
      */
-    public boolean isCapacityReached(Direction direction) {
-        return switch (direction) {
-            case UPSTREAM -> upstreamVehicleIds.size() >= upstreamCapacity;
-            case DOWNSTREAM -> downstreamVehicleIds.size() >= downstreamCapacity;
-            case NONE -> getTotalVehicleCount() >= (upstreamCapacity + downstreamCapacity);
-        };
-    }
+//    public boolean isCapacityReached(Direction direction) {
+//        return switch (direction) {
+//            case UPSTREAM -> upstreamVehicleIds.size() >= upstreamCapacity;
+//            case DOWNSTREAM -> downstreamVehicleIds.size() >= downstreamCapacity;
+//            case NONE -> getTotalVehicleCount() >= (upstreamCapacity + downstreamCapacity);
+//        };
+//    }
 
     // ==================== 通行请求相关方法 ====================
 
@@ -620,7 +730,7 @@ public class SegmentVariables {
      * 生成上行通行请求
      */
     public void generateUpstreamRequest() {
-        if (!upstreamRequest && !upstreamVehicleIds.isEmpty()) {
+        if (!upstreamRequest) {// && !upstreamVehicleIds.isEmpty()
             upstreamRequest = true;
             upstreamRequestTime = LocalDateTime.now();
             calculateUpstreamPriority();
@@ -631,7 +741,7 @@ public class SegmentVariables {
      * 生成下行通行请求
      */
     public void generateDownstreamRequest() {
-        if (!downstreamRequest && !downstreamVehicleIds.isEmpty()) {
+        if (!downstreamRequest) {// && !downstreamVehicleIds.isEmpty()
             downstreamRequest = true;
             downstreamRequestTime = LocalDateTime.now();
             calculateDownstreamPriority();
@@ -2209,26 +2319,6 @@ public class SegmentVariables {
     // ==================== 状态检查相关方法 ====================
 
     /**
-     * 检查是否可以接受车辆进入
-     * @param direction 方向
-     * @param currentState 当前路段状态
-     * @return 是否可以接受
-     */
-    public boolean canAcceptVehicle(Direction direction, SegmentState currentState) {
-        // 检查容量限制
-        if (isCapacityReached(direction)) {
-            return false;
-        }
-
-        // 检查状态兼容性
-        return switch (direction) {
-            case UPSTREAM -> currentState.allowsUpstreamEntry();
-            case DOWNSTREAM -> currentState.allowsDownstreamEntry();
-            case NONE -> false;
-        };
-    }
-
-    /**
      * 检查是否应该生成通行请求
      * @param direction 方向
      * @return 是否应该生成请求
@@ -2593,13 +2683,13 @@ public class SegmentVariables {
      */
     public String getRequestStatusSummary() {
         return String.format(
-                "通行请求状态 - 上行: %s(%s), 下行: %s(%s), 优先方向: %s",
+                "路段%d: 通行请求状态 - 上行: %s(%s), 下行: %s(%s), 优先方向: %s", segmentId,
                 upstreamRequest ? "有请求" : "无请求",
                 upstreamRequest && upstreamRequestTime != null ?
-                        String.format("%.1f秒前", java.time.Duration.between(upstreamRequestTime, LocalDateTime.now()).getSeconds()) : "N/A",
+                        String.format("%d秒前", java.time.Duration.between(upstreamRequestTime, LocalDateTime.now()).getSeconds()) : "N/A",
                 downstreamRequest ? "有请求" : "无请求",
                 downstreamRequest && downstreamRequestTime != null ?
-                        String.format("%.1f秒前", java.time.Duration.between(downstreamRequestTime, LocalDateTime.now()).getSeconds()) : "N/A",
+                        String.format("%d秒前", java.time.Duration.between(downstreamRequestTime, LocalDateTime.now()).getSeconds()) : "N/A",
                 determinePriorityDirection().getDescription()
         );
     }

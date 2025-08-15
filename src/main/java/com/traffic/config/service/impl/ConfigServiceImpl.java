@@ -181,8 +181,8 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public GlobalConfig getGlobalConfig() {
-        SingleLane config = loadConfig();
-        return config.getGlobal();
+        //SingleLane config = loadConfig();
+        return cachedConfig.getGlobal();
     }
 
     @Override
@@ -204,8 +204,8 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public List<Segment> getAllSegments() {
-        SingleLane config = loadConfig();
-        return config.getSegments().getSegmentList();
+        //SingleLane config = loadConfig();
+        return cachedConfig.getSegments().getSegmentList();
     }
 
     @Override
@@ -227,7 +227,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Optional<Segment> getSegmentBySegmentId(int segmentId) {
         return getAllSegments().stream()
-                .filter(segment -> segmentId == segmentId)
+                .filter(segment -> segment.getSegmentId() == segmentId)
                 .findFirst();
     }
 

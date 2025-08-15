@@ -33,21 +33,23 @@ public class SegmentGuards {
         if (!currentState.isGreenState()) {
             return false;
         }
+        switch (currentState) { // 已达到最大容量，必须切换
+            case UPSTREAM_GREEN -> {
+                if(variables.isUpMaxCapacity()) return true;
+            }
+            case DOWNSTREAM_GREEN -> {
+                if(variables.isDownMaxCapacity()) return true;
+            }
+        }
+        if(variables.isGreenTimeout()) return true;
 
         // 检查最小绿灯时间是否满足
         boolean minGreenTimeReached = variables.isMinGreenTimeReached();
 
-        // 检查是否有相反方向的通行请求
-        boolean hasOppositeRequest = switch (currentState) {
-            case UPSTREAM_GREEN -> variables.isDownstreamRequest();
-            case DOWNSTREAM_GREEN -> variables.isUpstreamRequest();
-            default -> false;
-        };
-
-        // 检查清空条件或强制切换条件
+        // 当前无请求，对向有请求即可切换
         boolean shouldSwitch = checkSwitchConditions(currentState, variables);
 
-        return minGreenTimeReached && hasOppositeRequest && shouldSwitch;
+        return minGreenTimeReached && shouldSwitch;
     }
 
     /**
@@ -63,7 +65,7 @@ public class SegmentGuards {
             case DOWNSTREAM_GREEN -> variables.getDownstreamClearanceDecision();
             default -> ClearanceDecision.WAIT;
         };
-
+        if(currentDirectionClearance == ClearanceDecision.WAIT) { return false; }
         // 获取相反方向的清空状态
         ClearanceDecision oppositeDirectionClearance = switch (currentState) {
             case UPSTREAM_GREEN -> variables.getDownstreamClearanceDecision();
@@ -71,25 +73,9 @@ public class SegmentGuards {
             default -> ClearanceDecision.WAIT;
         };
 
-        // 条件1：当前方向可以安全清空，相反方向准备好接收
-        boolean safeTransitionCondition = currentDirectionClearance.isSafeForTransition() &&
-                (oppositeDirectionClearance == ClearanceDecision.SAFE ||
-                        oppositeDirectionClearance == ClearanceDecision.WARNING);
+        if(oppositeDirectionClearance == ClearanceDecision.WAIT) { return true; }
 
-        // 条件2：绿灯时间达到最大值
-        boolean maxGreenTimeReached = variables.isGreenTimeout();
-
-        // 条件3：容量接近饱和
-        boolean capacityNearFull = switch (currentState) {
-            case UPSTREAM_GREEN -> variables.isCapacityReached(SegmentVariables.Direction.UPSTREAM);
-            case DOWNSTREAM_GREEN -> variables.isCapacityReached(SegmentVariables.Direction.DOWNSTREAM);
-            default -> false;
-        };
-
-        // 条件4：优先级评估结果
-        boolean priorityFavorsSwitch = checkPriorityConditions(currentState, variables);
-
-        return safeTransitionCondition || maxGreenTimeReached || capacityNearFull || priorityFavorsSwitch;
+        return false;
     }
 
     /**
@@ -126,26 +112,30 @@ public class SegmentGuards {
         if (currentState != SegmentState.ALL_RED_CLEAR) {
             return false;
         }
-
-        // 检查目标方向是否有通行请求, 这个条件不应当作为限制条件，但可以作为触发条件
-//        boolean hasTargetRequest = switch (targetState) {
-//            case UPSTREAM_GREEN -> variables.isUpstreamRequest();
-//            case DOWNSTREAM_GREEN -> variables.isDownstreamRequest();
-//            default -> false;
-//        };
+        // 红灯必须亮最小红灯时间
+        if(!variables.isMinRedTimeReached()){
+            return false;
+        }
 
         // 检查清空条件是否满足
-        boolean clearanceConditionMet = checkClearanceConditions(variables);
+        switch (targetState){
+            case UPSTREAM_GREEN -> {
+                if(variables.getUpstreamClearanceDecision() == ClearanceDecision.SAFE) return true;
+                return false;
+            }
+            case DOWNSTREAM_GREEN -> {
+                if(variables.getDownstreamClearanceDecision() == ClearanceDecision.SAFE) return true;
+                return false;
+            }
+        }
+        return true;
+    }
 
-        // 检查优先级判断，优先级判断，这里不应当再进行判断
-//        SegmentVariables.Direction priorityDirection = variables.determinePriorityDirection();
-//        boolean priorityMatches = switch (targetState) {
-//            case UPSTREAM_GREEN -> priorityDirection == SegmentVariables.Direction.UPSTREAM;
-//            case DOWNSTREAM_GREEN -> priorityDirection == SegmentVariables.Direction.DOWNSTREAM;
-//            default -> false;
-//        };
-        return  clearanceConditionMet;
-        //return hasTargetRequest && clearanceConditionMet && priorityMatches;
+    public static boolean checkRedToNoCtrl(SegmentState currentState, SegmentState targetState, SegmentEvent event, SegmentVariables variables) {
+        return true;
+    }
+    public static boolean checkRedToYellowFlash(SegmentState currentState, SegmentState targetState, SegmentEvent event, SegmentVariables variables) {
+        return true;
     }
 
     /**
@@ -159,46 +149,11 @@ public class SegmentGuards {
         return switch (overallDecision) {
             case SAFE, WARNING -> true;
             case CONSERVATIVE -> variables.isConservativeTimerExpired();
-            case WAIT -> variables.isMaxTimerExpired();
+            case WAIT -> false;//variables.isMaxTimerExpired();
         };
     }
 
     // ==================== 车辆事件守护条件 ====================
-
-    /**
-     * 车辆进入守护条件
-     * G(q, vehicle_enter_direction, v)
-     *
-     * @param currentState 当前状态
-     * @param event 触发事件
-     * @param variables 路段变量
-     * @param vehicleId 车辆ID
-     * @return 是否允许车辆进入
-     */
-    public static boolean checkVehicleEntry(SegmentState currentState,
-                                            SegmentEvent event,
-                                            SegmentVariables variables,
-                                            String vehicleId) {
-        // 获取车辆进入方向
-        SegmentVariables.Direction direction = getVehicleDirection(event);
-        if (direction == SegmentVariables.Direction.NONE) {
-            return false;
-        }
-
-        // 检查容量限制
-        boolean capacityAvailable = !variables.isCapacityReached(direction);
-
-        // 检查车辆ID唯一性
-        boolean uniqueVehicleId = !variables.isDuplicateVehicleId(vehicleId);
-
-        // 检查状态兼容性（是否允许该方向进入）
-        boolean stateCompatible = variables.canAcceptVehicle(direction, currentState);
-
-        // 检查传感器状态
-        boolean sensorsNormal = variables.areCriticalSensorsNormal();
-
-        return capacityAvailable && uniqueVehicleId && stateCompatible && sensorsNormal;
-    }
 
     /**
      * 车辆离开守护条件
@@ -260,7 +215,7 @@ public class SegmentGuards {
     public static boolean checkRequestGeneration(SegmentState currentState,
                                                  SegmentEvent event,
                                                  SegmentVariables variables) {
-        SegmentVariables.Direction direction = getRequestDirection(event);
+        SegmentVariables.Direction direction = getRequestDirection(variables);
         if (direction == SegmentVariables.Direction.NONE) {
             return false;
         }
@@ -304,7 +259,7 @@ public class SegmentGuards {
     public static boolean checkRequestClearance(SegmentState currentState,
                                                 SegmentEvent event,
                                                 SegmentVariables variables) {
-        SegmentVariables.Direction direction = getRequestDirection(event);
+        SegmentVariables.Direction direction = getRequestDirection(variables);
         if (direction == SegmentVariables.Direction.NONE) {
             return false;
         }
@@ -331,15 +286,14 @@ public class SegmentGuards {
 
     /**
      * 从请求事件获取方向
-     * @param event 请求事件
+     * @param variables 变量
      * @return 请求方向
      */
-    private static SegmentVariables.Direction getRequestDirection(SegmentEvent event) {
-        return switch (event) {
-            case UPSTREAM_REQUEST_GENERATED, UPSTREAM_REQUEST_CLEARED -> SegmentVariables.Direction.UPSTREAM;
-            case DOWNSTREAM_REQUEST_GENERATED, DOWNSTREAM_REQUEST_CLEARED -> SegmentVariables.Direction.DOWNSTREAM;
-            default -> SegmentVariables.Direction.NONE;
-        };
+    private static SegmentVariables.Direction getRequestDirection(SegmentVariables variables) {
+        if(!variables.isEmptyUpstreamMeetingzone()) return SegmentVariables.Direction.UPSTREAM;
+        if(!variables.isEmptyDownstreamMeetingzone())return SegmentVariables.Direction.DOWNSTREAM;
+
+        return SegmentVariables.Direction.NONE;
     }
 
     // ==================== 超时和故障守护条件 ====================
@@ -587,6 +541,7 @@ public class SegmentGuards {
                 }
                 yield false;
             }
+            default -> true;
         };
     }
 
@@ -637,71 +592,7 @@ public class SegmentGuards {
 
         return clearanceAcceptable && segmentHealthy && systemStable;
     }
-    /**
-     * 车辆事件统一守护条件检查
-     * 对应数学模型中的车辆事件守护条件 G(q, vehicle_event, v)
-     *
-     * @param currentState 当前状态
-     * @param event 车辆事件
-     * @param variables 路段变量
-     * @return 是否允许处理该车辆事件
-     */
-    public static boolean checkVehicleEventAllowed(SegmentState currentState,
-                                                   SegmentEvent event,
-                                                   SegmentVariables variables) {
-        // 检查事件是否为车辆事件
-        if (!event.isVehicleEvent()) {
-            return false;
-        }
 
-        // 检查系统基本状态
-        if (!checkBasicSystemConditions(variables)) {
-            return false;
-        }
-
-        // 检查是否处于故障状态
-        if (variables.isFaultDetected()) {
-            // 故障状态下需要特殊处理
-            return handleFaultStateVehicleEvent(currentState, event, variables);
-        }
-
-        // 检查传感器状态
-//        if (!variables.areCriticalSensorsNormal()) {
-//            // 传感器异常时，只允许基于备用传感器的事件
-//            return event.SENSOR_FAULT();
-//        }
-
-        // 根据具体车辆事件类型进行详细检查
-        return switch (event) {
-            case VEHICLE_ENTER_UPSTREAM, VEHICLE_ENTER_DOWNSTREAM ->
-                    checkVehicleEntryPreconditions(currentState, event, variables);
-
-            case VEHICLE_EXIT_UPSTREAM, VEHICLE_EXIT_DOWNSTREAM ->
-                    checkVehicleExitPreconditions(currentState, event, variables);
-
-            default -> false;
-        };
-    }
-
-    /**
-     * 检查系统基本条件
-     * @param variables 路段变量
-     * @return 系统是否处于可接受车辆事件的状态
-     */
-    private static boolean checkBasicSystemConditions(SegmentVariables variables) {
-        // 检查健康度
-        boolean healthAcceptable = variables.getSegmentHealthScore() >=
-                SegmentConstants.CRITICAL_HEALTH_THRESHOLD;
-
-        // 检查连续错误数量
-        boolean errorCountAcceptable = variables.getConsecutiveErrors() <
-                SegmentConstants.MAX_CONSECUTIVE_ERRORS;
-
-        // 检查是否超出最大容量
-        boolean capacityNotExceeded = !variables.isCapacityReached(SegmentVariables.Direction.NONE);
-
-        return healthAcceptable && errorCountAcceptable && capacityNotExceeded;
-    }
 
     /**
      * 处理故障状态下的车辆事件
@@ -729,33 +620,6 @@ public class SegmentGuards {
         return false;
     }
 
-    /**
-     * 检查车辆进入的前置条件
-     * @param currentState 当前状态
-     * @param event 车辆进入事件
-     * @param variables 路段变量
-     * @return 是否满足进入前置条件
-     */
-    private static boolean checkVehicleEntryPreconditions(SegmentState currentState,
-                                                          SegmentEvent event,
-                                                          SegmentVariables variables) {
-        // 获取车辆进入方向
-        SegmentVariables.Direction direction = getVehicleDirection(event);
-
-        // 检查方向容量
-        boolean capacityAvailable = !variables.isCapacityReached(direction);
-
-        // 检查状态兼容性
-        boolean stateCompatible = variables.canAcceptVehicle(direction, currentState);
-
-        // 检查是否处于切换过程中
-        boolean notInTransition = !variables.isInRedState();
-
-        // 检查清空状态
-        boolean clearanceAllowsEntry = checkClearanceAllowsEntry(direction, variables);
-
-        return capacityAvailable && stateCompatible && notInTransition && clearanceAllowsEntry;
-    }
 
     /**
      * 检查车辆离开的前置条件

@@ -58,7 +58,7 @@ public class DataAccessManager {
 
                 } else if (dataType == 0x01) {
                     // 车辆数据
-                    System.out.println("消息类型: 车辆数据");
+                    //System.out.println("消息类型: 车辆数据");
 
                     if (vehicleDataParser.canParse(message)) {
                         VehicleData vehicleData = vehicleDataParser.parse(message);
@@ -100,7 +100,7 @@ public class DataAccessManager {
             System.err.println("✗ 处理消息时出错: " + e.getMessage());
             e.printStackTrace();
         }
-        System.out.println("================\n");
+        //System.out.println("================\n");
     }
     //
     private DetectPoint getDetectPointByIndex(int index){

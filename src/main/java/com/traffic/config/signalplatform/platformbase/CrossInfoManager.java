@@ -9,10 +9,8 @@ import com.traffic.config.service.ConfigService;
 import com.traffic.config.service.event.SignalListEvent;
 import com.traffic.config.signalplatform.platformbase.entity.CrossInfo;
 import com.traffic.config.signalplatform.platformbase.enums.ControlPhase;
-import com.traffic.config.statemachinev3.events.AllClearCtrlEvent;
-import com.traffic.config.statemachinev3.events.AllRedCtrlEvent;
-import com.traffic.config.statemachinev3.events.GreenCtrlEvent;
-import com.traffic.config.statemachinev3.events.RedCtrlEvent;
+import com.traffic.config.statemachinev3.enums.segment.SegmentState;
+import com.traffic.config.statemachinev3.events.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,9 +145,64 @@ public class CrossInfoManager {
         logger.error("Failed to guard cross with sigid: {} after {} retries.", sigid, maxRetries);
         return false;
     }
+    @EventListener
+    public void handleCustomControl(CustomControlEvent event){
+        int ctrlPhase = getControlPhase(event.getUpSegmentState(), event.getDownSegmentState());
+        if(ctrlPhase == -1) return;
+        if(filterGuard(ctrlPhase, event.getSigid()))
+            guardCrossBySigid(event.getSigid(), ctrlPhase);
+    }
+
+    /** A-上行，对应北全放，B-下行，对应南全放
+     * A-Green, B-Green 错误状态不放行
+     * A-Green，B-Red 放行A
+     * A-Red，B-Green 放行B
+     * A-Red，B-Red 放行全红
+     * A-NULL，B notNull 放行B
+     * A notNull，B-NULL 放行A
+     * A-NULL，B-NULL 错误状态不放行 -1
+     */
+    protected int getControlPhase(SegmentState segmentStateA, SegmentState segmentStateB){
+        if(segmentStateA==null && segmentStateB==null) return -1;
+        if(segmentStateA==null) {
+            if(segmentStateB.isDownstreamState())return ControlPhase.SOUTH_FULL_GREEN.getValue();
+            if(segmentStateB.isYellowFlashState())return ControlPhase.YELLOW_FLASH.getValue();
+            if(segmentStateB.isAllRedState())return ControlPhase.ALL_RED.getValue();
+            return -1;
+        }
+        if(segmentStateB==null) {
+            if(segmentStateA.isUpstreamState())return ControlPhase.NORTH_FULL_GREEN.getValue();
+            if(segmentStateA.isYellowFlashState())return ControlPhase.YELLOW_FLASH.getValue();
+            if(segmentStateA.isAllRedState())return ControlPhase.ALL_RED.getValue();
+            return -1;
+        }
+        if(segmentStateA.isUpstreamState() && segmentStateB.isDownstreamState()){ return -1; }
+        if(segmentStateA.isUpstreamState()) return ControlPhase.NORTH_FULL_GREEN.getValue();
+        if(segmentStateB.isDownstreamState()) return ControlPhase.SOUTH_FULL_GREEN.getValue();
+        if(segmentStateA.isAllRedState() && segmentStateB.isAllRedState()){ return ControlPhase.ALL_RED.getValue(); }
+        if(segmentStateA.isYellowFlashState() || segmentStateB.isYellowFlashState()){ return ControlPhase.YELLOW_FLASH.getValue(); }
+        return -1;
+    }
+    protected boolean filterGuard(int ctrlPhase, String sigid){
+        if(crossInfoMap.containsKey(sigid)) {
+            CrossInfo crossInfo = crossInfoMap.get(sigid);
+            if(crossInfo.getCtrlPhase()==ctrlPhase) {
+                int retryCount = crossInfo.getRetryNums();
+                if(retryCount>0){
+                    crossInfo.setRetryNums(retryCount-1);
+                    return true;
+                }
+                return false;
+            }else {
+                crossInfo.setRetryNums(10);
+                return true;
+            }
+        }
+        return false;
+    }
 
     @EventListener
-    @Async("systemStateMachineV3Executor")
+    //@Async("systemStateMachineV3Executor")
     public void handleAllRedCtrl(AllRedCtrlEvent event){
         if(controlAllCrossesToAllRed(event.getVariables().getMaxRetryNumsAllCtrl())){
             event.getVariables().setAllSignalRed(true);
@@ -157,7 +210,7 @@ public class CrossInfoManager {
     }
 
     @EventListener
-    @Async("systemStateMachineV3Executor")
+    //@Async("systemStateMachineV3Executor")
     public void handleAllRedCtrl(AllClearCtrlEvent event){
         if(controlAllCrossesToAll(event.getVariables().getMaxRetryNumsAllCtrl(), ControlPhase.CANCEL_GUARD.getValue())){
             event.getVariables().setAllSignalRed(false);

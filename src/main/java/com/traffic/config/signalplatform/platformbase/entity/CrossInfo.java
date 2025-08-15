@@ -1,5 +1,6 @@
 package com.traffic.config.signalplatform.platformbase.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,4 +20,9 @@ public class CrossInfo {
     private int crossid;
     @JsonProperty("devBasicInfo")
     private DevBasicInfo devBasicInfo;
+
+    @JsonIgnore
+    private int ctrlPhase = -1;
+    @JsonIgnore
+    private int retryNums = 0;
 }

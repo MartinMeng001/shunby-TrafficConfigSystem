@@ -42,66 +42,28 @@ public enum SegmentEvent {
      * - 上行方向有车辆进入路段
      * - 更新车辆计数和ID集合
      */
-    VEHICLE_ENTER_UPSTREAM("上行车辆进入", "VEHICLE_ENTER_UPSTREAM", EventCategory.VEHICLE, EventPriority.NORMAL,
-            "上行车辆进入路段"),
+    VEHICLE_ENTER_UPSTREAM("上行车辆进入", "VEHICLE_ENTER_UPSTREAM", EventCategory.VEHICLE, EventPriority.NORMAL, "上行车辆进入路段"),
 
     /**
      * 上行车辆离开事件
      * - 上行方向有车辆离开路段
      * - 更新车辆计数和ID集合
      */
-    VEHICLE_EXIT_UPSTREAM("上行车辆离开", "VEHICLE_EXIT_UPSTREAM", EventCategory.VEHICLE, EventPriority.NORMAL,
-            "上行车辆离开路段"),
+    VEHICLE_EXIT_UPSTREAM("上行车辆离开", "VEHICLE_EXIT_UPSTREAM", EventCategory.VEHICLE, EventPriority.NORMAL, "上行车辆离开路段"),
 
     /**
      * 下行车辆进入事件
      * - 下行方向有车辆进入路段
      * - 更新车辆计数和ID集合
      */
-    VEHICLE_ENTER_DOWNSTREAM("下行车辆进入", "VEHICLE_ENTER_DOWNSTREAM", EventCategory.VEHICLE, EventPriority.NORMAL,
-            "下行车辆进入路段"),
+    VEHICLE_ENTER_DOWNSTREAM("下行车辆进入", "VEHICLE_ENTER_DOWNSTREAM", EventCategory.VEHICLE, EventPriority.NORMAL, "下行车辆进入路段"),
 
     /**
      * 下行车辆离开事件
      * - 下行方向有车辆离开路段
      * - 更新车辆计数和ID集合
      */
-    VEHICLE_EXIT_DOWNSTREAM("下行车辆离开", "VEHICLE_EXIT_DOWNSTREAM", EventCategory.VEHICLE, EventPriority.NORMAL,
-            "下行车辆离开路段"),
-
-    // ==================== 通行请求事件 (Traffic Request Events) ====================
-
-    /**
-     * 上行通行请求产生事件
-     * - 上行方向产生通行请求
-     * - 需要评估是否切换信号
-     */
-    UPSTREAM_REQUEST_GENERATED("上行请求产生", "UPSTREAM_REQUEST_GENERATED", EventCategory.REQUEST, EventPriority.MEDIUM,
-            "上行通行请求产生"),
-
-    /**
-     * 下行通行请求产生事件
-     * - 下行方向产生通行请求
-     * - 需要评估是否切换信号
-     */
-    DOWNSTREAM_REQUEST_GENERATED("下行请求产生", "DOWNSTREAM_REQUEST_GENERATED", EventCategory.REQUEST, EventPriority.MEDIUM,
-            "下行通行请求产生"),
-
-    /**
-     * 上行通行请求清除事件
-     * - 上行方向通行请求被清除
-     * - 该方向无车辆等待
-     */
-    UPSTREAM_REQUEST_CLEARED("上行请求清除", "UPSTREAM_REQUEST_CLEARED", EventCategory.REQUEST, EventPriority.LOW,
-            "上行通行请求清除"),
-
-    /**
-     * 下行通行请求清除事件
-     * - 下行方向通行请求被清除
-     * - 该方向无车辆等待
-     */
-    DOWNSTREAM_REQUEST_CLEARED("下行请求清除", "DOWNSTREAM_REQUEST_CLEARED", EventCategory.REQUEST, EventPriority.LOW,
-            "下行通行请求清除"),
+    VEHICLE_EXIT_DOWNSTREAM("下行车辆离开", "VEHICLE_EXIT_DOWNSTREAM", EventCategory.VEHICLE, EventPriority.NORMAL, "下行车辆离开路段"),
 
     // ==================== 清空决策事件 (Clearance Decision Events) ====================
 
@@ -409,22 +371,6 @@ public enum SegmentEvent {
      */
     public boolean isRequestEvent() {
         return category == EventCategory.REQUEST;
-    }
-
-    /**
-     * 判断是否为请求生成事件
-     * @return 是否为请求生成事件
-     */
-    public boolean isRequestGeneratedEvent() {
-        return this == UPSTREAM_REQUEST_GENERATED || this == DOWNSTREAM_REQUEST_GENERATED;
-    }
-
-    /**
-     * 判断是否为请求清除事件
-     * @return 是否为请求清除事件
-     */
-    public boolean isRequestClearedEvent() {
-        return this == UPSTREAM_REQUEST_CLEARED || this == DOWNSTREAM_REQUEST_CLEARED;
     }
 
     /**
