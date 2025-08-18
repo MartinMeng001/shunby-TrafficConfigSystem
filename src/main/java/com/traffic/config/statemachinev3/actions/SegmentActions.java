@@ -313,7 +313,7 @@ public class SegmentActions {
             }
             case DOWNSTREAM -> {
                 variables.removeDownstreamVehicle(vehicledid);
-                variables.inDownstreamMeetingzoneNext(vehicledid);
+                variables.inDownstreamMeetingzone(vehicledid);
                 variables.outDownstreamMeetingzone(vehicledid);
             }
         }

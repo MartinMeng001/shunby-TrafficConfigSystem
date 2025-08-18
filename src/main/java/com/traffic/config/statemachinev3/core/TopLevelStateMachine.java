@@ -217,16 +217,16 @@ public class TopLevelStateMachine {
             try {
                 if(!segment.isRunning()) continue;
                 if(lastSegment == null) {
-                    if(segment.getCurrentState().isDownstreamState()){
-                        EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", null, segment.getCurrentState(),
-                                getSigidBySegmentId(segment.getSegmentId(), false)));
-                    }else if(segment.getCurrentState().isUpstreamState()) {
-                        EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", segment.getCurrentState(), null,
-                                getSigidBySegmentId(segment.getSegmentId(), true)));
-                    }
+                    EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", segment.getCurrentState(), null,
+                            getSigidBySegmentId(segment.getSegmentId(), true)));
+
+//                    else if(segment.getCurrentState().isUpstreamState()) {
+//                        EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", segment.getCurrentState(), null,
+//                                getSigidBySegmentId(segment.getSegmentId(), true)));
+//                    }
                 }else{
                     EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", lastSegment.getCurrentState(), segment.getCurrentState(),
-                            getSigidBySegmentId(lastSegment.getSegmentId(), true)));
+                            getSigidBySegmentId(segment.getSegmentId(), true)));
                 }
                 lastSegment = segment;
             } catch (Exception e) {
@@ -235,13 +235,16 @@ public class TopLevelStateMachine {
             }
         }
         if(lastSegment != null) {
-            if(lastSegment.getCurrentState().isDownstreamState()){
-                EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", null, lastSegment.getCurrentState(),
-                        getSigidBySegmentId(lastSegment.getSegmentId(), false)));
-            }else if(lastSegment.getCurrentState().isUpstreamState()) {
-                EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", lastSegment.getCurrentState(),null,
-                        getSigidBySegmentId(lastSegment.getSegmentId(), true)));
-            }
+            if(lastSegment.getSegmentId()!=4) return;
+            EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", null, lastSegment.getCurrentState(),
+                    getSigidBySegmentId(lastSegment.getSegmentId(), false)));
+//            if(lastSegment.getCurrentState().isDownstreamState()){
+//                EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", null, lastSegment.getCurrentState(),
+//                        getSigidBySegmentId(lastSegment.getSegmentId(), false)));
+//            }else if(lastSegment.getCurrentState().isUpstreamState()) {
+//                EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", lastSegment.getCurrentState(),null,
+//                        getSigidBySegmentId(lastSegment.getSegmentId(), false)));
+//            }
         }
     }
 

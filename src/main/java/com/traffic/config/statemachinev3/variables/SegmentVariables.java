@@ -580,13 +580,13 @@ public class SegmentVariables {
         crossMeetingZoneManager.downVehicleEnter(downMeetingZoneCrossId.get(), vehicleId);
     }
     public void inDownstreamMeetingzoneNext(String vehicleId){
-        crossMeetingZoneManager.downVehicleEnterNext(downMeetingZoneCrossId.get(), vehicleId);
+        crossMeetingZoneManager.downVehicleEnterNext(upMeetingZoneCrossId.get(), vehicleId);
     }
     public void outUpstreamMeetingzone(String vehicleId){
         crossMeetingZoneManager.upVehicleExit(downMeetingZoneCrossId.get(), vehicleId);
     }
     public boolean isEmptyUpstreamMeetingzone(){
-        MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(downMeetingZoneCrossId.get());
+        MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(upMeetingZoneCrossId.get());
         if(meetingArea == null) return true;
         return meetingArea.isEmpty();
     }
@@ -613,9 +613,19 @@ public class SegmentVariables {
         crossMeetingZoneManager.downVehicleExit(upMeetingZoneCrossId.get(), vehicleId);
     }
     public boolean isEmptyDownstreamMeetingzone(){
-        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(upMeetingZoneCrossId.get());
+        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(downMeetingZoneCrossId.get());
         if(meetingArea == null) return true;
         return meetingArea.isEmpty();
+    }
+    public int getUpMeetingZoneCount(){
+        MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(upMeetingZoneCrossId.get());
+        if(meetingArea == null) return 0;
+        return meetingArea.getCount();
+    }
+    public int getDownMeetingZoneCount(){
+        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(downMeetingZoneCrossId.get());
+        if(meetingArea == null) return 0;
+        return meetingArea.getCount();
     }
     public boolean isDownMaxCapacity(){
         MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(downMeetingZoneCrossId.get());

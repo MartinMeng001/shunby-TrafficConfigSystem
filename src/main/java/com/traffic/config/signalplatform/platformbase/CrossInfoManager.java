@@ -54,7 +54,7 @@ public class CrossInfoManager {
     }
 
     @EventListener
-    @Async
+    @Async("platformEventHandlerThreadPool")
     public void handleSignalListUpdate(SignalListEvent event){
         logger.info("收到 SignalListEvent 事件，开始更新 CrossInfoMap...");
         crossInfoMap.clear(); // 清空现有数据
@@ -124,9 +124,11 @@ public class CrossInfoManager {
         int retryCount = 0;
         while (retryCount <= maxRetries) {
             logger.info("Attempting to guard cross. Sigid: {}, GuardMode: {}, Attempt: {}", sigid, guardMode, retryCount + 1);
-            if (guardCrossBySigid(sigid, guardMode)) {
-                logger.info("Successfully guarded cross with sigid: {}", sigid);
-                return true;
+            if(filterGuard(guardMode, sigid)) {
+                if (guardCrossBySigid(sigid, guardMode)) {
+                    logger.info("Successfully guarded cross with sigid: {}", sigid);
+                    return true;
+                }
             }
 
             retryCount++;
@@ -146,6 +148,7 @@ public class CrossInfoManager {
         return false;
     }
     @EventListener
+    @Async("platformEventHandlerThreadPool")
     public void handleCustomControl(CustomControlEvent event){
         int ctrlPhase = getControlPhase(event.getUpSegmentState(), event.getDownSegmentState());
         if(ctrlPhase == -1) return;
@@ -161,26 +164,28 @@ public class CrossInfoManager {
      * A-NULL，B notNull 放行B
      * A notNull，B-NULL 放行A
      * A-NULL，B-NULL 错误状态不放行 -1
+     * 路段实际只能控制路段的进入，而不控制路段的离开
      */
     protected int getControlPhase(SegmentState segmentStateA, SegmentState segmentStateB){
         if(segmentStateA==null && segmentStateB==null) return -1;
         if(segmentStateA==null) {
-            if(segmentStateB.isDownstreamState())return ControlPhase.SOUTH_FULL_GREEN.getValue();
             if(segmentStateB.isYellowFlashState())return ControlPhase.YELLOW_FLASH.getValue();
             if(segmentStateB.isAllRedState())return ControlPhase.ALL_RED.getValue();
+            if(segmentStateB.isDownstreamState())return ControlPhase.SOUTH_FULL_GREEN.getValue();
             return -1;
         }
         if(segmentStateB==null) {
-            if(segmentStateA.isUpstreamState())return ControlPhase.NORTH_FULL_GREEN.getValue();
             if(segmentStateA.isYellowFlashState())return ControlPhase.YELLOW_FLASH.getValue();
             if(segmentStateA.isAllRedState())return ControlPhase.ALL_RED.getValue();
+            if(segmentStateA.isUpstreamState())return ControlPhase.NORTH_FULL_GREEN.getValue();
             return -1;
         }
         if(segmentStateA.isUpstreamState() && segmentStateB.isDownstreamState()){ return -1; }
-        if(segmentStateA.isUpstreamState()) return ControlPhase.NORTH_FULL_GREEN.getValue();
-        if(segmentStateB.isDownstreamState()) return ControlPhase.SOUTH_FULL_GREEN.getValue();
-        if(segmentStateA.isAllRedState() && segmentStateB.isAllRedState()){ return ControlPhase.ALL_RED.getValue(); }
         if(segmentStateA.isYellowFlashState() || segmentStateB.isYellowFlashState()){ return ControlPhase.YELLOW_FLASH.getValue(); }
+        if(segmentStateB.isUpstreamState()) return ControlPhase.NORTH_FULL_GREEN.getValue();
+        if(segmentStateA.isDownstreamState()) return ControlPhase.SOUTH_FULL_GREEN.getValue();
+        if(segmentStateA.isAllRedState() && segmentStateB.isAllRedState()){ return ControlPhase.ALL_RED.getValue(); }
+
         return -1;
     }
     protected boolean filterGuard(int ctrlPhase, String sigid){
@@ -194,6 +199,7 @@ public class CrossInfoManager {
                 }
                 return false;
             }else {
+                crossInfo.setCtrlPhase(ctrlPhase);
                 crossInfo.setRetryNums(10);
                 return true;
             }
@@ -202,7 +208,7 @@ public class CrossInfoManager {
     }
 
     @EventListener
-    //@Async("systemStateMachineV3Executor")
+    @Async("platformEventHandlerThreadPool")
     public void handleAllRedCtrl(AllRedCtrlEvent event){
         if(controlAllCrossesToAllRed(event.getVariables().getMaxRetryNumsAllCtrl())){
             event.getVariables().setAllSignalRed(true);
@@ -210,52 +216,52 @@ public class CrossInfoManager {
     }
 
     @EventListener
-    //@Async("systemStateMachineV3Executor")
-    public void handleAllRedCtrl(AllClearCtrlEvent event){
+    @Async("platformEventHandlerThreadPool")
+    public void handleAllRedClearCtrl(AllClearCtrlEvent event){
         if(controlAllCrossesToAll(event.getVariables().getMaxRetryNumsAllCtrl(), ControlPhase.CANCEL_GUARD.getValue())){
             event.getVariables().setAllSignalRed(false);
         }
     }
 
     @EventListener
-    @Async("systemStateMachineV3Executor")
+    @Async("platformEventHandlerThreadPool")
     public void handleGreenCtrl(GreenCtrlEvent event){
-        int segmentId = event.getVariables().getSegmentId();
-        Optional<Segment> segment = configService.getSegmentBySegmentId(segmentId);
-        if(segment.isEmpty()) return;
-        Segment seg = segment.get();
-        int ctrlUp = seg.getUpctrl();
-        int ctrlDown = seg.getDownctrl();
-        String upsigid = seg.getUpsigid();
-        String downsigid = seg.getDownsigid();
-        switch(event.getCurrentState()){
-            case UPSTREAM_GREEN -> {
-                // 上行变绿
-                guardCrossBySigid(upsigid, ctrlUp);
-                // 下行变红
-                guardCrossBySigid(downsigid, ControlPhase.ALL_RED.getValue());
-            }
-            case DOWNSTREAM_GREEN -> {
-                // 上行变红
-                guardCrossBySigid(upsigid, ControlPhase.ALL_RED.getValue());
-                // 下行变绿
-                guardCrossBySigid(downsigid, ctrlDown);
-            }
-        }
+//        int segmentId = event.getVariables().getSegmentId();
+//        Optional<Segment> segment = configService.getSegmentBySegmentId(segmentId);
+//        if(segment.isEmpty()) return;
+//        Segment seg = segment.get();
+//        int ctrlUp = seg.getUpctrl();
+//        int ctrlDown = seg.getDownctrl();
+//        String upsigid = seg.getUpsigid();
+//        String downsigid = seg.getDownsigid();
+//        switch(event.getCurrentState()){
+//            case UPSTREAM_GREEN -> {
+//                // 上行变绿
+//                guardCrossBySigid(upsigid, ctrlUp);
+//                // 下行变红
+//                guardCrossBySigid(downsigid, ControlPhase.ALL_RED.getValue());
+//            }
+//            case DOWNSTREAM_GREEN -> {
+//                // 上行变红
+//                guardCrossBySigid(upsigid, ControlPhase.ALL_RED.getValue());
+//                // 下行变绿
+//                guardCrossBySigid(downsigid, ctrlDown);
+//            }
+//        }
     }
     @EventListener
-    @Async("systemStateMachineV3Executor")
+    @Async("platformEventHandlerThreadPool")
     public void handleRedCtrl(RedCtrlEvent event){
-        int segmentId = event.getVariables().getSegmentId();
-        Optional<Segment> segment = configService.getSegmentBySegmentId(segmentId);
-        if(segment.isEmpty()) return;
-        Segment seg = segment.get();
-        int ctrlUp = seg.getUpctrl();
-        int ctrlDown = seg.getDownctrl();
-        String upsigid = seg.getUpsigid();
-        String downsigid = seg.getDownsigid();
-        guardCrossBySigid(upsigid, ControlPhase.ALL_RED.getValue());
-        guardCrossBySigid(downsigid, ControlPhase.ALL_RED.getValue());
+//        int segmentId = event.getVariables().getSegmentId();
+//        Optional<Segment> segment = configService.getSegmentBySegmentId(segmentId);
+//        if(segment.isEmpty()) return;
+//        Segment seg = segment.get();
+//        int ctrlUp = seg.getUpctrl();
+//        int ctrlDown = seg.getDownctrl();
+//        String upsigid = seg.getUpsigid();
+//        String downsigid = seg.getDownsigid();
+//        guardCrossBySigid(upsigid, ControlPhase.ALL_RED.getValue());
+//        guardCrossBySigid(downsigid, ControlPhase.ALL_RED.getValue());
     }
 
     /**
@@ -372,6 +378,8 @@ public class CrossInfoManager {
                 if (crossInfo.getDevBasicInfo() != null && crossInfo.getDevBasicInfo().getSigid() > 0) { // 假设 sigid > 0 是有效ID
                     String sigid = String.valueOf(crossInfo.getDevBasicInfo().getSigid()); // 将 int sigid 转换为 String
                     if(crossInfoMap.containsKey(sigid)==false) continue;
+                    crossInfo.setCtrlPhase(crossInfoMap.get(sigid).getCtrlPhase());
+                    crossInfo.setRetryNums(crossInfoMap.get(sigid).getRetryNums());
                     crossInfoMap.put(sigid, crossInfo); // 更新或添加 CrossInfo
                     updatedCount++;
 

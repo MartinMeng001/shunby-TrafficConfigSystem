@@ -38,7 +38,7 @@ public class EventBusService {
     public void publish(Object event) {
         try {
             eventPublisher.publishEvent(event);
-            logger.debug("发布事件成功: {}", event.getClass().getSimpleName());
+            //logger.debug("发布事件成功: {}", event.getClass().getSimpleName());
         } catch (Exception e) {
             logger.error("发布事件失败: {}, 错误: {}",
                     event.getClass().getSimpleName(), e.getMessage(), e);

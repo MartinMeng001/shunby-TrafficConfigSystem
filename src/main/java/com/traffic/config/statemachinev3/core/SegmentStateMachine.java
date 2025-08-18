@@ -231,6 +231,14 @@ public class SegmentStateMachine {
      * 基于当前状态和事件类型确定下一个状态
      */
     private SegmentState determineTargetState(SegmentEvent event, SegmentState currentState) {
+        switch (currentState){
+            case ALL_YELLOWFLASH_MANUAL -> {
+                return SegmentState.ALL_YELLOWFLASH_MANUAL;
+            }
+            case ALL_RED_CLEAR -> {
+                return determineGreenStateFromRed();
+            }
+        }
         switch (event) {
             case TIMER_TICK -> {
                 return determineTimerTickTargetState();
@@ -362,10 +370,6 @@ public class SegmentStateMachine {
      */
     private SegmentState determineTimerTickTargetState() {
         switch (currentState) {
-            case ALL_RED_CLEAR -> {
-                // 从全红清空状态转换到绿灯状态
-                return determineGreenStateFromRed();
-            }
             case UPSTREAM_GREEN -> {    // 目标状态是确定的，不应该有条件，是否转换是有条件的
                 return SegmentState.ALL_RED_CLEAR;
             }
@@ -383,6 +387,10 @@ public class SegmentStateMachine {
      * 基于优先级算法和通行请求
      */
     private SegmentState determineGreenStateFromRed() {
+        // 如果红灯超时应该进入降级状态
+        if(variables.isRedTimeout()){
+            return SegmentState.ALL_YELLOWFLASH_MANUAL;
+        }
         // 检查清空条件是否满足
         if (!isClearanceConditionMet()) {
             return SegmentState.ALL_RED_CLEAR; // 继续等待清空
