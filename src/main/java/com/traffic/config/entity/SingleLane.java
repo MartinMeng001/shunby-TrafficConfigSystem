@@ -8,6 +8,7 @@ public class SingleLane {
     private GlobalConfig global;
     private Segments segments;
     private DetectPoints detectPoints;
+    private WaitingAreas waitingAreas;
 
     @XmlElement(name = "global")
     public GlobalConfig getGlobal() {
@@ -31,8 +32,16 @@ public class SingleLane {
     public DetectPoints getDetectPoints() {
         return detectPoints;
     }
+    // 不支持设置
+//    public void setDetectPoints(DetectPoints detectPoints) {
+//        this.detectPoints = detectPoints;
+//    }
 
-    public void setDetectPoints(DetectPoints detectPoints) {
-        this.detectPoints = detectPoints;
+    @XmlElement(name = "WaitingAreas")
+    public WaitingAreas getWaitingAreas() {
+        return waitingAreas;
+    }
+    public void setWaitingAreas(WaitingAreas waitingAreas) {
+        this.waitingAreas = waitingAreas;
     }
 }

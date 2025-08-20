@@ -52,7 +52,7 @@ public class SegmentStateMachineV3Service {
      * 同步处理关键系统事件
      */
     public boolean processSegmentEventSync(int segmentId, SegmentEvent event, Map<String, Object> eventData) {
-        if(event.isCritical()){
+//        if(event.isCritical()){
             logger.info("同步处理关键路段事件: {}-{}", segmentId, event.getChineseName());
             SegmentStateMachine segmentMachine = topLevelStateMachine.getSegmentStateMachine(segmentId);
             if (segmentMachine == null) {
@@ -60,10 +60,10 @@ public class SegmentStateMachineV3Service {
                 return false;
             }
             return segmentMachine.processSegmentEvent(event, eventData);
-        }else{
-            processSegmentEventAsync(segmentId, event, eventData);
-            return true;
-        }
+//        }else{
+//            processSegmentEventAsync(segmentId, event, eventData);
+//            return true;
+//        }
     }
 
     /**

@@ -3,8 +3,7 @@ package com.traffic.config.signalplatform.platformbase;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.traffic.config.entity.Region;
-import com.traffic.config.entity.Segment;
+import com.traffic.config.entity.Signal;
 import com.traffic.config.service.ConfigService;
 import com.traffic.config.service.event.SignalListEvent;
 import com.traffic.config.signalplatform.platformbase.entity.CrossInfo;
@@ -23,7 +22,6 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -58,15 +56,15 @@ public class CrossInfoManager {
     public void handleSignalListUpdate(SignalListEvent event){
         logger.info("收到 SignalListEvent 事件，开始更新 CrossInfoMap...");
         crossInfoMap.clear(); // 清空现有数据
-        List<Region> regions = event.getRegionList().getRegions();
-        for(Region region : regions){
+        List<Signal> signals = event.getRegionList().getRegions();
+        for(Signal signal : signals){
             CrossInfo crossInfo = new CrossInfo();
             crossInfo.setCrossid(0);    // 无效项
             // 这里仍沿用原始逻辑，使用 region.getName() 作为 key。
             // 如果实际业务中 sigid 是唯一的标识符，并且后续操作都基于 sigid，
             // 建议这里也使用 sigid 作为 key，以保持一致性。
-            crossInfoMap.put(region.getName(), crossInfo);
-            logger.debug("为区域 '{}' 添加了初始 CrossInfo 占位符。", region.getName());
+            crossInfoMap.put(signal.getName(), crossInfo);
+            logger.debug("为区域 '{}' 添加了初始 CrossInfo 占位符。", signal.getName());
         }
 
         // 首次立即尝试更新所有 CrossInfo
@@ -157,36 +155,37 @@ public class CrossInfoManager {
     }
 
     /** A-上行，对应北全放，B-下行，对应南全放
-     * A-Green, B-Green 错误状态不放行
+     * A-Green, B-Green 错误状态,必须亮红灯
      * A-Green，B-Red 放行A
      * A-Red，B-Green 放行B
      * A-Red，B-Red 放行全红
      * A-NULL，B notNull 放行B
      * A notNull，B-NULL 放行A
-     * A-NULL，B-NULL 错误状态不放行 -1
-     * 路段实际只能控制路段的进入，而不控制路段的离开
+     * A-NULL，B-NULL 错误状态不放行 亮红灯
+     * 路段实际只能控制路段的进入，而不控制路段的离开，不能出现任何一种组合没有灯态返回
      */
     protected int getControlPhase(SegmentState segmentStateA, SegmentState segmentStateB){
-        if(segmentStateA==null && segmentStateB==null) return -1;
+        if(segmentStateA==null && segmentStateB==null) return ControlPhase.ALL_RED.getValue();
         if(segmentStateA==null) {
             if(segmentStateB.isYellowFlashState())return ControlPhase.YELLOW_FLASH.getValue();
             if(segmentStateB.isAllRedState())return ControlPhase.ALL_RED.getValue();
             if(segmentStateB.isDownstreamState())return ControlPhase.SOUTH_FULL_GREEN.getValue();
-            return -1;
+            if(segmentStateB.isUpstreamState())return ControlPhase.NORTH_FULL_GREEN.getValue();
+            return ControlPhase.ALL_RED.getValue();
         }
         if(segmentStateB==null) {
             if(segmentStateA.isYellowFlashState())return ControlPhase.YELLOW_FLASH.getValue();
             if(segmentStateA.isAllRedState())return ControlPhase.ALL_RED.getValue();
             if(segmentStateA.isUpstreamState())return ControlPhase.NORTH_FULL_GREEN.getValue();
-            return -1;
+            if(segmentStateA.isDownstreamState())return ControlPhase.SOUTH_FULL_GREEN.getValue();
+            return ControlPhase.ALL_RED.getValue();
         }
-        if(segmentStateA.isUpstreamState() && segmentStateB.isDownstreamState()){ return -1; }
+        if(segmentStateA.isUpstreamState() && segmentStateB.isDownstreamState()){ ControlPhase.ALL_RED.getValue(); }
         if(segmentStateA.isYellowFlashState() || segmentStateB.isYellowFlashState()){ return ControlPhase.YELLOW_FLASH.getValue(); }
         if(segmentStateB.isUpstreamState()) return ControlPhase.NORTH_FULL_GREEN.getValue();
         if(segmentStateA.isDownstreamState()) return ControlPhase.SOUTH_FULL_GREEN.getValue();
-        if(segmentStateA.isAllRedState() && segmentStateB.isAllRedState()){ return ControlPhase.ALL_RED.getValue(); }
 
-        return -1;
+        return ControlPhase.ALL_RED.getValue();
     }
     protected boolean filterGuard(int ctrlPhase, String sigid){
         if(crossInfoMap.containsKey(sigid)) {
@@ -385,7 +384,7 @@ public class CrossInfoManager {
 
                     if (crossInfo.getDevBasicInfo().getOnline() == 1) { // 假设 online == 1 表示在线
                         onlineCount++;
-                        logger.info("CrossInfo单元 '{}' (sigid: {}) 状态：在线。", crossInfo.getCrossName(), sigid);
+                        //logger.info("CrossInfo单元 '{}' (sigid: {}) 状态：在线。", crossInfo.getCrossName(), sigid);
                     } else { // 假设 online == 0 表示离线
                         offlineCount++;
                         logger.warn("CrossInfo单元 '{}' (sigid: {}) 状态：离线！", crossInfo.getCrossName(), sigid);
@@ -398,8 +397,8 @@ public class CrossInfoManager {
                             crossInfo.getCrossName() != null ? crossInfo.getCrossName() : "未知 Cross");
                 }
             }
-            logger.info("CrossInfoMap 更新完成。总计收到 {} 条数据，成功更新/添加 {} 条。在线: {} 个, 离线: {} 个, 无效/跳过: {} 个。",
-                    incomingCrossInfoList.size(), updatedCount, onlineCount, offlineCount, notFoundCount);
+            //logger.info("CrossInfoMap 更新完成。总计收到 {} 条数据，成功更新/添加 {} 条。在线: {} 个, 离线: {} 个, 无效/跳过: {} 个。",
+            //        incomingCrossInfoList.size(), updatedCount, onlineCount, offlineCount, notFoundCount);
 
         } catch (Exception e) {
             logger.error("更新 CrossInfoMap 发生异常: {}", e.getMessage(), e);

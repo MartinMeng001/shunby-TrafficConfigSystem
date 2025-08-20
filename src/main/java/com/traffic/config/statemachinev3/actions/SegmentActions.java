@@ -4,15 +4,12 @@ import com.traffic.config.service.event.EventBusService;
 import com.traffic.config.statemachinev3.enums.segment.SegmentState;
 import com.traffic.config.statemachinev3.enums.segment.SegmentEvent;
 import com.traffic.config.statemachinev3.enums.segment.ClearanceDecision;
-import com.traffic.config.statemachinev3.events.GreenCtrlEvent;
 import com.traffic.config.statemachinev3.events.SegmentMachineActionEvent;
-import com.traffic.config.statemachinev3.utils.SpringContextUtil;
 import com.traffic.config.statemachinev3.variables.SegmentVariables;
 import com.traffic.config.statemachinev3.constants.SegmentConstants;
+import com.traffic.config.statemachinev3.variables.objects.CrossMettingZoneManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -261,13 +258,11 @@ public class SegmentActions {
             case UPSTREAM -> {
                 // 上行车辆
                 variables.addUpstreamVehicle(vehicledid);
-                // 要将该车辆从下行等待区[上行]中删除
-                variables.outUpstreamMeetingzone(vehicledid);
+                CrossMettingZoneManager.getInstance().upVehicleExitV2(variables.getSegmentId(), vehicledid);
             }
             case DOWNSTREAM -> {
                 variables.addDownstreamVehicle(vehicledid);
-                // 要将该车辆从上行等待区[下行]中删除
-                variables.outDownstreamMeetingzone(vehicledid);
+                CrossMettingZoneManager.getInstance().downVehicleExitV2(variables.getSegmentId(), vehicledid);
             }
         }
 
@@ -306,15 +301,11 @@ public class SegmentActions {
         switch (direction){
             case UPSTREAM -> {
                 variables.removeUpstreamVehicle(vehicledid);
-                // 该车辆进入上行等待区中
-                variables.inUpstreamMeetingzoneNext(vehicledid);
-                // 从下行等待区中删除该车
-                variables.outUpstreamMeetingzone(vehicledid);
+                CrossMettingZoneManager.getInstance().upVehicleEnterV2(variables.getSegmentId(), vehicleId);
             }
             case DOWNSTREAM -> {
                 variables.removeDownstreamVehicle(vehicledid);
-                variables.inDownstreamMeetingzone(vehicledid);
-                variables.outDownstreamMeetingzone(vehicledid);
+                CrossMettingZoneManager.getInstance().downVehicleEnterV2(variables.getSegmentId(), vehicleId);
             }
         }
 

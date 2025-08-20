@@ -1,16 +1,15 @@
 package com.traffic.config.entity;
 
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-public class Region {
+public class Signal {
     private String name;
 
-    public Region() {
+    public Signal() {
         // 无参构造函数
     }
 
-    public Region(String name) {
+    public Signal(String name) {
         this.name = name;
     }
 

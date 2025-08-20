@@ -207,7 +207,7 @@ public class WebServiceClient {
         try {
             HashMap<String, String> params = new HashMap<>();
             params.put("arg0", guard.toJSONString());
-            logger.info("Guard:{}", JSON.toJSONString(guard));
+            //logger.info("Guard:{}", JSON.toJSONString(guard));
             String result = callWebService("SetGuardControl", params);
             JSONObject obj = JSON.parseObject(result);
             if(obj==null) return 0;

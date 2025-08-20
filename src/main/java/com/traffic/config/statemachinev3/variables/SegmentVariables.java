@@ -94,6 +94,11 @@ public class SegmentVariables {
     private final CrossMettingZoneManager crossMeetingZoneManager;
 
     /**
+     * 人工强制：0-无，1-强制全红，2-强制黄闪，3-强制上行，4-强制下行
+     */
+    private volatile int forceSwitchReq;
+
+    /**
      * 上行通行请求标志
      */
     private volatile boolean upstreamRequest;
@@ -327,6 +332,7 @@ public class SegmentVariables {
         this.downstreamRequest = false;
         this.upstreamRequestTime = null;
         this.downstreamRequestTime = null;
+        this.forceSwitchReq = 0;
 
         // 清空决策变量初始化
         this.upstreamClearanceDecision = ClearanceDecision.WAIT;
@@ -355,7 +361,7 @@ public class SegmentVariables {
         this.crossMeetingZoneManager.registerCrossing(1, SegmentConstants.DEFAULT_UPSTREAM_CAPACITY);
         this.crossMeetingZoneManager.registerCrossing(2, SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY);
         this.crossMeetingZoneManager.registerCrossing(3, SegmentConstants.DEFAULT_UPSTREAM_CAPACITY);
-        this.crossMeetingZoneManager.registerCrossing(4, SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY);
+        //this.crossMeetingZoneManager.registerCrossing(4, SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY);
     }
     // ==================== 公共方法 =======================
     public boolean hasVehicle(){
@@ -570,21 +576,8 @@ public class SegmentVariables {
     public void clearUpstreamMeetingzone(){
         crossMeetingZoneManager.upVehicleClear(upMeetingZoneCrossId.get());
     }
-    public void inUpstreamMeetingzone(String vehicleId){
-        crossMeetingZoneManager.upVehicleEnter(upMeetingZoneCrossId.get(), vehicleId);
-    }
-    public void inUpstreamMeetingzoneNext(String vehicleId){
-        crossMeetingZoneManager.upVehicleEnterNext(upMeetingZoneCrossId.get(), vehicleId);
-    }
-    public void inDownstreamMeetingzone(String vehicleId){
-        crossMeetingZoneManager.downVehicleEnter(downMeetingZoneCrossId.get(), vehicleId);
-    }
-    public void inDownstreamMeetingzoneNext(String vehicleId){
-        crossMeetingZoneManager.downVehicleEnterNext(upMeetingZoneCrossId.get(), vehicleId);
-    }
-    public void outUpstreamMeetingzone(String vehicleId){
-        crossMeetingZoneManager.upVehicleExit(downMeetingZoneCrossId.get(), vehicleId);
-    }
+
+
     public boolean isEmptyUpstreamMeetingzone(){
         MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(upMeetingZoneCrossId.get());
         if(meetingArea == null) return true;
@@ -603,15 +596,8 @@ public class SegmentVariables {
     public void clearDownstreamMeetingzone(){
         crossMeetingZoneManager.downVehicleClear(downMeetingZoneCrossId.get());
     }
-    public void inDownUpstreamMeetingzone(String vehicleId){
-        crossMeetingZoneManager.downVehicleEnter(downMeetingZoneCrossId.get(), vehicleId);
-    }
-//    public void inDownstreamMeetingzoneNext(String vehicleId){
-//        crossMeetingZoneManager.downVehicleEnterNext(downMeetingZoneCrossId.get(), vehicleId);
-//    }
-    public void outDownstreamMeetingzone(String vehicleId){
-        crossMeetingZoneManager.downVehicleExit(upMeetingZoneCrossId.get(), vehicleId);
-    }
+
+
     public boolean isEmptyDownstreamMeetingzone(){
         MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(downMeetingZoneCrossId.get());
         if(meetingArea == null) return true;
@@ -827,6 +813,21 @@ public class SegmentVariables {
      * @return 优先服务方向
      */
     public Direction determinePriorityDirection() {
+        // 先确定是否有强制请求
+        switch (forceSwitchReq){
+            case 0->{   // 无强制
+                break;
+            }
+            case 1, 2->{
+                return Direction.NONE;
+            }
+            case 3->{
+                return Direction.UPSTREAM;
+            }
+            case 4->{
+                return Direction.DOWNSTREAM;
+            }
+        }
         if (upstreamRequest && !downstreamRequest) {
             return Direction.UPSTREAM;
         } else if (!upstreamRequest && downstreamRequest) {
@@ -2732,6 +2733,8 @@ public class SegmentVariables {
     public int getDownstreamOutCounter() { return downstreamOutCounter.get(); }
 
     // 通行请求相关
+    public int getForceSwitchReq() { return forceSwitchReq; }
+    public void setForceSwitchReq(int forceSwitchReq) { this.forceSwitchReq = forceSwitchReq; }
     public boolean isUpstreamRequest() { return upstreamRequest; }
     public boolean isDownstreamRequest() { return downstreamRequest; }
     public LocalDateTime getUpstreamRequestTime() { return upstreamRequestTime; }

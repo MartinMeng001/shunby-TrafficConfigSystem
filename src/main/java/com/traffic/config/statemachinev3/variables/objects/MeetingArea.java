@@ -27,8 +27,8 @@ public class MeetingArea {
             this.licensePlates.add(licensePlate);
         }
         vehicleCount.incrementAndGet();
-        System.out.println("车辆进入会车区，当前车辆计数：" + this.vehicleCount);
-        System.out.println("当前车牌集合：" + this.licensePlates);
+        //System.out.println("车辆进入会车区，当前车辆计数：" + this.vehicleCount);
+        //System.out.println("当前车牌集合：" + this.licensePlates);
     }
 
     /**
@@ -42,11 +42,12 @@ public class MeetingArea {
                 this.licensePlates.remove(licensePlate);
             }
             this.vehicleCount.decrementAndGet();
-            System.out.println("车辆离开会车区，当前车辆计数：" + this.vehicleCount);
-            System.out.println("当前车牌集合：" + this.licensePlates);
-        } else {
-            System.out.println("会车区已无车辆，无法处理车辆离开事件。");
+//            System.out.println("车辆离开会车区，当前车辆计数：" + this.vehicleCount);
+//            System.out.println("当前车牌集合：" + this.licensePlates);
         }
+//        else {
+//            System.out.println("会车区已无车辆，无法处理车辆离开事件。");
+//        }
     }
 
     public int getCount(){

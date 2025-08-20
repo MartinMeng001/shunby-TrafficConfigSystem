@@ -238,6 +238,7 @@ public class TopLevelStateMachine {
             if(lastSegment.getSegmentId()!=4) return;
             EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", null, lastSegment.getCurrentState(),
                     getSigidBySegmentId(lastSegment.getSegmentId(), false)));
+//            logger.info("[last cross]segmentId: {}, sigid: {}, run: {}", lastSegment.getSegmentId(), getSigidBySegmentId(lastSegment.getSegmentId(), false), lastSegment.getCurrentState().getDescription());
 //            if(lastSegment.getCurrentState().isDownstreamState()){
 //                EventBusService.publishStatic(new CustomControlEvent("CustomControlEvent", null, lastSegment.getCurrentState(),
 //                        getSigidBySegmentId(lastSegment.getSegmentId(), false)));

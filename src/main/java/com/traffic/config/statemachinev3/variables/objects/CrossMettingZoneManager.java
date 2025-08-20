@@ -17,10 +17,31 @@ public class CrossMettingZoneManager {
      * 注册一个新的会车区
      */
     public void registerCrossing(int crossMeetingZoneId, int maxCapacity){
-        allCrossMeetingZone.put(crossMeetingZoneId, new CrossMeetingArea(maxCapacity));
+        allCrossMeetingZone.put(crossMeetingZoneId, new CrossMeetingArea(crossMeetingZoneId, maxCapacity));
         System.out.println("会车区 " + crossMeetingZoneId + " 已注册，最大容量: " + maxCapacity);
     }
 
+    public boolean hasUpstreamRequest(int segmentId){
+        if(segmentId == 1){ // 路段1没有上行请求，只有下行请求
+            return false;
+        }
+//        if(segmentId == allCrossMeetingZone.size()+1){  // 最后一个路段没有下行请求，只有上行请求
+//            if(!allCrossMeetingZone.get(segmentId-1).getUpMeetingArea().isEmpty()) return true;
+//        }
+        if(segmentId > 1){
+            if(!allCrossMeetingZone.get(segmentId-1).getUpMeetingArea().isEmpty()) return true;
+        }
+        return false;
+    }
+    public boolean hasDownstreamRequest(int segmentId){
+        if(segmentId == allCrossMeetingZone.size()+1){  // 最后一个路段没有下行请求，只有上行请求
+            return false;
+        }
+        if(segmentId <= allCrossMeetingZone.size() && segmentId>0){
+            if(!allCrossMeetingZone.get(segmentId).getDownMeetingArea().isEmpty()) return true;
+        }
+        return false;
+    }
     /**
      * 检查指定会车区是否有容量
      */
@@ -40,51 +61,41 @@ public class CrossMettingZoneManager {
     }
     /**
      * 通知会车区有一辆车进入
+     * 上行，只有路段1到3会产生upVehicleEnter, 同一车牌不应当出现在其它会车区
+     * 下行，只有路段2到路段4会产生downVehicleEnter
      */
-    public void upVehicleEnter(int crossMeetingZoneId, String vehicleId){
-        CrossMeetingArea meetingArea = allCrossMeetingZone.get(crossMeetingZoneId);
-        if(meetingArea != null){
-            meetingArea.getUpMeetingArea().vehicleEntered(vehicleId);
-            System.out.println("上行会车区增加车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
-        }
+    public void upVehicleEnterV2(int segmentId, String vehicleId){
+        allCrossMeetingZone.forEach((zoneId, meetingArea) -> {
+            if(zoneId == segmentId){
+                //System.out.println("[upVehicleEnter] segmentId="+segmentId+", vehicleId="+vehicleId);
+                meetingArea.getUpMeetingArea().vehicleEntered(vehicleId);
+            }else{
+                meetingArea.removeVehicleId(vehicleId);
+            }
+        });
     }
-    public void upVehicleEnterNext(int crossMeetingZoneId, String vehicleId){
-        CrossMeetingArea meetingArea  = allCrossMeetingZone.get(crossMeetingZoneId);
-        if(meetingArea != null){
-            meetingArea.getUpMeetingArea().vehicleEntered(vehicleId);
-            System.out.println("上行会车区增加车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
-        }
+    public void downVehicleEnterV2(int segmentId, String vehicleId){
+        allCrossMeetingZone.forEach((zoneId, meetingArea) -> {
+            if(zoneId == segmentId-1){
+                meetingArea.getDownMeetingArea().vehicleEntered(vehicleId);
+            }else{
+                meetingArea.removeVehicleId(vehicleId);
+            }
+        });
     }
-    public void downVehicleEnter(int crossMeetingZoneId, String vehicleId){
-        CrossMeetingArea meetingArea = allCrossMeetingZone.get(crossMeetingZoneId);
-        if(meetingArea != null){
-            meetingArea.getDownMeetingArea().vehicleEntered(vehicleId);
-            System.out.println("下行会车区增加车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
-        }
-    }
-    public void downVehicleEnterNext(int crossMeetingZoneId, String vehicleId){
-        CrossMeetingArea meetingArea = allCrossMeetingZone.get(crossMeetingZoneId);
-        if(meetingArea != null){
-            meetingArea.getDownMeetingArea().vehicleEntered(vehicleId);
-            System.out.println("下行会车区增加车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
-        }
-    }
+
     /**
      * 通知会车区有一辆车离开
+     * 上行，只有路段1到3会产生upVehicleExit
+     * 下行，只有路段2到4会产生downVehicleExit
      */
-    public void upVehicleExit(int crossMeetingZoneId, String vehicleId){
-        CrossMeetingArea meetingArea = allCrossMeetingZone.get(crossMeetingZoneId);
-        if(meetingArea != null){
-            meetingArea.getUpMeetingArea().vehicleExited(vehicleId);
-            System.out.println("上行会车区删除车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
-        }
+    public void upVehicleExitV2(int segmentId, String vehicleId){
+        if(segmentId < 2 || segmentId > allCrossMeetingZone.size()+1){ return; }
+        allCrossMeetingZone.get(segmentId-1).getUpMeetingArea().vehicleExited(vehicleId);
     }
-    public void downVehicleExit(int crossMeetingZoneId, String vehicleId){
-        CrossMeetingArea meetingArea = allCrossMeetingZone.get(crossMeetingZoneId);
-        if(meetingArea != null){
-            meetingArea.getDownMeetingArea().vehicleExited(vehicleId);
-            System.out.println("下行会车区删除车牌:"+vehicleId+" 会车区ID:"+crossMeetingZoneId);
-        }
+    public void downVehicleExitV2(int segmentId, String vehicleId){
+        if(segmentId < 1 || segmentId> allCrossMeetingZone.size())return;
+        allCrossMeetingZone.get(segmentId).getDownMeetingArea().vehicleExited(vehicleId);
     }
     /**
      * 通知会车区清空
@@ -115,6 +126,11 @@ public class CrossMettingZoneManager {
         }
         return null;
     }
+
+    public Map<Integer, CrossMeetingArea> getAllCrossMeetingZone() {
+        return allCrossMeetingZone;
+    }
+
     public void printAllCrossMeetingZones() {
         allCrossMeetingZone.forEach((zoneId, meetingArea) -> {
             System.out.println("会车区ID: " + zoneId + ", 信息: " + meetingArea.toString());

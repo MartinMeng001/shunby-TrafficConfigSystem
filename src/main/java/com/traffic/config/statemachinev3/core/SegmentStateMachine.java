@@ -8,6 +8,7 @@ import com.traffic.config.statemachinev3.constants.SegmentConstants;
 import com.traffic.config.statemachinev3.guards.SegmentGuards;
 import com.traffic.config.statemachinev3.actions.SegmentActions;
 import com.traffic.config.statemachinev3.clearance.ClearanceDecisionEngine;
+import com.traffic.config.statemachinev3.variables.objects.CrossMettingZoneManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -183,15 +184,11 @@ public class SegmentStateMachine {
 
         try {
             // 1. 检查事件是否适用于当前状态
-            if (!isEventApplicable(event, currentState)) {
+            if (!isEventApplicable(event, currentState, eventData)) {
                 if(variables.hasVehicle())
                     logger.debug("路段 {} 事件 {} 不适用于当前状态 {}",
                         variables.getSegmentId(), event.getChineseName(), currentState.getChineseName());
                 return false;
-            }
-            if(variables.hasVehicle()){
-                logger.info(variables.getRequestStatusSummary());
-                logger.info(variables.getStatusSummary());
             }
             // 2. 确定目标状态, 每种条件都应该有一个明确的状态需求
             SegmentState targetState = determineTargetState(event, currentState);
@@ -216,6 +213,35 @@ public class SegmentStateMachine {
                 // 6. 记录状态转换
                 recordStateTransition(oldState, currentState, event, eventTime);
             }
+            // 6. 检查强制切换，如果成功，则清空
+            if(variables.getForceSwitchReq()>0){
+                switch(variables.getForceSwitchReq()){
+                    case 1->{
+                        if(currentState.isAllRedState()){
+                            variables.setForceSwitchReq(0);
+                            logger.info("路段 {} 强制全红成功", variables.getSegmentId());
+                        }
+                    }
+                    case 2->{
+                        if(currentState.isYellowFlashState()){
+                            variables.setForceSwitchReq(0);
+                            logger.info("路段 {} 强制黄闪成功", variables.getSegmentId());
+                        }
+                    }
+                    case 3->{
+                        if(currentState.isUpstreamState()){
+                            variables.setForceSwitchReq(0);
+                            logger.info("路段 {} 强制上行成功", variables.getSegmentId());
+                        }
+                    }
+                    case 4->{
+                        if(currentState.isDownstreamState()){
+                            variables.setForceSwitchReq(0);
+                            logger.info("路段 {} 强制下行成功", variables.getSegmentId());
+                        }
+                    }
+                }
+            }
 
             return true;
         } catch (Exception e) {
@@ -231,6 +257,16 @@ public class SegmentStateMachine {
      * 基于当前状态和事件类型确定下一个状态
      */
     private SegmentState determineTargetState(SegmentEvent event, SegmentState currentState) {
+        // 最高优先级 - 人工控制, 强控可以控制管控方向
+        if(event == SegmentEvent.FORCE_SWITCH || event == SegmentEvent.SYSTEM_RESET) {
+            if(variables.getForceSwitchReq()==1) return SegmentState.ALL_RED_CLEAR;
+            if(variables.getForceSwitchReq()==2) return SegmentState.ALL_YELLOWFLASH_MANUAL;
+            // 如果需要立刻切换，取消下面的注释，如果需要经过全红过渡，则注释掉
+            if(variables.getForceSwitchReq()==3) return SegmentState.UPSTREAM_GREEN;
+            if(variables.getForceSwitchReq()==4) return SegmentState.DOWNSTREAM_GREEN;
+            //return SegmentState.ALL_RED_CLEAR;
+        }
+        // 自动运行的最高优先级
         switch (currentState){
             case ALL_YELLOWFLASH_MANUAL -> {
                 return SegmentState.ALL_YELLOWFLASH_MANUAL;
@@ -239,6 +275,7 @@ public class SegmentStateMachine {
                 return determineGreenStateFromRed();
             }
         }
+        // 正常功能优先级
         switch (event) {
             case TIMER_TICK -> {
                 return determineTimerTickTargetState();
@@ -251,7 +288,7 @@ public class SegmentStateMachine {
                  ID_LOGIC_ERROR_DETECTED, DATA_INCONSISTENCY_FOUND, SYSTEM_STATE_MACHINE_COMMAND, CONFIG_UPDATE-> { // 需要action处理，返回当前状态
                 return currentState;
             }
-            case FORCE_SWITCH, EMERGENCY_OVERRIDE, SYSTEM_RESET -> {
+            case EMERGENCY_OVERRIDE -> {
                 if (currentState.isGreenState()) {
                     return SegmentState.ALL_RED_CLEAR;
                 }
@@ -276,6 +313,10 @@ public class SegmentStateMachine {
      * 实现守护条件函数 G: Q × Σ × V* → Boolean
      */
     private boolean checkGuardCondition(SegmentEvent event, SegmentState targetState) {
+        // 如果人工控制，直接执行，不需要检查守护条件
+        if(event == SegmentEvent.FORCE_SWITCH) {
+            return true;
+        }
         switch (currentState) {
             case ALL_RED_CLEAR -> {
                 if(targetState == SegmentState.ALL_NOCTRL)  return SegmentGuards.checkRedToNoCtrl(currentState, targetState, event, variables);    // 从全红状态到非管控状态，直接切换
@@ -338,7 +379,7 @@ public class SegmentStateMachine {
         }
 
         // 如果是状态转换，执行相应的进入动作，这里是切换动作
-        if (targetState != currentState) {
+        if (targetState != currentState || variables.getForceSwitchReq()>0) {
             executeStateEntryAction(targetState, event);
         }
     }
@@ -592,8 +633,22 @@ public class SegmentStateMachine {
     /**
      * 检查事件是否适用于当前状态
      */
-    private boolean isEventApplicable(SegmentEvent event, SegmentState state) {
-        // 系统事件在所有状态下都适用 - 不存在这种状态，暂时禁用，以后根据需求确定是否添加
+    private boolean isEventApplicable(SegmentEvent event, SegmentState state, Map<String, Object> eventData) {
+        // 对event做前期处理
+        switch (event){
+            case FORCE_SWITCH -> {
+                String ctrlPhase = (String) eventData.get("ctrlPhase");
+                if("RED".equalsIgnoreCase(ctrlPhase)){
+                    variables.setForceSwitchReq(1);
+                }else if("YF".equalsIgnoreCase(ctrlPhase)){
+                    variables.setForceSwitchReq(2);
+                }else if("UP".equalsIgnoreCase(ctrlPhase)){
+                    variables.setForceSwitchReq(3);
+                }else if("DOWN".equalsIgnoreCase(ctrlPhase)){
+                    variables.setForceSwitchReq(4);
+                }
+            }
+        }
 //        if (event.isSystemEvent()) {
 //            return true;
 //        }
@@ -609,10 +664,10 @@ public class SegmentStateMachine {
 //        }
 
         // 车辆事件在运行状态下适用，不存在其它状态，这里应该永远返回true
-        if (event == SegmentEvent.VEHICLE_ENTER_UPSTREAM || event == SegmentEvent.VEHICLE_EXIT_UPSTREAM ||
-        event == SegmentEvent.VEHICLE_EXIT_DOWNSTREAM || event == SegmentEvent.VEHICLE_ENTER_DOWNSTREAM) {
-            //return state != SegmentState.FAULT_MODE && state != SegmentState.MAINTENANCE;
-        }
+//        if (event == SegmentEvent.VEHICLE_ENTER_UPSTREAM || event == SegmentEvent.VEHICLE_EXIT_UPSTREAM ||
+//        event == SegmentEvent.VEHICLE_EXIT_DOWNSTREAM || event == SegmentEvent.VEHICLE_ENTER_DOWNSTREAM) {
+//            //return state != SegmentState.FAULT_MODE && state != SegmentState.MAINTENANCE;
+//        }
 
         return true;
     }
@@ -642,8 +697,13 @@ public class SegmentStateMachine {
             }
         }
         // 检查上下行请求及清空, 有车则有请求，无车则清空
-        variables.setUpstreamRequest(!variables.isEmptyUpstreamMeetingzone());
-        variables.setDownstreamRequest(!variables.isEmptyDownstreamMeetingzone());
+        // 应该根据等待区来判断
+        // 对于路段1，只判断等待区1下行请求
+        // 对于路段2，判断等待区1上行请求和等待区2下行请求
+        // 对于路段3，判断等待区2上行请求和等待区3下行请求
+        // 对于路段4，判断等待区3上行请求
+        variables.setUpstreamRequest(CrossMettingZoneManager.getInstance().hasUpstreamRequest(variables.getSegmentId()));
+        variables.setDownstreamRequest(CrossMettingZoneManager.getInstance().hasDownstreamRequest(variables.getSegmentId()));
 
         // 检查故障条件
 //        if (shouldTriggerFaultEvent()) {
@@ -651,9 +711,9 @@ public class SegmentStateMachine {
 //        }
 
         // 检查强制切换条件
-        if (shouldTriggerForceSwitch()) {
-            postEvent(SegmentEvent.FORCE_SWITCH, null);
-        }
+//        if (shouldTriggerForceSwitch()) {
+//            postEvent(SegmentEvent.FORCE_SWITCH, null);
+//        }
     }
 
     /**
@@ -675,17 +735,17 @@ public class SegmentStateMachine {
      * 检查是否应该触发强制切换
      */
     private boolean shouldTriggerForceSwitch() {
-        // 如果绿灯时间过长
+        // 如果绿灯时间过长，这属于正常切换逻辑，不需要放在这里
         if (currentState.isGreenState() && variables.isGreenTimeout()) {
             return true;
         }
 
-        // 如果容量达到上限
+        // 如果容量达到上限，这属于正常切换逻辑，不需要放在这里
         if (currentState == SegmentState.UPSTREAM_GREEN &&
                 variables.getUpstreamVehicleIds().size() >= variables.getUpstreamCapacity()) {
             return true;
         }
-
+        // 如果容量达到上限，这属于正常切换逻辑，不需要放在这里
         if (currentState == SegmentState.DOWNSTREAM_GREEN &&
                 variables.getDownstreamVehicleIds().size() >= variables.getDownstreamCapacity()) {
             return true;
