@@ -32,6 +32,7 @@
         <lombok.version>1.18.30</lombok.version>
         <hutool.version>5.8.25</hutool.version>
         <fastjson.version>2.0.45</fastjson.version>
+        <webjars.version>1.5.1</webjars.version>
     </properties>
 
     <dependencies>
@@ -51,6 +52,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web-services</artifactId>
+        </dependency>
+        <!-- 核心WebSocket支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+
+        <!-- 前端WebSocket客户端支持 -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>sockjs-client</artifactId>
+            <version>${webjars.version}</version>
         </dependency>
 
         <!-- Spring Boot Actuator (健康检查、监控) -->
@@ -91,6 +104,17 @@
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
             <version>${fastjson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.13.5</version> <!-- 与 Spring Boot 2.7.18 兼容 -->
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.13.5</version>
         </dependency>
 
         <!-- Spring Boot Configuration Processor -->

@@ -7,11 +7,12 @@ public class Segment {
     private String name;
     private String upsigid;
     private String downsigid;
-    private int allred;
-    private int upctrl;
-    private int downctrl;
-    private int inzone;
-    private int outzone;
+    private int length;
+    private int minRed;
+    private int maxRed;
+    private int minGreen;
+    private int maxGreen;
+
 
     @XmlElement(name = "segmentId")
     public int getSegmentId() {
@@ -46,48 +47,44 @@ public class Segment {
     public void setDownsigid(String downsigid) {
         this.downsigid = downsigid;
     }
-    @XmlElement(name = "allred")
-    public int getAllred() {
-        return allred;
+
+    @XmlElement(name = "length")
+    public int getLength() {
+        return length;
+    }
+    public void setLength(int length) {
+        this.length = length;
     }
 
-    public void setAllred(int allred) {
-        this.allred = allred;
+    @XmlElement(name = "minRed")
+    public int getMinRed() {
+        return minRed;
+    }
+    public void setMinRed(int minRed) {
+        this.minRed = minRed;
     }
 
-    @XmlElement(name = "upctrl")
-    public int getUpctrl() {
-        return upctrl;
+    @XmlElement(name = "maxRed")
+    public int getMaxRed() {
+        return maxRed;
+    }
+    public void setMaxRed(int maxRed) {
+        this.maxRed = maxRed;
     }
 
-    public void setUpctrl(int upctrl) {
-        this.upctrl = upctrl;
+    @XmlElement(name = "minGreen")
+    public int getMinGreen() {
+        return minGreen;
+    }
+    public void setMinGreen(int minGreen) {
+        this.minGreen = minGreen;
     }
 
-    @XmlElement(name = "downctrl")
-    public int getDownctrl() {
-        return downctrl;
+    @XmlElement(name = "maxGreen")
+    public int getMaxGreen() {
+        return maxGreen;
     }
-
-    public void setDownctrl(int downctrl) {
-        this.downctrl = downctrl;
-    }
-
-    @XmlElement(name = "inzone")
-    public int getInzone() {
-        return inzone;
-    }
-
-    public void setInzone(int inzone) {
-        this.inzone = inzone;
-    }
-
-    @XmlElement(name = "outzone")
-    public int getOutzone() {
-        return outzone;
-    }
-
-    public void setOutzone(int outzone) {
-        this.outzone = outzone;
+    public void setMaxGreen(int maxGreen) {
+        this.maxGreen = maxGreen;
     }
 }

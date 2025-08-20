@@ -3,6 +3,15 @@ server:
   servlet:
     context-path: /traffic-config
 
+# WebSocket配置
+websocket:
+  traffic:
+    endpoint: /ws/traffic
+    allowed-origins: "*"  # 生产环境应配置具体域名
+    max-session-idle-timeout: 30000
+    max-text-message-buffer-size: 8192
+    max-binary-message-buffer-size: 8192
+
 spring:
   application:
     name: traffic-config-system

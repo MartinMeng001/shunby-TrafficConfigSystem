@@ -2,7 +2,6 @@ package com.traffic.config.entity;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,7 @@ public class GlobalConfig {
     private int allRed;
     private int maxAllRed;
     private String platformUrl;
-    private RegionList regionList;
+    private SignalControllerList regionList;
 
     @XmlElement(name = "AllRed")
     public int getAllRed() {
@@ -40,18 +39,18 @@ public class GlobalConfig {
     }
 
     @XmlElement(name = "RegionList")
-    public RegionList getRegionList() {
+    public SignalControllerList getRegionList() {
         return regionList;
     }
 
-    public void setRegionList(RegionList regionList) {
+    public void setRegionList(SignalControllerList regionList) {
         this.regionList = regionList;
     }
     // 便利方法：获取区域名称列表
     public List<String> getRegionNames() {
         if (regionList != null && regionList.getRegions() != null) {
             return regionList.getRegions().stream()
-                    .map(Region::getName)
+                    .map(Signal::getName)
                     .collect(java.util.stream.Collectors.toList());
         }
         return new ArrayList<>();

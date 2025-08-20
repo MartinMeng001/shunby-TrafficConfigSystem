@@ -30,12 +30,12 @@ public class WebServiceClient {
 
     private static final Logger logger = LoggerFactory.getLogger(WebServiceClient.class);
 
-    private String serverUrl = "192.168.1.254:8080"; // 默认地址
+    private String serverUrl = "122.5.105.22:2020"; // 默认地址
     private String nameSpace = "http://webservice/";
     //private boolean beInited = false;
 
     public void updateServerUrl(String serverIp) {
-        this.serverUrl = serverIp + ":8080"; // 假设端口为8080
+        this.serverUrl = serverIp + ":2020"; // 假设端口为8080
     }
 
     @PostConstruct
@@ -207,7 +207,7 @@ public class WebServiceClient {
         try {
             HashMap<String, String> params = new HashMap<>();
             params.put("arg0", guard.toJSONString());
-            logger.info("Guard:{}", JSON.toJSONString(guard));
+            //logger.info("Guard:{}", JSON.toJSONString(guard));
             String result = callWebService("SetGuardControl", params);
             JSONObject obj = JSON.parseObject(result);
             if(obj==null) return 0;

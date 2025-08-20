@@ -31,9 +31,9 @@ public class SystemStateMachineV3Service {
     }
 
     /**
-     * 定时触发系统心跳事件（每500ms一次，比V2更频繁）
+     * 定时触发系统心跳事件（每1000ms一次）
      */
-    @Scheduled(fixedRate = 500)
+    @Scheduled(fixedRate = 1000)
     public void systemHeartbeat() {
         try {
             topLevelStateMachine.processTimerTick();  // 直接调用

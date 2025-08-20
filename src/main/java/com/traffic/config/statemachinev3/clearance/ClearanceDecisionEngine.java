@@ -108,9 +108,9 @@ public class ClearanceDecisionEngine {
         }
 
         // 3. 检查是否为警告状态（需要注意但可通行）
-        if (isWarningCondition(context)) {
-            return ClearanceDecision.WARNING;
-        }
+//        if (isWarningCondition(context)) {
+//            return ClearanceDecision.WARNING;
+//        }
 
         // 4. 默认为保守状态（需要保守清空）
 //        if(isCONSERVATIVECondition(context)) {
@@ -126,7 +126,7 @@ public class ClearanceDecisionEngine {
     private boolean shouldWait(ClearanceContext context) {
         // 车辆ID集合不为空且计数器严重不匹配
         boolean severeCounterMismatch = !context.vehicleIds.isEmpty() &&
-                Math.abs(context.inCounter - context.outCounter) > 1;
+                Math.abs(context.inCounter - context.outCounter) >= 1;
 
         // 传感器故障率过高, 不是目前算法规定的条件
         // boolean sensorCriticalFailure = context.sensorFailureRate > 0.5;

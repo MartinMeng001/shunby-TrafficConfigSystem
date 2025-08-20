@@ -405,26 +405,6 @@ public class ConfigServiceImpl implements ConfigService {
             throw ConfigException.validationError("sigid", segment.getUpsigid());
         }
 
-        // 验证数值范围
-        if (segment.getAllred() < 0) {
-            throw ConfigException.validationError("allred", segment.getAllred());
-        }
-
-        if (segment.getUpctrl() < 0) {
-            throw ConfigException.validationError("upctrl", segment.getUpctrl());
-        }
-
-        if (segment.getDownctrl() < 0) {
-            throw ConfigException.validationError("downctrl", segment.getDownctrl());
-        }
-
-        if (segment.getInzone() < 0) {
-            throw ConfigException.validationError("inzone", segment.getInzone());
-        }
-
-        if (segment.getOutzone() < 0) {
-            throw ConfigException.validationError("outzone", segment.getOutzone());
-        }
     }
 
     @Override
@@ -446,18 +426,6 @@ public class ConfigServiceImpl implements ConfigService {
             throw ConfigException.validationError("detectPoint.index", detectPoint.getIndex());
         }
 
-        if (detectPoint.getSegmentId() <= 0) {
-            throw ConfigException.validationError("detectPoint.segmentId", detectPoint.getSegmentId());
-        }
-
-        // 验证字符串字段不为空
-        if (!StringUtils.hasText(detectPoint.getInout())) {
-            throw ConfigException.validationError("detectPoint.inout", detectPoint.getInout());
-        }
-
-        if (!StringUtils.hasText(detectPoint.getDirection())) {
-            throw ConfigException.validationError("detectPoint.direction", detectPoint.getDirection());
-        }
     }
     @Override
     public void refreshCache() {

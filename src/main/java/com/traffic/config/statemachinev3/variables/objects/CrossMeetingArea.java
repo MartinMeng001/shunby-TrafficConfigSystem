@@ -5,10 +5,10 @@ public class CrossMeetingArea {
     private final MeetingArea upMeetingArea;
     private final MeetingArea downMeetingArea;
 
-    public CrossMeetingArea(int crossMeetingAreaId) {
+    public CrossMeetingArea(int crossMeetingAreaId, int maxCapacity) {
         this.crossMeetingAreaId = crossMeetingAreaId;
-        this.upMeetingArea = new MeetingArea(2);
-        this.downMeetingArea = new MeetingArea(2);
+        this.upMeetingArea = new MeetingArea(maxCapacity);
+        this.downMeetingArea = new MeetingArea(maxCapacity);
     }
 
     public int getCrossMeetingAreaId() {
@@ -19,6 +19,10 @@ public class CrossMeetingArea {
     }
     public MeetingArea getDownMeetingArea() {
         return downMeetingArea;
+    }
+    public void removeVehicleId(String vehicleId){
+        upMeetingArea.vehicleExited(vehicleId);
+        downMeetingArea.vehicleExited(vehicleId);
     }
     public String toString(){
         return String.format("WaitAreaId:%d, Vehicles[UP]:%d, Vehicles[DOWN]:%d\r\n", crossMeetingAreaId, upMeetingArea.getCount(), downMeetingArea.getCount());
