@@ -56,7 +56,7 @@ public class CrossInfoManager {
     public void handleSignalListUpdate(SignalListEvent event){
         logger.info("收到 SignalListEvent 事件，开始更新 CrossInfoMap...");
         crossInfoMap.clear(); // 清空现有数据
-        List<Signal> signals = event.getRegionList().getRegions();
+        List<Signal> signals = event.getSignalList().getSignals();
         for(Signal signal : signals){
             CrossInfo crossInfo = new CrossInfo();
             crossInfo.setCrossid(0);    // 无效项

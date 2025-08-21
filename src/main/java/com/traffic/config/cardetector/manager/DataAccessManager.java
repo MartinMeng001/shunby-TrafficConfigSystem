@@ -111,31 +111,15 @@ public class DataAccessManager {
     }
     private SegmentEvent makeSegmentEvent(DetectPoint point, int runDirection){
         if(point==null) return null;
-        if(point.getDirection().equalsIgnoreCase("up")){    // 上行检测点逻辑
-            String inout = point.getInout();
-            if("in".equalsIgnoreCase(inout)){
-                if(runDirection==0){ return null; }
-                if(runDirection==1){ return SegmentEvent.VEHICLE_ENTER_UPSTREAM; }
-                if(runDirection==2){ return SegmentEvent.VEHICLE_EXIT_DOWNSTREAM; }
-            }else if("out".equalsIgnoreCase(inout)){
-                if(runDirection==0){ return null; }
-                if(runDirection==1){ return SegmentEvent.VEHICLE_EXIT_UPSTREAM; }
-                if(runDirection==2){ return SegmentEvent.VEHICLE_ENTER_DOWNSTREAM; }
+        switch(point.getIndex()){
+            case 1, 3, 5, 7->{
+                return SegmentEvent.VEHICLE_ENTER_UPSTREAM;
             }
-            return null;
-        }
-        if(point.getDirection().equalsIgnoreCase("down")){    // 上行检测点逻辑
-            String inout = point.getInout();
-            if("in".equalsIgnoreCase(inout)){
-                if(runDirection==0){ return null; }
-                if(runDirection==1){ return SegmentEvent.VEHICLE_ENTER_DOWNSTREAM; }
-                if(runDirection==2){ return SegmentEvent.VEHICLE_EXIT_UPSTREAM; }
-            }else if("out".equalsIgnoreCase(inout)){
-                if(runDirection==0){ return null; }
-                if(runDirection==1){ return SegmentEvent.VEHICLE_EXIT_DOWNSTREAM; }
-                if(runDirection==2){ return SegmentEvent.VEHICLE_ENTER_UPSTREAM; }
+            case 2, 4, 6, 8->{
+                return SegmentEvent.VEHICLE_ENTER_DOWNSTREAM;
             }
         }
+
         return null;
     }
 
@@ -143,19 +127,17 @@ public class DataAccessManager {
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("vehicleId", carId);
         if(point==null) return null;
-        if(point.getDirection().equalsIgnoreCase("up")){    // 上行检测点逻辑
-            if(runDirection==0){ return null; }
-            if(runDirection==1){ eventData.put("direction", SegmentVariables.Direction.UPSTREAM);return eventData; }
-            if(runDirection==2){ eventData.put("direction", SegmentVariables.Direction.DOWNSTREAM);return eventData; }
-
-            return null;
+        switch(point.getIndex()){
+            case 1, 3, 5, 7->{
+                eventData.put("direction", SegmentVariables.Direction.UPSTREAM);
+                return eventData;
+            }
+            case 2, 4, 6, 8->{
+                eventData.put("direction", SegmentVariables.Direction.DOWNSTREAM);
+                return eventData;
+            }
         }
-        if(point.getDirection().equalsIgnoreCase("down")){    // 上行检测点逻辑
-            if(runDirection==0){ return null; }
-            if(runDirection==1){ eventData.put("direction", SegmentVariables.Direction.DOWNSTREAM);return eventData; }
-            if(runDirection==2){ eventData.put("direction", SegmentVariables.Direction.UPSTREAM);return eventData; }
 
-        }
         return null;
     }
     private String formatBytes(byte[] bytes) {

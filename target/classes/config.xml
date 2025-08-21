@@ -4,159 +4,109 @@
         <AllRed>120</AllRed>
         <MaxAllRed>300</MaxAllRed>
         <PlatformUrl>122.5.105.22:2020</PlatformUrl>
-        <RegionList>
-            <Region name="入口信号机">37</Region>
-            <Region name="信号机2">38</Region>
-            <Region name="信号机3">41</Region>
-            <Region name="信号机4">42</Region>
-            <Region name="出口信号机">43</Region>
-        </RegionList>
+        <SignalControllerList>
+            <Signal name="上行入口信号机">37</Signal>
+            <Signal name="信号机2">38</Signal>
+            <Signal name="信号机3">41</Signal>
+            <Signal name="信号机4">42</Signal>
+            <Signal name="下行入口信号机">43</Signal>
+        </SignalControllerList>
     </global>
     <segments size="4">
         <segment>
             <segmentId>1</segmentId>
-            <allred>60</allred>
-            <downctrl>7</downctrl>
-            <inzone>2</inzone>
             <name>路段1</name>
-            <outzone>2</outzone>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
             <upsigid>37</upsigid>
             <downsigid>38</downsigid>
-            <upctrl>8</upctrl>
         </segment>
         <segment>
             <segmentId>2</segmentId>
-            <allred>60</allred>
-            <downctrl>7</downctrl>
-            <inzone>2</inzone>
             <name>路段2</name>
-            <outzone>2</outzone>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
             <upsigid>38</upsigid>
             <downsigid>41</downsigid>
-            <upctrl>8</upctrl>
         </segment>
         <segment>
             <segmentId>3</segmentId>
-            <allred>60</allred>
-            <downctrl>7</downctrl>
-            <inzone>2</inzone>
             <name>路段3</name>
-            <outzone>2</outzone>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
             <upsigid>41</upsigid>
             <downsigid>42</downsigid>
-            <upctrl>8</upctrl>
         </segment>
         <segment>
             <segmentId>4</segmentId>
-            <allred>60</allred>
-            <downctrl>7</downctrl>
-            <inzone>2</inzone>
             <name>路段4</name>
-            <outzone>2</outzone>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
             <upsigid>42</upsigid>
             <downsigid>43</downsigid>
-            <upctrl>8</upctrl>
         </segment>
     </segments>
-    <DetectPoints>
+    <DetectPoints readonly="true">
         <DetectPoint>
             <index>1</index>
-            <segmentId>1</segmentId>
-            <direction>up</direction>
-            <inout>in</inout>
+            <details>路段1上行检测</details>
         </DetectPoint>
         <DetectPoint>
             <index>2</index>
-            <segmentId>1</segmentId>
-            <direction>up</direction>
-            <inout>out</inout>
+            <details>路段1下行检测</details>
         </DetectPoint>
         <DetectPoint>
             <index>3</index>
-            <segmentId>1</segmentId>
-            <direction>down</direction>
-            <inout>in</inout>
+            <details>路段2上行检测</details>
         </DetectPoint>
         <DetectPoint>
             <index>4</index>
-            <segmentId>1</segmentId>
-            <direction>down</direction>
-            <inout>out</inout>
+            <details>路段2下行检测</details>
         </DetectPoint>
-
         <DetectPoint>
             <index>5</index>
-            <segmentId>2</segmentId>
-            <direction>up</direction>
-            <inout>in</inout>
+            <details>路段3上行检测</details>
         </DetectPoint>
         <DetectPoint>
             <index>6</index>
-            <segmentId>2</segmentId>
-            <direction>up</direction>
-            <inout>out</inout>
+            <details>路段3下行检测</details>
         </DetectPoint>
         <DetectPoint>
             <index>7</index>
-            <segmentId>2</segmentId>
-            <direction>down</direction>
-            <inout>in</inout>
+            <details>路段4上行检测</details>
         </DetectPoint>
         <DetectPoint>
             <index>8</index>
-            <segmentId>2</segmentId>
-            <direction>down</direction>
-            <inout>out</inout>
-        </DetectPoint>
-
-        <DetectPoint>
-            <index>9</index>
-            <segmentId>3</segmentId>
-            <direction>up</direction>
-            <inout>in</inout>
-        </DetectPoint>
-        <DetectPoint>
-            <index>10</index>
-            <segmentId>3</segmentId>
-            <direction>up</direction>
-            <inout>out</inout>
-        </DetectPoint>
-        <DetectPoint>
-            <index>11</index>
-            <segmentId>3</segmentId>
-            <direction>down</direction>
-            <inout>in</inout>
-        </DetectPoint>
-        <DetectPoint>
-            <index>12</index>
-            <segmentId>3</segmentId>
-            <direction>down</direction>
-            <inout>out</inout>
-        </DetectPoint>
-
-        <DetectPoint>
-            <index>13</index>
-            <segmentId>4</segmentId>
-            <direction>up</direction>
-            <inout>in</inout>
-        </DetectPoint>
-        <DetectPoint>
-            <index>14</index>
-            <segmentId>4</segmentId>
-            <direction>up</direction>
-            <inout>out</inout>
-        </DetectPoint>
-        <DetectPoint>
-            <index>15</index>
-            <segmentId>4</segmentId>
-            <direction>down</direction>
-            <inout>in</inout>
-        </DetectPoint>
-        <DetectPoint>
-            <index>16</index>
-            <segmentId>4</segmentId>
-            <direction>down</direction>
-            <inout>out</inout>
+            <details>路段4下行检测</details>
         </DetectPoint>
     </DetectPoints>
+    <WaitingAreas>
+        <waitingArea>
+            <index>1</index>
+            <upCapacity>2</upCapacity>
+            <downCapacity>2</downCapacity>
+        </waitingArea>
+        <waitingArea>
+            <index>2</index>
+            <upCapacity>2</upCapacity>
+            <downCapacity>2</downCapacity>
+        </waitingArea>
+        <waitingArea>
+            <index>3</index>
+            <upCapacity>2</upCapacity>
+            <downCapacity>2</downCapacity>
+        </waitingArea>
+    </WaitingAreas>
 </SingleLane>

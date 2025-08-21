@@ -33,9 +33,9 @@ public class SingleLane {
         return detectPoints;
     }
     // 不支持设置
-//    public void setDetectPoints(DetectPoints detectPoints) {
-//        this.detectPoints = detectPoints;
-//    }
+    public void setDetectPoints(DetectPoints detectPoints) {
+        this.detectPoints = detectPoints;
+    }
 
     @XmlElement(name = "WaitingAreas")
     public WaitingAreas getWaitingAreas() {

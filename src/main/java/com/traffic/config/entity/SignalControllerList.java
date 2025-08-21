@@ -9,7 +9,7 @@ public class SignalControllerList {
     private List<Signal> signals;
 
     @XmlElement(name = "Signal")
-    public List<Signal> getRegions() {
+    public List<Signal> getSignals() {
         return signals;
     }
 
