@@ -30,6 +30,13 @@ public class SegmentVariables {
      */
     private final int segmentId;
 
+    // ==================== 配置参数 =============================
+    private int roadLength;
+    private int minGreen;   // 正常绿灯运行时间，如果极端情况，可不运行到该时间，例如超过最大容量，不管是否到达最小绿，都直接切换
+    private int maxGreen;   // 正常情况应该不会放行到最大绿，只要满足最小绿，且路段已清空，就可以切换，除非一直存在通行请求才可能达到最大绿
+    private int minRed;   // 最小红灯时间，对于满足清空条件的中间过渡，只运行最小红灯时间即可，主要用来统一状态切换逻辑
+    private int maxRed;   // 最大红灯时间，这是判断清空的基础时间依据，在该时间段内如果无法判断有效清空，再运行一个保守清空
+
     // ==================== 时间管理变量 (Time Management Variables) ====================
 
     /**
@@ -230,15 +237,6 @@ public class SegmentVariables {
 
     // ==================== 容量配置变量 (Capacity Configuration Variables) ====================
 
-    /**
-     * 上行会车区容量
-     */
-    private volatile int upstreamCapacity;
-
-    /**
-     * 下行会车区容量
-     */
-    private volatile int downstreamCapacity;
 
     // ==================== 车辆进入时间记录 (Vehicle Entry Time Records) ====================
 
@@ -321,6 +319,13 @@ public class SegmentVariables {
     private void initializeVariables() {
         LocalDateTime now = LocalDateTime.now();
 
+        // 配置参数
+        this.minGreen = 0;
+        this.maxGreen = 0;
+        this.minRed = 0;
+        this.maxRed = 0;
+        this.roadLength = 0;
+
         // 时间变量初始化
         this.greenStartTime = null;
         this.redStartTime = null;
@@ -358,11 +363,54 @@ public class SegmentVariables {
         this.throughputRate = 0.0;
         this.congestionLevel = 0.0;
 
-        this.crossMeetingZoneManager.registerCrossing(1, SegmentConstants.DEFAULT_UPSTREAM_CAPACITY);
-        this.crossMeetingZoneManager.registerCrossing(2, SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY);
-        this.crossMeetingZoneManager.registerCrossing(3, SegmentConstants.DEFAULT_UPSTREAM_CAPACITY);
+        this.crossMeetingZoneManager.registerCrossing(1, 2);
+        this.crossMeetingZoneManager.registerCrossing(2, 2);
+        this.crossMeetingZoneManager.registerCrossing(3, 2);
         //this.crossMeetingZoneManager.registerCrossing(4, SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY);
     }
+    // ==================== 配置参数 =======================
+
+
+    public int getMaxGreen() {
+        return maxGreen;
+    }
+    public void setMaxGreen(int maxGreen) {
+        this.maxGreen = maxGreen;
+    }
+
+    public int getMaxRed() {
+        return maxRed;
+    }
+    public void setMaxRed(int maxRed) {
+        this.maxRed = maxRed;
+    }
+
+    public int getMinGreen() {
+        return minGreen;
+    }
+    public void setMinGreen(int minGreen) {
+        this.minGreen = minGreen;
+    }
+
+    public int getMinRed() {
+        return minRed;
+    }
+    public void setMinRed(int minRed) {
+        this.minRed = minRed;
+    }
+
+    public int getRoadLength() {
+        return roadLength;
+    }
+    public void setRoadLength(int roadLength) {
+        this.roadLength = roadLength;
+    }
+
+    public int getConservativeClearTime(){
+        if(roadLength<=0) return 0;
+        return roadLength * 2 / 3;  // 按照5.4km/h计算
+    }
+
     // ==================== 公共方法 =======================
     public boolean hasVehicle(){
         if(!isEmptyUpstreamMeetingzone()) return true;
@@ -490,7 +538,8 @@ public class SegmentVariables {
      * @return 是否超时
      */
     public boolean isGreenTimeout() {
-        return getCurrentGreenDurationSeconds() > SegmentConstants.MAX_GREEN_TIME;
+        if(maxGreen<=0) return false;
+        return getCurrentGreenDurationSeconds() > maxGreen;
     }
 
     /**
@@ -498,7 +547,8 @@ public class SegmentVariables {
      * @return 是否超时
      */
     public boolean isRedTimeout() {
-        return getCurrentRedDurationSeconds() > SegmentConstants.MAX_RED_TIME;
+        if(maxRed<=0) return false;
+        return getCurrentRedDurationSeconds() > maxRed;
     }
 
     /**
@@ -506,10 +556,12 @@ public class SegmentVariables {
      * @return 是否达到最小值
      */
     public boolean isMinGreenTimeReached() {
-        return getCurrentGreenDurationSeconds() >= SegmentConstants.MIN_GREEN_TIME;
+        if(minGreen<=0) return false;
+        return getCurrentGreenDurationSeconds() >= minGreen;
     }
     public boolean isMinRedTimeReached(){
-        return getCurrentRedDurationSeconds() >= SegmentConstants.MIN_RED_TIME;
+        if(minRed<=0) return false;
+        return getCurrentRedDurationSeconds() >= minRed;
     }
     /**
      * 检查当前是否处于绿灯状态
@@ -542,8 +594,9 @@ public class SegmentVariables {
         if (conservativeTimerStart == null) {
             return false;
         }
+        if(roadLength<=0) return false;
         long duration = java.time.Duration.between(conservativeTimerStart, LocalDateTime.now()).getSeconds();
-        return duration >= SegmentConstants.CONSERVATIVE_CLEAR_TIME;
+        return duration >= getConservativeClearTime();
     }
 
     /**
@@ -554,8 +607,9 @@ public class SegmentVariables {
         if (conservativeTimerStart == null) {
             return false;
         }
+        if(maxRed<=0) return false;
         long duration = java.time.Duration.between(conservativeTimerStart, LocalDateTime.now()).getSeconds();
-        return duration >= SegmentConstants.MAX_RED_TIME;
+        return duration >= maxRed;
     }
 
     /**
@@ -588,9 +642,9 @@ public class SegmentVariables {
         int counts = 0;
         if(meetingArea != null) {
             counts = meetingArea.getCount();
+            if(counts+getUpstreamCounts() >= meetingArea.getMaxCapacity()) return true;
         }
-        if(counts+getUpstreamCounts() < SegmentConstants.DEFAULT_UPSTREAM_CAPACITY) return false;
-        return true;
+        return false;
     }
 
     public void clearDownstreamMeetingzone(){
@@ -608,19 +662,29 @@ public class SegmentVariables {
         if(meetingArea == null) return 0;
         return meetingArea.getCount();
     }
+    public int getUpMeetingZoneCapacity(){
+        MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(upMeetingZoneCrossId.get());
+        if(meetingArea == null) return 0;
+        return meetingArea.getMaxCapacity();
+    }
     public int getDownMeetingZoneCount(){
         MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(downMeetingZoneCrossId.get());
         if(meetingArea == null) return 0;
         return meetingArea.getCount();
+    }
+    public int getDownMeetingZoneCapacity(){
+        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(downMeetingZoneCrossId.get());
+        if(meetingArea == null) return 0;
+        return meetingArea.getMaxCapacity();
     }
     public boolean isDownMaxCapacity(){
         MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(downMeetingZoneCrossId.get());
         int counts = 0;
         if(meetingArea != null) {
             counts = meetingArea.getCount();
+            if(counts+getDownstreamCounts() >= meetingArea.getMaxCapacity()) return true;
         }
-        if(counts+getDownstreamCounts() < SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY) return false;
-        return true;
+        return false;
     }
 
     /**
@@ -771,9 +835,11 @@ public class SegmentVariables {
         if (upstreamRequestTime != null) {
             upstreamWaitingTime = java.time.Duration.between(upstreamRequestTime, LocalDateTime.now()).getSeconds();
         }
-
+        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(upMeetingZoneCrossId.get());
+        int maxCapcity = 100;
+        if(meetingArea!=null) maxCapcity=meetingArea.getMaxCapacity();
         double timeFactor = Math.min(1.0, upstreamWaitingTime / SegmentConstants.MAX_REASONABLE_WAIT_TIME);
-        double loadFactor = (double) upstreamVehicleIds.size() / upstreamCapacity;
+        double loadFactor = (double) upstreamVehicleIds.size() / maxCapcity;
         double alternationFactor = (lastServedDirection == Direction.DOWNSTREAM) ? 1.0 : 0.5;
 
         priorityScoreUpstream = SegmentConstants.DEFAULT_TIME_PRIORITY_WEIGHT * timeFactor +
@@ -793,9 +859,11 @@ public class SegmentVariables {
         if (downstreamRequestTime != null) {
             downstreamWaitingTime = java.time.Duration.between(downstreamRequestTime, LocalDateTime.now()).getSeconds();
         }
-
+        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(downMeetingZoneCrossId.get());
+        int maxCapcity = 100;
+        if(meetingArea!=null) maxCapcity=meetingArea.getMaxCapacity();
         double timeFactor = Math.min(1.0, downstreamWaitingTime / SegmentConstants.MAX_REASONABLE_WAIT_TIME);
-        double loadFactor = (double) downstreamVehicleIds.size() / downstreamCapacity;
+        double loadFactor = (double) downstreamVehicleIds.size() / maxCapcity;
         double alternationFactor = (lastServedDirection == Direction.UPSTREAM) ? 1.0 : 0.5;
 
         priorityScoreDownstream = SegmentConstants.DEFAULT_TIME_PRIORITY_WEIGHT * timeFactor +
@@ -1020,6 +1088,10 @@ public class SegmentVariables {
         upstreamVehicleIds.clear();
         downstreamVehicleIds.clear();
         vehicleEntryTimes.clear();
+        upstreamInCounter.set(0);
+        upstreamOutCounter.set(0);
+        downstreamInCounter.set(0);
+        downstreamOutCounter.set(0);
         conservativeTimerStart = null;
 
         // 更新清空决策
@@ -1027,11 +1099,11 @@ public class SegmentVariables {
         downstreamClearanceDecision = ClearanceDecision.SAFE;
         overallClearanceDecision = ClearanceDecision.SAFE;
 
-        // 降低健康度评分
-        segmentHealthScore.addAndGet(-10);
-        if (segmentHealthScore.get() < 0) {
-            segmentHealthScore.set(0);
-        }
+//        // 降低健康度评分
+//        segmentHealthScore.addAndGet(-10);
+//        if (segmentHealthScore.get() < 0) {
+//            segmentHealthScore.set(0);
+//        }
     }
     /**
      * 检查清空决策是否允许状态转换
@@ -1754,18 +1826,6 @@ public class SegmentVariables {
         logPerformanceMetricChange("拥堵程度", level);
     }
 
-    /**
-     * 更新拥堵程度
-     * 基于当前车辆数和容量计算
-     */
-    public void updateCongestionLevel() {
-        int totalCapacity = upstreamCapacity + downstreamCapacity;
-        if (totalCapacity > 0) {
-            double newLevel = (double) getTotalVehicleCount() / totalCapacity;
-            setCongestionLevel(Math.min(1.0, newLevel));
-        }
-    }
-
 
     /**
      * 检查是否高度拥堵
@@ -1800,7 +1860,6 @@ public class SegmentVariables {
      */
     public void updateAllPerformanceStatistics() {
         updateThroughputRate();
-        updateCongestionLevel();
 
         // 综合统计日志
         logComprehensivePerformanceUpdate();
@@ -1945,10 +2004,6 @@ public class SegmentVariables {
                 throughputRate = (double) totalVehiclesServed.get() / timeWindow;
             }
         }
-
-        // 更新拥堵程度
-        int totalCapacity = upstreamCapacity + downstreamCapacity;
-        congestionLevel = (double) getTotalVehicleCount() / totalCapacity;
 
         // 如果拥堵程度过高，影响健康度
         if (congestionLevel > SegmentConstants.HIGH_CONGESTION_THRESHOLD) {
@@ -2328,21 +2383,6 @@ public class SegmentVariables {
     }
 
     // ==================== 状态检查相关方法 ====================
-
-    /**
-     * 检查是否应该生成通行请求
-     * @param direction 方向
-     * @return 是否应该生成请求
-     */
-    public boolean shouldGenerateRequest(Direction direction) {
-        return switch (direction) {
-            case UPSTREAM -> !upstreamRequest &&
-                    upstreamVehicleIds.size() >= SegmentConstants.calculateRequestTriggerThreshold(upstreamCapacity);
-            case DOWNSTREAM -> !downstreamRequest &&
-                    downstreamVehicleIds.size() >= SegmentConstants.calculateRequestTriggerThreshold(downstreamCapacity);
-            case NONE -> false;
-        };
-    }
 
     /**
      * 检查是否应该清除通行请求
@@ -2775,15 +2815,6 @@ public class SegmentVariables {
     public double getCongestionLevel() { return congestionLevel; }
 
     // 容量配置相关
-    public int getUpstreamCapacity() { return upstreamCapacity; }
-    public void setUpstreamCapacity(int upstreamCapacity) {
-        this.upstreamCapacity = SegmentConstants.clampCapacity(upstreamCapacity);
-    }
-
-    public int getDownstreamCapacity() { return downstreamCapacity; }
-    public void setDownstreamCapacity(int downstreamCapacity) {
-        this.downstreamCapacity = SegmentConstants.clampCapacity(downstreamCapacity);
-    }
 
     // 车辆进入时间记录
     public Map<String, LocalDateTime> getVehicleEntryTimes() { return new HashMap<>(vehicleEntryTimes); }

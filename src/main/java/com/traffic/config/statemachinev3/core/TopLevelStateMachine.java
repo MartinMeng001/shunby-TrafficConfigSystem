@@ -1,6 +1,8 @@
 package com.traffic.config.statemachinev3.core;
 
 import com.traffic.config.entity.Segment;
+import com.traffic.config.entity.WaitingArea;
+import com.traffic.config.entity.WaitingAreas;
 import com.traffic.config.service.ConfigService;
 import com.traffic.config.service.event.EventBusService;
 import com.traffic.config.signalplatform.platformbase.CrossInfoManager;
@@ -672,7 +674,8 @@ public class TopLevelStateMachine {
      * 检查是否应该触发过渡完成事件
      */
     private boolean shouldTriggerTransitionComplete() {
-        return variables.getTransitionDurationSeconds() >= SystemConstants.TRANSITION_TIME &&
+        if(variables.getAllRedTime()<=0) return false;  // 尚未初始化，等待
+        return variables.getTransitionDurationSeconds() >= variables.getAllRedTime() &&
                 checkAllSegmentsCleared();
     }
 
@@ -680,8 +683,9 @@ public class TopLevelStateMachine {
      * 检查是否应该触发过渡超时事件
      */
     private boolean shouldTriggerTransitionTimeout() {
+        if(variables.getAllRedTime()<=0) return false;
         return variables.getTransitionDurationSeconds() >
-                SystemConstants.TRANSITION_TIME * SystemConstants.TRANSITION_TIMEOUT_MULTIPLIER;
+                variables.getAllRedTime() * SystemConstants.TRANSITION_TIMEOUT_MULTIPLIER;
     }
 
     /**
@@ -893,7 +897,30 @@ public class TopLevelStateMachine {
         // 验证配置文件是否正确加载
         if(configService.isValidConfig()) {
             logger.debug("验证配置加载状态");
-            return true; // 简化实现
+            // ======== 加载所有配置参数 ===========
+            try {
+                variables.setAllRedTime(configService.getGlobalConfig().getAllRed());
+                variables.setMaxAllRedTime(configService.getGlobalConfig().getMaxAllRed());
+                List<WaitingArea> waitingAreas = configService.getAllWaitingAreas();
+                for (int i = 1; i <= SystemConstants.TOTAL_SEGMENT_COUNT; i++) {
+                    SegmentStateMachine segmentStateMachine = getSegmentStateMachine(i);
+                    Segment segment = configService.getAllSegments().get(i - 1);
+                    segmentStateMachine.getVariables().setMinGreen(segment.getMinGreen());
+                    segmentStateMachine.getVariables().setMaxGreen(segment.getMaxGreen());
+                    segmentStateMachine.getVariables().setMinRed(segment.getMinRed());
+                    segmentStateMachine.getVariables().setMaxRed(segment.getMaxRed());
+                    segmentStateMachine.getVariables().setRoadLength(segment.getLength());
+                }
+                for(int i = 1; i <= 3;i++){
+                    WaitingArea waitingArea = waitingAreas.get(i-1);
+                    CrossMettingZoneManager.getInstance().updateCrossMeetingCapacity(i, waitingArea.getUpCapacity(), waitingArea.getDownCapacity());
+                }
+                return true; // 简化实现
+            }catch (Exception e){
+                logger.error("配置文件不完整", e);
+                //e.printStackTrace();
+                return false;
+            }
         }else{
             logger.debug("验证配置加载失败");
             return false; // 简化实现

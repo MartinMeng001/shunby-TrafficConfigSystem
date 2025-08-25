@@ -214,6 +214,11 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
+    public List<WaitingArea> getAllWaitingAreas() {
+        return cachedConfig.getWaitingAreas().getWaitingAreas();
+    }
+
+    @Override
     public Optional<Segment> getSegmentBySigid(String sigid) {
         if (!StringUtils.hasText(sigid)) {
             return Optional.empty();

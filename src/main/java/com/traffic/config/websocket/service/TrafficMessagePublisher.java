@@ -395,6 +395,8 @@ public class TrafficMessagePublisher {
             return "ALL_RED";
         } else if (ctrlPhase == ControlPhase.YELLOW_FLASH.getValue()) {
             return "YELLOW_FLASH";
+        } else if(ctrlPhase == ControlPhase.SOUTH_NORTH_ALL_GREEN.getValue()){
+            return "UPDOWN";
         } else {
             return "UNKNOWN";
         }

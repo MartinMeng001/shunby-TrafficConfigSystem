@@ -89,10 +89,6 @@ public class SegmentStateMachine {
         this.isRunning = false;
         this.lastEventProcessTime = LocalDateTime.now();
 
-        // 初始化路段容量
-        this.variables.setUpstreamCapacity(SegmentConstants.DEFAULT_UPSTREAM_CAPACITY);
-        this.variables.setDownstreamCapacity(SegmentConstants.DEFAULT_DOWNSTREAM_CAPACITY);
-
         logger.info("路段状态机初始化完成 - 路段ID: {}, 初始状态: {}",
                 segmentId, currentState.getChineseName());
     }
@@ -105,6 +101,8 @@ public class SegmentStateMachine {
     public void start() {
         if (!isRunning) {
             isRunning = true;
+            variables.startRedTimer();
+            variables.resetGreenTimer();
             // 发送初始化完成事件
             postEvent(SegmentEvent.CLEARANCE_COMPLETE, null);
             logger.info("路段 {} 状态机启动", variables.getSegmentId());
@@ -117,6 +115,8 @@ public class SegmentStateMachine {
     public void stop() {
         if (isRunning) {
             isRunning = false;
+            variables.resetGreenTimer();
+            variables.resetRedTimer();
             eventQueue.clear();
             logger.info("路段 {} 状态机停止", variables.getSegmentId());
         }
@@ -198,6 +198,7 @@ public class SegmentStateMachine {
                         variables.getSegmentId(), event.getChineseName());
                 return false;
             }
+            logger.warn("路段 {} 事件 {}, 当前状态 {}, 目标状态 {}", variables.getSegmentId(), event.getChineseName(), currentState.getChineseName(), targetState.getChineseName());
             // 3. 检查守护条件 G(q, σ, v)，状态切换需要检查条件是否允许
             if (!checkGuardCondition(event, targetState)) {
                 if(variables.hasVehicle())
@@ -205,13 +206,17 @@ public class SegmentStateMachine {
                         variables.getSegmentId(), currentState.getChineseName(), targetState.getChineseName(), event.getChineseName());
                 return false;
             }
+            logger.warn("[guard]路段 {}, 最小绿 {}, 最大绿 {}, 最小红 {}, 最大红 {}, 清空 {}", variables.getSegmentId(), variables.isMinGreenTimeReached(), variables.isGreenTimeout(),
+                    variables.isMinRedTimeReached(), variables.isRedTimeout(), variables.getOverallClearanceDecision().isSafeForTransition());
             // 4. 执行动作函数 A(q, σ, v)
             executeAction(event, targetState, eventData);
+            logger.warn("[Action]路段 {} 事件 {}, 当前状态 {}, 目标状态 {}", variables.getSegmentId(), event.getChineseName(), currentState.getChineseName(), targetState.getChineseName());
             // 5. 状态转换 q' = δ(q, σ, v)
             if (targetState != currentState) {
                 transitionToState(targetState, event);
                 // 6. 记录状态转换
                 recordStateTransition(oldState, currentState, event, eventTime);
+                logger.warn("[Transition]路段 {} 事件 {}, 当前状态 {}, 目标状态 {}", variables.getSegmentId(), event.getChineseName(), currentState.getChineseName(), targetState.getChineseName());
             }
             // 6. 检查强制切换，如果成功，则清空
             if(variables.getForceSwitchReq()>0){
@@ -271,9 +276,9 @@ public class SegmentStateMachine {
             case ALL_YELLOWFLASH_MANUAL -> {
                 return SegmentState.ALL_YELLOWFLASH_MANUAL;
             }
-            case ALL_RED_CLEAR -> {
-                return determineGreenStateFromRed();
-            }
+//            case ALL_RED_CLEAR -> {
+//                return determineGreenStateFromRed();
+//            }
         }
         // 正常功能优先级
         switch (event) {
@@ -411,6 +416,9 @@ public class SegmentStateMachine {
      */
     private SegmentState determineTimerTickTargetState() {
         switch (currentState) {
+            case ALL_RED_CLEAR -> {
+                return determineGreenStateFromRed();
+            }
             case UPSTREAM_GREEN -> {    // 目标状态是确定的，不应该有条件，是否转换是有条件的
                 return SegmentState.ALL_RED_CLEAR;
             }
@@ -459,53 +467,6 @@ public class SegmentStateMachine {
         return SegmentState.ALL_RED_CLEAR; // 没有请求时保持全红
     }
 
-    /**
-     * 判断是否应该从上行绿灯状态切换
-     */
-    private boolean shouldSwitchFromUpstreamGreen() {
-        // 检查强制切换条件
-        if (variables.isGreenTimeout() ||
-                isCapacityNearFull(SegmentVariables.Direction.UPSTREAM)) {
-            return true;
-        }
-        // 检查最小绿灯时间
-        if (!variables.isMinGreenTimeReached()) {
-            return false;
-        }
-
-        // 检查是否有下行请求
-        if (variables.isDownstreamRequest()) {
-            return true;
-        }
-
-        // 基于优先级判断是否切换
-        return shouldSwitchBasedOnPriority(SegmentVariables.Direction.DOWNSTREAM);
-    }
-
-    /**
-     * 判断是否应该从下行绿灯状态切换
-     */
-    private boolean shouldSwitchFromDownstreamGreen() {
-        // 检查最小绿灯时间
-        if (!variables.isMinGreenTimeReached()) {
-            return false;
-        }
-
-        // 检查是否有上行请求
-        if (!variables.isUpstreamRequest()) {
-            return false;
-        }
-
-        // 检查强制切换条件
-        if (variables.isGreenTimeout() ||
-                isCapacityNearFull(SegmentVariables.Direction.DOWNSTREAM)) {
-            return true;
-        }
-
-        // 基于优先级判断是否切换
-        return shouldSwitchBasedOnPriority(SegmentVariables.Direction.UPSTREAM);
-    }
-
     // ==================== 清空决策集成 ====================
 
     /**
@@ -513,6 +474,7 @@ public class SegmentStateMachine {
      * 集成清空决策引擎的结果到状态机
      */
     private void updateClearanceDecisions() {
+        //if(variables.isInGreenState()) return;   // 不是全红，不判断清空
         // 计算各方向的清空决策
         ClearanceDecision upstreamDecision = clearanceEngine.calculateUpstreamClearance(variables);
         ClearanceDecision downstreamDecision = clearanceEngine.calculateDownstreamClearance(variables);
@@ -528,9 +490,10 @@ public class SegmentStateMachine {
 
         // 检查强制清空条件
         if (clearanceEngine.shouldForceConservativeClearance(variables)) {
-            variables.setUpstreamClearanceDecision(ClearanceDecision.SAFE);
-            variables.setDownstreamClearanceDecision(ClearanceDecision.SAFE);
-            variables.setOverallClearanceDecision(ClearanceDecision.SAFE);
+//            variables.setUpstreamClearanceDecision(ClearanceDecision.SAFE);
+//            variables.setDownstreamClearanceDecision(ClearanceDecision.SAFE);
+//            variables.setOverallClearanceDecision(ClearanceDecision.SAFE);
+            variables.forceClearSegment();
             clearanceEngine.stopConservativeClearanceTimer(variables);
         }
     }
@@ -551,9 +514,11 @@ public class SegmentStateMachine {
      */
     private boolean isClearanceConditionMet() {
         ClearanceDecision overallDecision = variables.getOverallClearanceDecision();
+        if(overallDecision == ClearanceDecision.CONSERVATIVE){
+            return clearanceEngine.shouldForceConservativeClearance(variables);
+        }
         return overallDecision == ClearanceDecision.SAFE ||
-                overallDecision == ClearanceDecision.WARNING ||
-                clearanceEngine.shouldForceConservativeClearance(variables);
+                overallDecision == ClearanceDecision.WARNING;
     }
 
     // ==================== 优先级算法 ====================
@@ -612,23 +577,6 @@ public class SegmentStateMachine {
     }
 
     // ==================== 辅助判断方法 ====================
-
-    /**
-     * 检查容量是否接近满载
-     */
-    private boolean isCapacityNearFull(SegmentVariables.Direction direction) {
-        switch (direction) {
-            case UPSTREAM -> {
-                return variables.getUpstreamVehicleIds().size() >=
-                        variables.getUpstreamCapacity() * 0.9;
-            }
-            case DOWNSTREAM -> {
-                return variables.getDownstreamVehicleIds().size() >=
-                        variables.getDownstreamCapacity() * 0.9;
-            }
-        }
-        return false;
-    }
 
     /**
      * 检查事件是否适用于当前状态
@@ -729,29 +677,6 @@ public class SegmentStateMachine {
                 variables.getErrorCountIdLogic() >= SegmentConstants.MAX_ID_LOGIC_ERRORS ||
                 variables.getConsecutiveErrors() >= SegmentConstants.MAX_CONSECUTIVE_ERRORS ||
                 variables.getSegmentHealthScore() < SegmentConstants.CRITICAL_HEALTH_THRESHOLD;
-    }
-
-    /**
-     * 检查是否应该触发强制切换
-     */
-    private boolean shouldTriggerForceSwitch() {
-        // 如果绿灯时间过长，这属于正常切换逻辑，不需要放在这里
-        if (currentState.isGreenState() && variables.isGreenTimeout()) {
-            return true;
-        }
-
-        // 如果容量达到上限，这属于正常切换逻辑，不需要放在这里
-        if (currentState == SegmentState.UPSTREAM_GREEN &&
-                variables.getUpstreamVehicleIds().size() >= variables.getUpstreamCapacity()) {
-            return true;
-        }
-        // 如果容量达到上限，这属于正常切换逻辑，不需要放在这里
-        if (currentState == SegmentState.DOWNSTREAM_GREEN &&
-                variables.getDownstreamVehicleIds().size() >= variables.getDownstreamCapacity()) {
-            return true;
-        }
-
-        return false;
     }
 
     // ==================== 公共接口方法 ====================
@@ -872,8 +797,8 @@ public class SegmentStateMachine {
         report.append("当前清空决策: ").append(variables.getOverallClearanceDecision()).append("\n");
         report.append("健康度评分: ").append(variables.getSegmentHealthScore()).append("\n");
         report.append("故障状态: ").append(variables.isFaultDetected() ? "是" : "否").append("\n");
-        report.append("上行车辆数: ").append(variables.getUpstreamVehicleIds().size()).append("/").append(variables.getUpstreamCapacity()).append("\n");
-        report.append("下行车辆数: ").append(variables.getDownstreamVehicleIds().size()).append("/").append(variables.getDownstreamCapacity()).append("\n");
+        report.append("上行车辆数: ").append(variables.getUpstreamVehicleIds().size()).append("\n");
+        report.append("下行车辆数: ").append(variables.getDownstreamVehicleIds().size()).append("\n");
         report.append("状态转换次数: ").append(transitionHistory.size()).append("\n");
 
         return report.toString();

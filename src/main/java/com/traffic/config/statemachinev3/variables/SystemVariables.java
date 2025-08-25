@@ -27,6 +27,9 @@ import java.util.concurrent.atomic.AtomicLong;
 @Data
 public class SystemVariables {
 
+    // ==================== 配置参数 ===========================
+    private int allRedTime;
+    private int maxAllRedTime;
     // ==================== 时间管理变量 (Time Management Variables) ====================
 
     /**
@@ -470,6 +473,8 @@ public class SystemVariables {
     private void initializeVariables() {
         LocalDateTime now = LocalDateTime.now();
 
+        this.allRedTime = 0;
+        this.maxAllRedTime = 0;
         // 时间变量初始化
         this.stateStartTime = now;
         this.systemInitStartTime = now;
@@ -520,7 +525,23 @@ public class SystemVariables {
             segmentClearanceStates.put(i, new ClearanceState(i));
         }
     }
+    // ==================== 撇脂参数方法 ====================
 
+    public int getAllRedTime() {
+        return allRedTime;
+    }
+
+    public void setAllRedTime(int allRedTime) {
+        this.allRedTime = allRedTime;
+    }
+
+    public int getMaxAllRedTime() {
+        return maxAllRedTime;
+    }
+
+    public void setMaxAllRedTime(int maxAllRedTime) {
+        this.maxAllRedTime = maxAllRedTime;
+    }
     // ==================== 时间相关方法 ====================
 
     /**
@@ -559,7 +580,8 @@ public class SystemVariables {
      * @return 是否超时
      */
     public boolean isTransitionTimeout() {
-        return getTransitionDurationSeconds() > SystemConstants.getTransitionTimeoutSeconds();
+        if(maxAllRedTime<=0) return false;
+        return getTransitionDurationSeconds() > maxAllRedTime;
     }
 
     /**
@@ -567,7 +589,8 @@ public class SystemVariables {
      * @return 是否满足条件
      */
     public boolean isTransitionComplete() {
-        return getTransitionDurationSeconds() >= SystemConstants.TRANSITION_TIME;// && segmentsAllReady
+        if(allRedTime <= 0) return false;
+        return getTransitionDurationSeconds() >= allRedTime;// && segmentsAllReady
     }
 
     /**
@@ -642,8 +665,9 @@ public class SystemVariables {
         if (state.getConservativeTimerStart() == null) {
             return false;
         }
+        if(maxAllRedTime <= 0) return false;
         long duration = java.time.Duration.between(state.getConservativeTimerStart(), LocalDateTime.now()).getSeconds();
-        return duration >= SystemConstants.MAX_RED_TIME; // 使用系统常量作为保守清空时间
+        return duration >= maxAllRedTime;   //SystemConstants.MAX_RED_TIME; // 使用系统常量作为保守清空时间
     }
 
     /**

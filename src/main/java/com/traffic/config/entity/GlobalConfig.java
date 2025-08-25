@@ -47,7 +47,7 @@ public class GlobalConfig {
         this.signalList = signalList;
     }
     // 便利方法：获取区域名称列表
-    public List<String> getRegionNames() {
+    public List<String> getSignalNames() {
         if (signalList != null && signalList.getSignals() != null) {
             return signalList.getSignals().stream()
                     .map(Signal::getName)

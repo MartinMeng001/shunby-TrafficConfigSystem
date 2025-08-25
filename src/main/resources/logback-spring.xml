@@ -42,6 +42,25 @@
             <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
     </appender>
+    <!-- =====================自定义Event======================== -->
+    <appender name="EVENT_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${APP_NAME}-event.log</file>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>${LOG_CHARSET}</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}-event.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
 
     <!-- ==================== 错误日志文件 ==================== -->
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -75,6 +94,14 @@
     </appender>
 
     <!-- ==================== Logger配置 ==================== -->
+
+<!--    <logger name="com.traffic.config.statemachinev3" level="WARN" additivity="true">-->
+<!--        <appender-ref ref="EVENT_FILE" />-->
+<!--    </logger>-->
+    <logger name="com.traffic.config.statemachinev3.core.SegmentStateMachine" level="WARN" additivity="false">
+        <appender-ref ref="EVENT_FILE" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
 
     <!-- 应用程序包 -->
     <logger name="com.traffic.config" level="DEBUG" additivity="false">

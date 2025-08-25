@@ -20,6 +20,10 @@ public class CrossMettingZoneManager {
         allCrossMeetingZone.put(crossMeetingZoneId, new CrossMeetingArea(crossMeetingZoneId, maxCapacity));
         System.out.println("会车区 " + crossMeetingZoneId + " 已注册，最大容量: " + maxCapacity);
     }
+    public void updateCrossMeetingCapacity(int crossZoneId, int maxUpCapacity, int maxDownCapacity){
+        allCrossMeetingZone.get(crossZoneId).getDownMeetingArea().setMaxCapacity(maxUpCapacity);
+        allCrossMeetingZone.get(crossZoneId).getUpMeetingArea().setMaxCapacity(maxDownCapacity);
+    }
 
     public boolean hasUpstreamRequest(int segmentId){
         if(segmentId == 1){ // 路段1没有上行请求，只有下行请求

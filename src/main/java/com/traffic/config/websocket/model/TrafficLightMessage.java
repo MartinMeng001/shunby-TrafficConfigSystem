@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TrafficLightMessage {
     private String sigid;
-    private String status; // UPSTREAM, DOWNSTREAM, ALL_RED, YELLOW_FLASH
+    private String status; // UPSTREAM, DOWNSTREAM, ALL_RED, YELLOW_FLASH, UPDOWN
     private String statusDescription;
     private int phase; // 控制相位值
 

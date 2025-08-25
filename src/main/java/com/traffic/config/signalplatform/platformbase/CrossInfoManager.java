@@ -180,8 +180,12 @@ public class CrossInfoManager {
             if(segmentStateA.isDownstreamState())return ControlPhase.SOUTH_FULL_GREEN.getValue();
             return ControlPhase.ALL_RED.getValue();
         }
-        if(segmentStateA.isUpstreamState() && segmentStateB.isDownstreamState()){ ControlPhase.ALL_RED.getValue(); }
         if(segmentStateA.isYellowFlashState() || segmentStateB.isYellowFlashState()){ return ControlPhase.YELLOW_FLASH.getValue(); }
+        if(segmentStateA.isDownstreamState() && segmentStateB.isUpstreamState()){
+            logger.warn("[两边放行] segmentA:{}, segmentB:{}", segmentStateA.getChineseName(), segmentStateB.getChineseName());
+            //return ControlPhase.ALL_RED.getValue();
+            return ControlPhase.SOUTH_NORTH_ALL_GREEN.getValue();
+        }
         if(segmentStateB.isUpstreamState()) return ControlPhase.NORTH_FULL_GREEN.getValue();
         if(segmentStateA.isDownstreamState()) return ControlPhase.SOUTH_FULL_GREEN.getValue();
 

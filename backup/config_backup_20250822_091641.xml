@@ -71,10 +71,10 @@
         </segment>
         <segment>
             <downsigid>42</downsigid>
-            <length>1100</length>
-            <maxGreen>17</maxGreen>
-            <maxRed>50</maxRed>
-            <minGreen>7</minGreen>
+            <length>1000</length>
+            <maxGreen>15</maxGreen>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
             <minRed>5</minRed>
             <name>路段3</name>
             <segmentId>3</segmentId>
@@ -82,11 +82,11 @@
         </segment>
         <segment>
             <downsigid>43</downsigid>
-            <length>1200</length>
-            <maxGreen>18</maxGreen>
-            <maxRed>62</maxRed>
-            <minGreen>8</minGreen>
-            <minRed>7</minRed>
+            <length>1000</length>
+            <maxGreen>15</maxGreen>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <minRed>5</minRed>
             <name>路段4</name>
             <segmentId>4</segmentId>
             <upsigid>42</upsigid>

@@ -1,9 +1,7 @@
 package com.traffic.config.statemachinev3.clearance;
 
-import com.traffic.config.statemachinev3.actions.SegmentActions;
 import com.traffic.config.statemachinev3.enums.segment.ClearanceDecision;
 import com.traffic.config.statemachinev3.variables.SegmentVariables;
-import com.traffic.config.statemachinev3.constants.SegmentConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +42,6 @@ public class ClearanceDecisionEngine {
 
         // 记录决策过程
         logClearanceDecision("上行", decision, context, variables);
-
         return decision;
     }
 
@@ -108,36 +105,26 @@ public class ClearanceDecisionEngine {
         }
 
         // 3. 检查是否为警告状态（需要注意但可通行）
-//        if (isWarningCondition(context)) {
-//            return ClearanceDecision.WARNING;
-//        }
+        if (isWarningCondition(context)) {
+            return ClearanceDecision.WARNING;
+        }
 
         // 4. 默认为保守状态（需要保守清空）
-//        if(isCONSERVATIVECondition(context)) {
-//            return ClearanceDecision.CONSERVATIVE;
-//        }
+        if(isCONSERVATIVECondition(context)) {
+            return ClearanceDecision.CONSERVATIVE;
+        }
         return ClearanceDecision.CONSERVATIVE;
     }
 
     /**
-     * 判断是否应该等待
+     * 判断是否应该等待, 这里不考虑其它情况，只要不清空就等待
      * 条件：存在明显的不安全因素
      */
     private boolean shouldWait(ClearanceContext context) {
         // 车辆ID集合不为空且计数器严重不匹配
-        boolean severeCounterMismatch = !context.vehicleIds.isEmpty() &&
-                Math.abs(context.inCounter - context.outCounter) >= 1;
+        if(context.vehicleIds.isEmpty()==false && context.inCounter != context.outCounter) return true;
 
-        // 传感器故障率过高, 不是目前算法规定的条件
-        // boolean sensorCriticalFailure = context.sensorFailureRate > 0.5;
-
-        // 存在严重的逻辑错误 不是目前算法规定的条件
-        // boolean severeLogicError = context.consecutiveErrors > SegmentConstants.MAX_CONSECUTIVE_ERRORS / 2;
-
-        // 健康度过低, 先不考虑健康度问题
-        //boolean criticalHealth = context.segmentHealthScore < SegmentConstants.CRITICAL_HEALTH_THRESHOLD;
-
-        return severeCounterMismatch;// || criticalHealth|| sensorCriticalFailure ||severeLogicError
+        return false;// || criticalHealth|| sensorCriticalFailure ||severeLogicError
     }
 
     /**
@@ -165,52 +152,25 @@ public class ClearanceDecisionEngine {
     }
 
     /**
-     * 判断是否为警告状态
-     * 条件：存在一些异常但不严重
+     * 判断是否警告清空 ID为空，计数不平衡
+     * 条件：所有指标都正常
      */
     private boolean isWarningCondition(ClearanceContext context) {
-        // 车辆ID集合为空但计数器不匹配
-        boolean minorCounterMismatch = context.vehicleIds.isEmpty() &&
-                Math.abs(context.inCounter - context.outCounter) >= 1;
-
-        // 传感器轻微降级
-        //boolean minorSensorIssues = context.sensorFailureRate > SegmentConstants.SENSOR_ERROR_RATE_THRESHOLD &&
-         //       context.sensorFailureRate <= 0.3;
-
-        // 健康度中等
-        //boolean moderateHealth = context.segmentHealthScore >= SegmentConstants.CRITICAL_HEALTH_THRESHOLD &&
-        //        context.segmentHealthScore < SegmentConstants.NORMAL_HEALTH_THRESHOLD;
-
-        // 有少量错误但不严重
-        //boolean minorErrors = context.consecutiveErrors > 0 &&
-        //        context.consecutiveErrors <= SegmentConstants.MAX_CONSECUTIVE_ERRORS / 2;
-
-        return minorCounterMismatch;//|| minorSensorIssues || moderateHealth || minorErrors;
+        boolean vehicleIdsEmpty = context.vehicleIds.isEmpty();
+        boolean countersMatch = context.inCounter != context.outCounter;
+        return vehicleIdsEmpty && countersMatch;
     }
 
     /**
-     * 判断是否为保守清空状态
-     * 条件：存在一些异常但不严重
+     * 判断是否保守清空 ID不为空，计数平衡
+     * 条件：所有指标都正常
      */
     private boolean isCONSERVATIVECondition(ClearanceContext context) {
-        // 车辆ID集合为空但计数器不匹配
-        boolean minorCounterMismatch = !context.vehicleIds.isEmpty() &&
-                Math.abs(context.inCounter - context.outCounter) == 0;
-
-        // 传感器轻微降级
-        //boolean minorSensorIssues = context.sensorFailureRate > SegmentConstants.SENSOR_ERROR_RATE_THRESHOLD &&
-        //       context.sensorFailureRate <= 0.3;
-
-        // 健康度中等
-        //boolean moderateHealth = context.segmentHealthScore >= SegmentConstants.CRITICAL_HEALTH_THRESHOLD &&
-        //        context.segmentHealthScore < SegmentConstants.NORMAL_HEALTH_THRESHOLD;
-
-        // 有少量错误但不严重
-        //boolean minorErrors = context.consecutiveErrors > 0 &&
-        //        context.consecutiveErrors <= SegmentConstants.MAX_CONSECUTIVE_ERRORS / 2;
-
-        return minorCounterMismatch;//|| minorSensorIssues || moderateHealth || minorErrors;
+        boolean vehicleIdsEmpty = !context.vehicleIds.isEmpty();
+        boolean countersMatch = context.inCounter == context.outCounter;
+        return vehicleIdsEmpty && countersMatch;
     }
+
     /**
      * 合并双方向清空决策
      * 优先级：WAIT > CONSERVATIVE > WARNING > SAFE
@@ -253,13 +213,13 @@ public class ClearanceDecisionEngine {
                 context.vehicleIds = variables.getUpstreamVehicleIds();
                 context.inCounter = variables.getUpstreamInCounter();
                 context.outCounter = variables.getUpstreamOutCounter();
-                context.capacity = variables.getUpstreamCapacity();
+                context.capacity = variables.getUpMeetingZoneCapacity();
             }
             case DOWNSTREAM -> {
                 context.vehicleIds = variables.getDownstreamVehicleIds();
                 context.inCounter = variables.getDownstreamInCounter();
                 context.outCounter = variables.getDownstreamOutCounter();
-                context.capacity = variables.getDownstreamCapacity();
+                context.capacity = variables.getDownMeetingZoneCapacity();
             }
             default -> throw new IllegalArgumentException("不支持的方向: " + direction);
         }
@@ -305,9 +265,9 @@ public class ClearanceDecisionEngine {
         if (conservativeStart == null) {
             return false;
         }
-
+        if(variables.getRoadLength()<=0) return false;
         long elapsedSeconds = ChronoUnit.SECONDS.between(conservativeStart, LocalDateTime.now());
-        boolean shouldForce = elapsedSeconds >= SegmentConstants.CONSERVATIVE_CLEAR_TIME;
+        boolean shouldForce = elapsedSeconds >= variables.getConservativeClearTime();
 
         if (shouldForce) {
             logger.info("路段 {} 保守清空计时器到期，强制清空 - 等待时间: {}秒",
@@ -346,20 +306,6 @@ public class ClearanceDecisionEngine {
 
     // ==================== 决策历史和统计 ====================
 
-    /**
-     * 更新清空决策历史统计
-     *
-     * @param decision 决策结果
-     * @param variables 路段变量
-     */
-    public void updateClearanceStatistics(ClearanceDecision decision, SegmentVariables variables) {
-        // 这里可以记录决策历史，用于性能分析和优化
-        // 例如：统计各种决策的频率，分析决策质量等
-
-        logger.debug("路段 {} 清空决策统计更新 - 决策: {}, 健康度: {}, 拥堵程度: {:.2f}",
-                variables.getSegmentId(), decision,
-                variables.getSegmentHealthScore(), variables.getCongestionLevel());
-    }
 
     // ==================== 辅助方法 ====================
 
@@ -376,39 +322,7 @@ public class ClearanceDecisionEngine {
 //                context.consecutiveErrors);
     }
 
-    /**
-     * 验证清空决策的合理性
-     * 用于调试和质量保证
-     */
-    public boolean validateClearanceDecision(ClearanceDecision decision, SegmentVariables variables) {
-        // 检查决策是否符合基本逻辑
-        boolean isValid = true;
-        String reason = "";
 
-        // 如果车辆ID集合不为空但决策为SAFE，可能存在问题
-        if (decision == ClearanceDecision.SAFE) {
-            boolean hasVehicles = !variables.getUpstreamVehicleIds().isEmpty() ||
-                    !variables.getDownstreamVehicleIds().isEmpty();
-            if (hasVehicles) {
-                isValid = false;
-                reason = "存在车辆但决策为SAFE";
-            }
-        }
-
-        // 如果健康度过低但决策为SAFE，可能存在问题
-        if (decision == ClearanceDecision.SAFE &&
-                variables.getSegmentHealthScore() < SegmentConstants.CRITICAL_HEALTH_THRESHOLD) {
-            isValid = false;
-            reason = "健康度过低但决策为SAFE";
-        }
-
-        if (!isValid) {
-            logger.warn("路段 {} 清空决策验证失败: {} - 原因: {}",
-                    variables.getSegmentId(), decision, reason);
-        }
-
-        return isValid;
-    }
 
     // ==================== 内部类：清空上下文 ====================
 

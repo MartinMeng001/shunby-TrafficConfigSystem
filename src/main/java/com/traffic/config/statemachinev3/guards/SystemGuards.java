@@ -67,12 +67,12 @@ public class SystemGuards {
         if (currentState != SystemStateV3.ALL_RED_TRANSITION) {
             return false;
         }
-
+        if(variables.getAllRedTime()<= 0) return false; // 系统参数尚未准备好
         // 检查是否处于全红状态
         boolean allSignalRed = variables.isAllSignalRed();
 
         // 检查过渡时间是否足够
-        boolean timeRequirementMet = variables.getTransitionDurationSeconds() >= SystemConstants.TRANSITION_TIME;
+        boolean timeRequirementMet = variables.getTransitionDurationSeconds() >= variables.getAllRedTime();
 
         // 检查所有路段是否清空完成
         boolean segmentsClearanceMet = variables.isSegmentsAllReady();
@@ -102,9 +102,9 @@ public class SystemGuards {
         if (currentState != SystemStateV3.ALL_RED_TRANSITION) {
             return false;
         }
-
+        if(variables.getAllRedTime()<=0) return false;
         // 检查是否超过最大过渡时间
-        boolean maxTimeExceeded = variables.getTransitionDurationSeconds() > SystemConstants.getTransitionTimeoutSeconds();
+        boolean maxTimeExceeded = variables.getTransitionDurationSeconds() > variables.getAllRedTime() * SystemConstants.TRANSITION_TIMEOUT_MULTIPLIER;;
 
         // 检查清空超时次数是否超限
         boolean clearTimeoutExceeded = variables.getClearTimeoutCount() >= SystemConstants.MAX_CLEAR_TIMEOUT_COUNT;
@@ -394,11 +394,12 @@ public class SystemGuards {
         if (currentState != SystemStateV3.ALL_RED_TRANSITION) {
             return false;
         }
-
+        if(variables.getAllRedTime()<=0) return false;
+        if(variables.getMaxAllRedTime()<=0) return false;
         // 检查过渡时间是否超过限制但路段未清空
-        boolean transitionTimeExceeded = variables.getTransitionDurationSeconds() >= SystemConstants.TRANSITION_TIME;
+        boolean transitionTimeExceeded = variables.getTransitionDurationSeconds() >= variables.getAllRedTime();
         boolean segmentsNotReady = !variables.isSegmentsAllReady();
-        boolean withinTimeoutWindow = variables.getTransitionDurationSeconds() <= SystemConstants.getTransitionTimeoutSeconds();
+        boolean withinTimeoutWindow = variables.getTransitionDurationSeconds() <= variables.getMaxAllRedTime();
 
         return transitionTimeExceeded && segmentsNotReady && withinTimeoutWindow;
     }
