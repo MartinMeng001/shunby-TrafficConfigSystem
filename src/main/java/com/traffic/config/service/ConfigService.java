@@ -1,9 +1,6 @@
 package com.traffic.config.service;
 
-import com.traffic.config.entity.DetectPoint;
-import com.traffic.config.entity.GlobalConfig;
-import com.traffic.config.entity.Segment;
-import com.traffic.config.entity.SingleLane;
+import com.traffic.config.entity.*;
 import com.traffic.config.exception.ConfigException;
 
 import java.util.List;
@@ -55,6 +52,8 @@ public interface ConfigService {
      * @return 路段配置列表
      */
     List<DetectPoint> getAllDetectPoints();
+
+    List<WaitingArea> getAllWaitingAreas();
 
     /**
      * 根据信号灯ID获取路段配置

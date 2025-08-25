@@ -10,7 +10,7 @@ public class GlobalConfig {
     private int allRed;
     private int maxAllRed;
     private String platformUrl;
-    private SignalControllerList regionList;
+    private SignalControllerList signalList;
 
     @XmlElement(name = "AllRed")
     public int getAllRed() {
@@ -38,18 +38,18 @@ public class GlobalConfig {
         this.platformUrl = platformUrl;
     }
 
-    @XmlElement(name = "RegionList")
-    public SignalControllerList getRegionList() {
-        return regionList;
+    @XmlElement(name = "SignalControllerList")
+    public SignalControllerList getSignalList() {
+        return signalList;
     }
 
-    public void setRegionList(SignalControllerList regionList) {
-        this.regionList = regionList;
+    public void setSignalList(SignalControllerList signalList) {
+        this.signalList = signalList;
     }
     // 便利方法：获取区域名称列表
-    public List<String> getRegionNames() {
-        if (regionList != null && regionList.getRegions() != null) {
-            return regionList.getRegions().stream()
+    public List<String> getSignalNames() {
+        if (signalList != null && signalList.getSignals() != null) {
+            return signalList.getSignals().stream()
                     .map(Signal::getName)
                     .collect(java.util.stream.Collectors.toList());
         }

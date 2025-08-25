@@ -98,8 +98,6 @@ public class SegmentActions {
         variables.resetGreenTimer();
 
         // 初始化清空决策为等待状态
-//        variables.setUpstreamClearanceDecision(ClearanceDecision.WAIT);
-//        variables.setDownstreamClearanceDecision(ClearanceDecision.WAIT);
         variables.setClearanceDecisions(ClearanceDecision.WAIT, ClearanceDecision.WAIT);
         variables.setOverallClearanceDecision(ClearanceDecision.WAIT);
 
@@ -467,7 +465,7 @@ public class SegmentActions {
                 // 时间因子
                 timeScore = Math.min(1.0, variables.getUpstreamWaitingTime() / SegmentConstants.MAX_REASONABLE_WAIT_TIME);
                 // 负载因子
-                loadScore = (double) variables.getUpstreamVehicleIds().size() / variables.getUpstreamCapacity();
+                //loadScore = (double) variables.getUpstreamVehicleIds().size() / variables.getUpstreamCapacity();
                 // 交替因子
                 alternationScore = variables.getLastServedDirection() == SegmentVariables.Direction.DOWNSTREAM ? 1.0 : 0.5;
             }
@@ -475,7 +473,7 @@ public class SegmentActions {
                 // 时间因子
                 timeScore = Math.min(1.0, variables.getDownstreamWaitingTime() / SegmentConstants.MAX_REASONABLE_WAIT_TIME);
                 // 负载因子
-                loadScore = (double) variables.getDownstreamVehicleIds().size() / variables.getDownstreamCapacity();
+                //loadScore = (double) variables.getDownstreamVehicleIds().size() / variables.getDownstreamCapacity();
                 // 交替因子
                 alternationScore = variables.getLastServedDirection() == SegmentVariables.Direction.UPSTREAM ? 1.0 : 0.5;
             }
@@ -541,16 +539,6 @@ public class SegmentActions {
     }
 
     /**
-     * 检查容量限制
-     */
-    private static boolean checkCapacityLimit(SegmentVariables.Direction direction, SegmentVariables variables) {
-        return switch (direction) {
-            case UPSTREAM -> variables.getUpstreamVehicleIds().size() < variables.getUpstreamCapacity();
-            case DOWNSTREAM -> variables.getDownstreamVehicleIds().size() < variables.getDownstreamCapacity();
-            case NONE -> false;
-        };
-    }
-    /**
      * 检查车辆冲突
      */
     private static boolean checkCrashLimit(SegmentVariables.Direction direction, SegmentVariables variables){
@@ -598,38 +586,6 @@ public class SegmentActions {
                     variables.incrementDownstreamInCounter();
                 } else {
                     variables.incrementDownstreamOutCounter();
-                }
-            }
-        }
-    }
-
-    /**
-     * 生成通行请求（如果需要）
-     */
-    private static void generateTrafficRequestIfNeeded(SegmentVariables.Direction direction, SegmentVariables variables) {
-        LocalDateTime now = LocalDateTime.now();
-
-        switch (direction) {
-            case UPSTREAM -> {
-                if (!variables.isUpstreamRequest()) {
-                    int threshold = SegmentConstants.calculateRequestTriggerThreshold(variables.getUpstreamCapacity());
-                    if (variables.getUpstreamVehicleIds().size() >= threshold) {
-                        variables.setUpstreamRequest(true);
-                        variables.setUpstreamRequestTime(now);
-                        logger.debug("路段 {} 生成上行通行请求 - 车辆数: {}, 阈值: {}",
-                                variables.getSegmentId(), variables.getUpstreamVehicleIds().size(), threshold);
-                    }
-                }
-            }
-            case DOWNSTREAM -> {
-                if (!variables.isDownstreamRequest()) {
-                    int threshold = SegmentConstants.calculateRequestTriggerThreshold(variables.getDownstreamCapacity());
-                    if (variables.getDownstreamVehicleIds().size() >= threshold) {
-                        variables.setDownstreamRequest(true);
-                        variables.setDownstreamRequestTime(now);
-                        logger.debug("路段 {} 生成下行通行请求 - 车辆数: {}, 阈值: {}",
-                                variables.getSegmentId(), variables.getDownstreamVehicleIds().size(), threshold);
-                    }
                 }
             }
         }
@@ -690,7 +646,7 @@ public class SegmentActions {
         updateThroughputRate(variables);
 
         // 更新拥堵程度
-        updateCongestionLevel(variables);
+        //updateCongestionLevel(variables);
     }
 
     /**
@@ -711,26 +667,17 @@ public class SegmentActions {
     }
 
     /**
-     * 更新拥堵程度
-     */
-    private static void updateCongestionLevel(SegmentVariables variables) {
-        int totalVehicles = variables.getUpstreamVehicleIds().size() + variables.getDownstreamVehicleIds().size();
-        int totalCapacity = variables.getUpstreamCapacity() + variables.getDownstreamCapacity();
-
-        double congestionLevel = totalCapacity > 0 ? (double) totalVehicles / totalCapacity : 0.0;
-        variables.setCongestionLevel(Math.min(1.0, congestionLevel));
-    }
-
-    /**
      * 检查保守清空计时器
      */
     private static void checkConservativeTimer(SegmentVariables variables) {
         LocalDateTime conservativeStart = variables.getConservativeTimerStart();
+        if(variables.getRoadLength()<=0) return;
+
         if (conservativeStart != null) {
             LocalDateTime now = LocalDateTime.now();
             long elapsedSeconds = ChronoUnit.SECONDS.between(conservativeStart, now);
 
-            if (elapsedSeconds >= SegmentConstants.CONSERVATIVE_CLEAR_TIME) {
+            if (elapsedSeconds >= variables.getConservativeClearTime()) {
                 // 保守清空时间到期，强制清空
                 variables.setUpstreamClearanceDecision(ClearanceDecision.SAFE);
                 variables.setDownstreamClearanceDecision(ClearanceDecision.SAFE);
@@ -1190,8 +1137,8 @@ public class SegmentActions {
         diagnosticInfo.append(String.format("  当前状态: %s\n", currentState.getChineseName()));
         diagnosticInfo.append(String.format("  健康度评分: %d/100\n", variables.getSegmentHealthScore()));
         diagnosticInfo.append(String.format("  故障状态: %s\n", variables.isFaultDetected() ? "是" : "否"));
-        diagnosticInfo.append(String.format("  上行车辆数: %d/%d\n", variables.getUpstreamVehicleIds().size(), variables.getUpstreamCapacity()));
-        diagnosticInfo.append(String.format("  下行车辆数: %d/%d\n", variables.getDownstreamVehicleIds().size(), variables.getDownstreamCapacity()));
+        diagnosticInfo.append(String.format("  上行车辆数: %d\n", variables.getUpstreamVehicleIds().size()));
+        diagnosticInfo.append(String.format("  下行车辆数: %d\n", variables.getDownstreamVehicleIds().size()));
         diagnosticInfo.append(String.format("  上行请求: %s\n", variables.isUpstreamRequest() ? "是" : "否"));
         diagnosticInfo.append(String.format("  下行请求: %s\n", variables.isDownstreamRequest() ? "是" : "否"));
         diagnosticInfo.append(String.format("  清空决策: %s\n", variables.getOverallClearanceDecision()));

@@ -45,11 +45,12 @@ public class SegmentGuards {
 
         // 检查最小绿灯时间是否满足
         boolean minGreenTimeReached = variables.isMinGreenTimeReached();
+        boolean isClear = variables.getOverallClearanceDecision().isSafeForTransition();
 
         // 当前无请求，对向有请求即可切换
         boolean shouldSwitch = checkSwitchConditions(currentState, variables);
 
-        return minGreenTimeReached && shouldSwitch;
+        return minGreenTimeReached && (shouldSwitch || isClear);
     }
 
     /**
@@ -119,12 +120,16 @@ public class SegmentGuards {
 
         // 检查清空条件是否满足
         switch (targetState){
-            case UPSTREAM_GREEN -> {
-                if(variables.getUpstreamClearanceDecision() == ClearanceDecision.SAFE) return true;
+            case UPSTREAM_GREEN -> {    // 这里无法判断保守清空，保守清空后要先设置为SAFE, 这个条件已经满足，这里无需重复判断
+                if(variables.getUpstreamClearanceDecision() == ClearanceDecision.SAFE ||
+                        variables.getUpstreamClearanceDecision() == ClearanceDecision.WARNING) {
+                    return true;
+                }
                 return false;
             }
             case DOWNSTREAM_GREEN -> {
-                if(variables.getDownstreamClearanceDecision() == ClearanceDecision.SAFE) return true;
+                if(variables.getDownstreamClearanceDecision() == ClearanceDecision.SAFE ||
+                        variables.getDownstreamClearanceDecision() == ClearanceDecision.WARNING) return true;
                 return false;
             }
         }
@@ -202,50 +207,6 @@ public class SegmentGuards {
     }
 
     // ==================== 通行请求事件守护条件 ====================
-
-    /**
-     * 通行请求生成守护条件
-     * G(q, request_generated, v)
-     *
-     * @param currentState 当前状态
-     * @param event 触发事件
-     * @param variables 路段变量
-     * @return 是否应该生成通行请求
-     */
-    public static boolean checkRequestGeneration(SegmentState currentState,
-                                                 SegmentEvent event,
-                                                 SegmentVariables variables) {
-        SegmentVariables.Direction direction = getRequestDirection(variables);
-        if (direction == SegmentVariables.Direction.NONE) {
-            return false;
-        }
-
-        // 检查该方向是否有车辆等待
-        boolean hasWaitingVehicles = switch (direction) {
-            case UPSTREAM -> !variables.getUpstreamVehicleIds().isEmpty();
-            case DOWNSTREAM -> !variables.getDownstreamVehicleIds().isEmpty();
-            case NONE -> false;
-        };
-
-        // 检查当前状态是否不服务该方向
-        boolean notCurrentlyServed = switch (direction) {
-            case UPSTREAM -> currentState != SegmentState.UPSTREAM_GREEN;
-            case DOWNSTREAM -> currentState != SegmentState.DOWNSTREAM_GREEN;
-            case NONE -> false;
-        };
-
-        // 检查该方向是否还没有请求
-        boolean noExistingRequest = switch (direction) {
-            case UPSTREAM -> !variables.isUpstreamRequest();
-            case DOWNSTREAM -> !variables.isDownstreamRequest();
-            case NONE -> false;
-        };
-
-        // 检查是否达到请求触发阈值
-        boolean shouldGenerateRequest = variables.shouldGenerateRequest(direction);
-
-        return hasWaitingVehicles && notCurrentlyServed && noExistingRequest && shouldGenerateRequest;
-    }
 
     /**
      * 通行请求清除守护条件

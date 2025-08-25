@@ -14,8 +14,8 @@ public class ThreadPoolConfig {
     @Bean(name = "platformEventHandlerThreadPool")
     public ThreadPoolTaskExecutor eventHandlerThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(2); // 核心线程数
-        executor.setMaxPoolSize(5); // 最大线程数
+        executor.setCorePoolSize(5); // 核心线程数
+        executor.setMaxPoolSize(10); // 最大线程数
         executor.setQueueCapacity(100); // 队列容量
         executor.setThreadNamePrefix("PlatformEventHandlerThread-"); // 线程名前缀
         executor.setWaitForTasksToCompleteOnShutdown(true); // 关闭时等待任务完成

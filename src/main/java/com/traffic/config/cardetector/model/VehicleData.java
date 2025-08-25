@@ -31,9 +31,30 @@ public class VehicleData {
 
     public int getLaneNumber() { return laneNumber; }
     public void setLaneNumber(int laneNumber) { this.laneNumber = laneNumber; }
+    public int getSegmentId(){
+        switch (laneNumber){
+            case 1, 2-> {
+                return 1;
+            }
+            case 3, 4 -> {
+                return 2;
+            }
+            case 5, 6 -> {
+                return 3;
+            }
+            case 7, 8 -> {
+                return 4;
+            }
+        }
+        return 0;
+    }
 
     public String getLicensePlate() { return licensePlate; }
     public void setLicensePlate(String licensePlate) { this.licensePlate = licensePlate; }
+    public boolean isValidLicensePlate(){
+        if(licensePlate == null || licensePlate.trim().isEmpty()) return false;
+        return true;
+    }
 
     public VehicleDirection getDirection() { return direction; }
     public void setDirection(VehicleDirection direction) { this.direction = direction; }

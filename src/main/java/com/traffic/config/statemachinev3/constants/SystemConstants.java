@@ -13,11 +13,11 @@ public final class SystemConstants {
     /**
      * 最大全红时间（秒）
      */
-    public static final int MAX_RED_TIME = 60;
+    //public static final int MAX_RED_TIME = 60;
     /**
      * 系统全红过渡时间（秒）
      */
-    public static final int TRANSITION_TIME = 60;
+    //public static final int TRANSITION_TIME = 60;
 
     /**
      * 错误统计时间窗口（秒） - 60分钟
@@ -140,14 +140,6 @@ public final class SystemConstants {
     }
 
     // ==================== 辅助方法 ====================
-
-    /**
-     * 获取过渡超时时间
-     * @return 过渡超时时间（秒）
-     */
-    public static int getTransitionTimeoutSeconds() {
-        return TRANSITION_TIME * TRANSITION_TIMEOUT_MULTIPLIER;
-    }
 
     /**
      * 获取错误窗口时间（分钟）

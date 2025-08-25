@@ -56,7 +56,7 @@ public class CrossInfoManager {
     public void handleSignalListUpdate(SignalListEvent event){
         logger.info("收到 SignalListEvent 事件，开始更新 CrossInfoMap...");
         crossInfoMap.clear(); // 清空现有数据
-        List<Signal> signals = event.getRegionList().getRegions();
+        List<Signal> signals = event.getSignalList().getSignals();
         for(Signal signal : signals){
             CrossInfo crossInfo = new CrossInfo();
             crossInfo.setCrossid(0);    // 无效项
@@ -180,8 +180,12 @@ public class CrossInfoManager {
             if(segmentStateA.isDownstreamState())return ControlPhase.SOUTH_FULL_GREEN.getValue();
             return ControlPhase.ALL_RED.getValue();
         }
-        if(segmentStateA.isUpstreamState() && segmentStateB.isDownstreamState()){ ControlPhase.ALL_RED.getValue(); }
         if(segmentStateA.isYellowFlashState() || segmentStateB.isYellowFlashState()){ return ControlPhase.YELLOW_FLASH.getValue(); }
+        if(segmentStateA.isDownstreamState() && segmentStateB.isUpstreamState()){
+            logger.warn("[两边放行] segmentA:{}, segmentB:{}", segmentStateA.getChineseName(), segmentStateB.getChineseName());
+            //return ControlPhase.ALL_RED.getValue();
+            return ControlPhase.SOUTH_NORTH_ALL_GREEN.getValue();
+        }
         if(segmentStateB.isUpstreamState()) return ControlPhase.NORTH_FULL_GREEN.getValue();
         if(segmentStateA.isDownstreamState()) return ControlPhase.SOUTH_FULL_GREEN.getValue();
 

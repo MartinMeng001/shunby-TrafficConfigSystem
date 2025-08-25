@@ -12,24 +12,9 @@ public final class SegmentConstants {
     // ==================== 时间常量 (Time Constants) ====================
 
     /**
-     * 最小绿灯时间（秒）
-     */
-    public static final int MIN_GREEN_TIME = 30;
-
-    /**
-     * 最大绿灯时间（秒）
-     */
-    public static final int MAX_GREEN_TIME = 40;
-
-    /**
-     * 最大全红时间（秒）
-     */
-    public static final int MAX_RED_TIME = 60;
-    public static final int MIN_RED_TIME = 5;
-    /**
      * 保守清空时长（秒）
      */
-    public static final int CONSERVATIVE_CLEAR_TIME = 30;
+    //public static final int CONSERVATIVE_CLEAR_TIME = 30;
 
     /**
      * 通行请求生成阈值时间（秒）
@@ -56,22 +41,22 @@ public final class SegmentConstants {
     /**
      * 默认上行会车区容量
      */
-    public static final int DEFAULT_UPSTREAM_CAPACITY = 2;
+    //public static final int DEFAULT_UPSTREAM_CAPACITY = 2;
 
     /**
      * 默认下行会车区容量
      */
-    public static final int DEFAULT_DOWNSTREAM_CAPACITY = 2;
+    //public static final int DEFAULT_DOWNSTREAM_CAPACITY = 2;
 
     /**
      * 最小路段容量
      */
-    public static final int MIN_SEGMENT_CAPACITY = 1;
+    //public static final int MIN_SEGMENT_CAPACITY = 1;
 
     /**
      * 最大路段容量
      */
-    public static final int MAX_SEGMENT_CAPACITY = 20;
+    //public static final int MAX_SEGMENT_CAPACITY = 20;
 
     // ==================== 请求触发常量 (Request Trigger Constants) ====================
 
@@ -221,33 +206,6 @@ public final class SegmentConstants {
     // ==================== 辅助方法 ====================
 
     /**
-     * 计算请求触发阈值
-     * @param capacity 路段容量
-     * @return 请求触发阈值
-     */
-    public static int calculateRequestTriggerThreshold(int capacity) {
-        return Math.max(1, (int) (capacity * REQUEST_TRIGGER_RATIO));
-    }
-
-    /**
-     * 验证容量是否有效
-     * @param capacity 容量值
-     * @return 是否有效
-     */
-    public static boolean isValidCapacity(int capacity) {
-        return capacity >= MIN_SEGMENT_CAPACITY && capacity <= MAX_SEGMENT_CAPACITY;
-    }
-
-    /**
-     * 限制容量在有效范围内
-     * @param capacity 原始容量
-     * @return 限制后的容量
-     */
-    public static int clampCapacity(int capacity) {
-        return Math.max(MIN_SEGMENT_CAPACITY, Math.min(MAX_SEGMENT_CAPACITY, capacity));
-    }
-
-    /**
      * 验证优先级权重是否有效
      * @param timeWeight 时间权重
      * @param loadWeight 负载权重
@@ -269,14 +227,6 @@ public final class SegmentConstants {
         return time > 0;
     }
 
-    /**
-     * 验证绿灯时间是否有效
-     * @param greenTime 绿灯时间
-     * @return 是否有效
-     */
-    public static boolean isValidGreenTime(int greenTime) {
-        return greenTime >= MIN_GREEN_TIME && greenTime <= MAX_GREEN_TIME;
-    }
 
     /**
      * 检查是否为紧急等待时间

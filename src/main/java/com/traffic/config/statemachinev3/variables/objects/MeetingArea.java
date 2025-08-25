@@ -7,7 +7,7 @@ public class MeetingArea {
 
     private final Set<String> licensePlates;
     private final AtomicInteger vehicleCount = new AtomicInteger(0);;
-    private final int maxCapacity;
+    private int maxCapacity;
 
     public MeetingArea(int maxCapacity) {
         this.licensePlates = new HashSet<>();
@@ -16,6 +16,9 @@ public class MeetingArea {
 
     public int getMaxCapacity(){
         return maxCapacity;
+    }
+    public void setMaxCapacity(int maxCapacity){
+        this.maxCapacity = maxCapacity;
     }
     /**
      * 处理车辆进入会车区的事件

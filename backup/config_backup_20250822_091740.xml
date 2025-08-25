@@ -95,8 +95,8 @@
     <WaitingAreas>
         <waitingArea>
             <index>1</index>
-            <upCapacity>2</upCapacity>
-            <downCapacity>2</downCapacity>
+            <upCapacity>1</upCapacity>
+            <downCapacity>1</downCapacity>
         </waitingArea>
         <waitingArea>
             <index>2</index>

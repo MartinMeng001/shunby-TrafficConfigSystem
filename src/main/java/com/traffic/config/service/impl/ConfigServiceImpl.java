@@ -82,7 +82,7 @@ public class ConfigServiceImpl implements ConfigService {
             taskScheduler.schedule(() -> {
                 log.info("ConfigService: 延迟 {} 秒后发布初始 ServerUrlUpdateEvent。", 5);
                 eventPublisher.publishEvent(new ServerUrlUpdateEvent(this, cachedConfig.getGlobal().getPlatformUrl()));
-                eventPublisher.publishEvent(new SignalListEvent(this, cachedConfig.getGlobal().getRegionList()));
+                eventPublisher.publishEvent(new SignalListEvent(this, cachedConfig.getGlobal().getSignalList()));
             }, new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5)));
         } catch (JAXBException e) {
             log.error("JAXB上下文初始化失败", e);
@@ -211,6 +211,11 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public List<DetectPoint> getAllDetectPoints() {
         return cachedConfig.getDetectPoints().getDetectPointList();
+    }
+
+    @Override
+    public List<WaitingArea> getAllWaitingAreas() {
+        return cachedConfig.getWaitingAreas().getWaitingAreas();
     }
 
     @Override
@@ -427,6 +432,11 @@ public class ConfigServiceImpl implements ConfigService {
         }
 
     }
+    private void checkDetectPointsReadonly() {
+        if (!cachedConfig.getDetectPoints().isReadonly()) {
+            throw new ConfigException("READONLY_VIOLATION", "检测点配置为只读，不允许修改");
+        }
+    }
     @Override
     public void refreshCache() {
         lock.writeLock().lock();
@@ -559,6 +569,7 @@ public class ConfigServiceImpl implements ConfigService {
                 validateSegment(segment);
             }
         }
+        checkDetectPointsReadonly();
         // --- 新增代码，用于验证 DetectPoint ---
         if (config.getDetectPoints() != null && config.getDetectPoints().getDetectPointList() != null) {
             for (DetectPoint detectPoint : config.getDetectPoints().getDetectPointList()) {

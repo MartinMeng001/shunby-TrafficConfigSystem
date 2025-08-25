@@ -2,6 +2,7 @@ package com.traffic.config.signalplatform.platformbase.enums;
 
 public enum ControlPhase {
     CANCEL_GUARD(0, "取消管控"),
+    SOUTH_NORTH_ALL_GREEN(6, "对放"),
     EAST_FULL_GREEN(7, "东全放"),
     WEST_FULL_GREEN(8, "西全放"),
     SOUTH_FULL_GREEN(9, "下行"),  // 南全放

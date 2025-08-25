@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SingleLane>
+    <global>
+        <AllRed>120</AllRed>
+        <MaxAllRed>300</MaxAllRed>
+        <PlatformUrl>122.5.105.22:2020</PlatformUrl>
+        <SignalControllerList>
+            <Signal name="上行入口信号机">37</Signal>
+            <Signal name="信号机2">38</Signal>
+            <Signal name="信号机3">41</Signal>
+            <Signal name="信号机4">42</Signal>
+            <Signal name="下行入口信号机">43</Signal>
+        </SignalControllerList>
+    </global>
+    <segments size="4">
+        <segment>
+            <segmentId>1</segmentId>
+            <name>路段1</name>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
+            <upsigid>37</upsigid>
+            <downsigid>38</downsigid>
+        </segment>
+        <segment>
+            <segmentId>2</segmentId>
+            <name>路段2</name>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
+            <upsigid>38</upsigid>
+            <downsigid>41</downsigid>
+        </segment>
+        <segment>
+            <segmentId>3</segmentId>
+            <name>路段3</name>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
+            <upsigid>41</upsigid>
+            <downsigid>42</downsigid>
+        </segment>
+        <segment>
+            <segmentId>4</segmentId>
+            <name>路段4</name>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
+            <upsigid>42</upsigid>
+            <downsigid>43</downsigid>
+        </segment>
+    </segments>
+    <DetectPoints readonly="true">
+        <DetectPoint>
+            <index>1</index>
+            <details>路段1上行检测</details>
+        </DetectPoint>
+        <DetectPoint>
+            <index>2</index>
+            <details>路段1下行检测</details>
+        </DetectPoint>
+        <DetectPoint>
+            <index>3</index>
+            <details>路段2上行检测</details>
+        </DetectPoint>
+        <DetectPoint>
+            <index>4</index>
+            <details>路段2下行检测</details>
+        </DetectPoint>
+        <DetectPoint>
+            <index>5</index>
+            <details>路段3上行检测</details>
+        </DetectPoint>
+        <DetectPoint>
+            <index>6</index>
+            <details>路段3下行检测</details>
+        </DetectPoint>
+        <DetectPoint>
+            <index>7</index>
+            <details>路段4上行检测</details>
+        </DetectPoint>
+        <DetectPoint>
+            <index>8</index>
+            <details>路段4下行检测</details>
+        </DetectPoint>
+    </DetectPoints>
+    <WaitingAreas>
+        <waitingArea>
+            <index>1</index>
+            <upCapacity>2</upCapacity>
+            <downCapacity>2</downCapacity>
+        </waitingArea>
+        <waitingArea>
+            <index>2</index>
+            <upCapacity>2</upCapacity>
+            <downCapacity>2</downCapacity>
+        </waitingArea>
+        <waitingArea>
+            <index>3</index>
+            <upCapacity>2</upCapacity>
+            <downCapacity>2</downCapacity>
+        </waitingArea>
+    </WaitingAreas>
+</SingleLane>

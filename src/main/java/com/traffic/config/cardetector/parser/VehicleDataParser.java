@@ -63,7 +63,7 @@ public class VehicleDataParser implements DataParser<VehicleData> {
             vehicleData.setSpeed(speed);
             offset++;
 
-            // 速度 (1字节)
+            // 运行方向 (1字节)
             int runDirection = data[offset] & 0xFF;
             vehicleData.setRunDirection(runDirection);
 
