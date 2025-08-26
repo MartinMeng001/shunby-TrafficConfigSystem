@@ -182,7 +182,7 @@ public class CrossInfoManager {
         }
         if(segmentStateA.isYellowFlashState() || segmentStateB.isYellowFlashState()){ return ControlPhase.YELLOW_FLASH.getValue(); }
         if(segmentStateA.isDownstreamState() && segmentStateB.isUpstreamState()){
-            logger.warn("[两边放行] segmentA:{}, segmentB:{}", segmentStateA.getChineseName(), segmentStateB.getChineseName());
+//            logger.warn("[两边放行] segmentA:{}, segmentB:{}", segmentStateA.getChineseName(), segmentStateB.getChineseName());
             //return ControlPhase.ALL_RED.getValue();
             return ControlPhase.SOUTH_NORTH_ALL_GREEN.getValue();
         }

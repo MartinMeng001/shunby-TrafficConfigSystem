@@ -157,7 +157,8 @@ public class TrafficMessagePublisher {
                 return; // 没有连接的客户端，跳过推送
             }
             CrossMettingZoneManager.getInstance().getAllCrossMeetingZone().forEach((zoneId, meetingArea) -> {
-                publishWaitingAreaStatus(meetingArea);
+                if(zoneId>=1 && zoneId<=3)
+                    publishWaitingAreaStatus(meetingArea);
             });
 
 //            List<SegmentStateMachine> segmentMachines = topLevelStateMachine.getSegmentStateMachines();

@@ -628,17 +628,30 @@ public class SegmentVariables {
      * 会车区管理
      */
     public void clearUpstreamMeetingzone(){
-        crossMeetingZoneManager.upVehicleClear(upMeetingZoneCrossId.get());
+        crossMeetingZoneManager.upVehicleClear(downMeetingZoneCrossId.get());
+        System.out.println("ForceClear Upstream Meetingzone:"+downMeetingZoneCrossId.get());
     }
 
-
+    public int getMeetZoneCrossId(boolean isUpstream){
+        if(isUpstream) return upMeetingZoneCrossId.get();
+        return downMeetingZoneCrossId.get();
+    }
     public boolean isEmptyUpstreamMeetingzone(){
         MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(upMeetingZoneCrossId.get());
         if(meetingArea == null) return true;
         return meetingArea.isEmpty();
     }
     public boolean isUpMaxCapacity(){
-        MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(upMeetingZoneCrossId.get());
+        MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(downMeetingZoneCrossId.get());
+        int counts = 0;
+        if(meetingArea != null) {
+            counts = meetingArea.getCount();
+            if(counts+getUpstreamCounts() >= meetingArea.getMaxCapacity()) return true;
+        }
+        return false;
+    }
+    public boolean isUpMaxCapacityA(int meetzoneCrossId){
+        MeetingArea meetingArea = crossMeetingZoneManager.getUpMeetingArea(meetzoneCrossId);
         int counts = 0;
         if(meetingArea != null) {
             counts = meetingArea.getCount();
@@ -648,7 +661,8 @@ public class SegmentVariables {
     }
 
     public void clearDownstreamMeetingzone(){
-        crossMeetingZoneManager.downVehicleClear(downMeetingZoneCrossId.get());
+        System.out.println("ForceClear Downstream Meetingzone:"+upMeetingZoneCrossId.get());
+        crossMeetingZoneManager.downVehicleClear(upMeetingZoneCrossId.get());
     }
 
 
@@ -678,7 +692,16 @@ public class SegmentVariables {
         return meetingArea.getMaxCapacity();
     }
     public boolean isDownMaxCapacity(){
-        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(downMeetingZoneCrossId.get());
+        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(upMeetingZoneCrossId.get());
+        int counts = 0;
+        if(meetingArea != null) {
+            counts = meetingArea.getCount();
+            if(counts+getDownstreamCounts() >= meetingArea.getMaxCapacity()) return true;
+        }
+        return false;
+    }
+    public boolean isDownMaxCapacityA(int meetingZoneCrossId){
+        MeetingArea meetingArea = crossMeetingZoneManager.getDownMeetingArea(meetingZoneCrossId);
         int counts = 0;
         if(meetingArea != null) {
             counts = meetingArea.getCount();
@@ -812,6 +835,7 @@ public class SegmentVariables {
      * 清除上行通行请求
      */
     public void clearUpstreamRequest() {
+        clearUpstreamMeetingzone();
         upstreamRequest = false;
         upstreamRequestTime = null;
         priorityScoreUpstream = 0.0;
@@ -822,6 +846,7 @@ public class SegmentVariables {
      * 清除下行通行请求
      */
     public void clearDownstreamRequest() {
+        clearDownstreamMeetingzone();
         downstreamRequest = false;
         downstreamRequestTime = null;
         priorityScoreDownstream = 0.0;
