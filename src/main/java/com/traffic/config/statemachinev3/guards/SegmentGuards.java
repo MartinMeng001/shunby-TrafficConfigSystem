@@ -33,15 +33,28 @@ public class SegmentGuards {
         if (!currentState.isGreenState()) {
             return false;
         }
+        //if(variables.isGreenTimeout()) return true; // 如果达到绿灯超时，切换时，要清空等待区
         switch (currentState) { // 已达到最大容量，必须切换
             case UPSTREAM_GREEN -> {
-                if(variables.isUpMaxCapacity()) return true;
+                if(variables.isGreenTimeout()) {
+                    variables.clearUpstreamRequest();
+                    return true; // 如果达到绿灯超时，切换时，要清空等待区
+                }
+                // 判断上行等待区，而非上行请求等待区
+                if(variables.isUpMaxCapacityA(variables.getMeetZoneCrossId(true))) return true;
+                if(variables.isUpstreamRequest()) return false;     // 有车辆请求没到最大绿，不进行切换
             }
             case DOWNSTREAM_GREEN -> {
-                if(variables.isDownMaxCapacity()) return true;
+                if(variables.isGreenTimeout()) {
+                    variables.clearDownstreamRequest();
+                    return true; // 如果达到绿灯超时，切换时，要清空等待区
+                }
+                // 判断下行等待区，而非下行请求等待区
+                if(variables.isDownMaxCapacityA(variables.getMeetZoneCrossId(false))) return true;
+                if(variables.isDownstreamRequest()) return false;   // 有车辆请求没到最大绿，不进行切换
             }
         }
-        if(variables.isGreenTimeout()) return true;
+
 
         // 检查最小绿灯时间是否满足
         boolean minGreenTimeReached = variables.isMinGreenTimeReached();
@@ -49,7 +62,6 @@ public class SegmentGuards {
 
         // 当前无请求，对向有请求即可切换
         boolean shouldSwitch = checkSwitchConditions(currentState, variables);
-
         return minGreenTimeReached && (shouldSwitch || isClear);
     }
 

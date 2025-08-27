@@ -444,6 +444,21 @@ public class SegmentStateMachine {
         if (!isClearanceConditionMet()) {
             return SegmentState.ALL_RED_CLEAR; // 继续等待清空
         }
+        // 先判断前方等待区容量是否允许放行, 这里是判断等待区，不是请求等待区
+        boolean isUpMax = variables.isUpMaxCapacityA(variables.getMeetZoneCrossId(true));
+        boolean isDownMax = variables.isDownMaxCapacityA(variables.getMeetZoneCrossId(false));
+        if(isUpMax && isDownMax) {
+            logger.warn("SegmentId {} 上下行均不允许放行 upMeetZoneCrossId:{}, downMeetingZoneCrossId:{}", variables.getSegmentId(), variables.getMeetZoneCrossId(true), variables.getMeetZoneCrossId(false));
+            return SegmentState.ALL_RED_CLEAR; // 继续等待清空
+        }
+        if(isUpMax) {
+            logger.warn("SegmentId {} 上行不允许放行 upMeetZoneCrossId:{}, downMeetingZoneCrossId:{}", variables.getSegmentId(), variables.getMeetZoneCrossId(true), variables.getMeetZoneCrossId(false));
+            return SegmentState.DOWNSTREAM_GREEN;
+        }
+        if(isDownMax) {
+            logger.warn("SegmentId {} 下行不允许放行 upMeetZoneCrossId:{}, downMeetingZoneCrossId:{}", variables.getSegmentId(), variables.getMeetZoneCrossId(true), variables.getMeetZoneCrossId(false));
+            return SegmentState.UPSTREAM_GREEN;
+        }
 
         // 基于优先级算法确定服务方向
         SegmentVariables.Direction priorityDirection = determinePriorityDirection();
@@ -528,30 +543,18 @@ public class SegmentStateMachine {
      * 实现感应控制的核心优先级算法
      */
     private SegmentVariables.Direction determinePriorityDirection() {
+        // 如果两个方向都有请求,或者都无请求，使用交替策略，暂时不使用得分，后期可尝试基于优先级得分判断
+        if (variables.isUpstreamRequest() && variables.isDownstreamRequest()) {
+            return alternateDirection();
+        }
         // 如果只有一个方向有请求，直接返回
         if (variables.isUpstreamRequest()) {    // && !variables.isDownstreamRequest()
-            logger.info("上行有通行请求:{}", variables.getSegmentId());
+            logger.warn("上行有通行请求:{}", variables.getSegmentId());
             return SegmentVariables.Direction.UPSTREAM;
         }
         if (variables.isDownstreamRequest() ) {//&& variables.isDownstreamRequest()
-            logger.info("下行有通行请求:{}", variables.getSegmentId());
+            logger.warn("下行有通行请求:{}", variables.getSegmentId());
             return SegmentVariables.Direction.DOWNSTREAM;
-        }
-
-        // 如果两个方向都有请求,或者都无请求，使用交替策略，暂时不使用得分，后期可尝试基于优先级得分判断
-        if (variables.isUpstreamRequest() && variables.isDownstreamRequest()) {
-
-            return alternateDirection();
-//            double upstreamScore = variables.getPriorityScoreUpstream();
-//            double downstreamScore = variables.getPriorityScoreDownstream();
-//
-//            // 如果得分相近，采用交替策略
-//            if (Math.abs(upstreamScore - downstreamScore) < SegmentConstants.PRIORITY_SCORE_THRESHOLD) {
-//                return alternateDirection();
-//            }
-//
-//            return upstreamScore > downstreamScore ?
-//                    SegmentVariables.Direction.UPSTREAM : SegmentVariables.Direction.DOWNSTREAM;
         }
 
         // 如果都没有请求，返回交替方向
