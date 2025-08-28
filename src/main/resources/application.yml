@@ -1,3 +1,6 @@
+# 完整的 application.yml 配置文件
+
+# 服务器配置
 server:
   port: 8080
   servlet:
@@ -7,26 +10,97 @@ server:
 websocket:
   traffic:
     endpoint: /ws/traffic
-    allowed-origins: "*"  # 生产环境应配置具体域名
+    allowed-origins: "*"
     max-session-idle-timeout: 30000
     max-text-message-buffer-size: 8192
     max-binary-message-buffer-size: 8192
 
+# Spring配置
 spring:
   application:
     name: traffic-config-system
   profiles:
-    active: default # 不包含statemachine-v2，所以statemachinev2不会启动
+    active: default
 
-# 配置文件路径
+  # 允许Bean覆盖
+  main:
+    allow-bean-definition-overriding: true
+
+  # 数据源配置（SQLite）
+  datasource:
+    url: jdbc:sqlite:./data/traffic_system.db
+    driver-class-name: org.sqlite.JDBC
+    username:
+    password:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # JPA配置
+  jpa:
+    database-platform: com.traffic.config.dialect.CustomSQLiteDialect
+    hibernate:
+      ddl-auto: create-drop  # 重新创建表解决列名问题
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# 交通控制系统配置
 traffic:
   config:
     file:
       path: classpath:config.xml
 
+  # 数据库日志配置
+  log:
+    database:
+      enabled: true
+      cleanup:
+        enabled: true
+        normal-retain-days: 30
+        error-retain-days: 90
+        cron: "0 0 2 * * ?"
+    level:
+      vehicle: INFO
+      segment: INFO
+      conflict: WARN
+      detector: ERROR
+      sensor: INFO
+      system: INFO
+
+  # 数据目录配置
+  data:
+    dir: ./data
+    backup:
+      dir: ./data/backup
+    logs:
+      dir: ./logs
+
+# 日志配置
 logging:
   level:
     com.traffic: DEBUG
     org.springframework.web: INFO
+    com.traffic.config.service.log: DEBUG
+    org.springframework.orm.jpa: INFO
+    org.hibernate.SQL: DEBUG
+    org.springframework.boot.autoconfigure: WARN
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# 管理端点配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized

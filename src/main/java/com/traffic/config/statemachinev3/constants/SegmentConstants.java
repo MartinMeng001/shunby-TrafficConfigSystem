@@ -38,25 +38,6 @@ public final class SegmentConstants {
 
     // ==================== 容量常量 (Capacity Constants) ====================
 
-    /**
-     * 默认上行会车区容量
-     */
-    //public static final int DEFAULT_UPSTREAM_CAPACITY = 2;
-
-    /**
-     * 默认下行会车区容量
-     */
-    //public static final int DEFAULT_DOWNSTREAM_CAPACITY = 2;
-
-    /**
-     * 最小路段容量
-     */
-    //public static final int MIN_SEGMENT_CAPACITY = 1;
-
-    /**
-     * 最大路段容量
-     */
-    //public static final int MAX_SEGMENT_CAPACITY = 20;
 
     // ==================== 请求触发常量 (Request Trigger Constants) ====================
 

@@ -4,8 +4,10 @@ import com.traffic.config.cardetector.model.ProtocolMessage;
 import com.traffic.config.cardetector.model.VehicleData;
 import com.traffic.config.cardetector.parser.VehicleDataParser;
 import com.traffic.config.entity.DetectPoint;
+import com.traffic.config.entity.log.SystemLogEntity;
 import com.traffic.config.exception.DataParseException;
 import com.traffic.config.service.ConfigService;
+import com.traffic.config.service.log.SystemLogService;
 import com.traffic.config.statemachinev3.enums.segment.SegmentEvent;
 import com.traffic.config.statemachinev3.threading.SegmentStateMachineV3Service;
 import com.traffic.config.statemachinev3.variables.SegmentVariables;
@@ -28,6 +30,9 @@ public class DataAccessManager {
     @Autowired
     private ConfigService configService;
 
+    @Autowired
+    private SystemLogService systemLogService;
+
     private int countRadar = 0;
     private int countVideo = 0;
 
@@ -49,7 +54,6 @@ public class DataAccessManager {
 
                 if (dataType == 0x00) {
                     // 心跳消息
-                    System.out.println("消息类型: 心跳消息");
                     if (message.getData().length >= 5) {
                         byte[] ipBytes = new byte[4];
                         System.arraycopy(message.getData(), 1, ipBytes, 0, 4);
@@ -73,13 +77,17 @@ public class DataAccessManager {
 //                        DetectPoint point = getDetectPointByIndex(vehicleData.getLaneNumber());
 //                        if(point == null){ return;}
                         if(vehicleData.isValidLicensePlate()==false) {
-                            if(vehicleData.getDirection().getCode() == 1) countRadar++;
+                            if(vehicleData.getDirection().getCode() == 1) {
+                                countRadar++;
+                                systemLogService.logVehicleEvent(SystemLogEntity.LogLevel.INFO,
+                                        String.format("Radar VehicleEvent, direction:%d, run Direction:", vehicleData.getDirection().getCode(), vehicleData.getRunDirection()), null);
+                            }
                             return;
                         }
                         countVideo++;
-                        System.out.println("解析结果:");
-                        System.out.println("Radar: " + countRadar);
-                        System.out.println("Video: " + countVideo);
+//                        System.out.println("解析结果:");
+//                        System.out.println("Radar: " + countRadar);
+//                        System.out.println("Video: " + countVideo);
 //                        System.out.println("  数据类型: " + vehicleData.getDataType());
 //                        System.out.println("  信号机IP: " + vehicleData.getSignalIp());
 //                        System.out.println("  车道编号: " + vehicleData.getLaneNumber());
@@ -94,7 +102,9 @@ public class DataAccessManager {
                         if(eventData == null){ return;}
                         int segmentId = vehicleData.getSegmentId();
                         if(segmentId ==0) return;
-                        System.out.println("VehicleEvent:"+eventData.toString()+ " Event:"+event.toString());
+                        systemLogService.logVehicleEvent(SystemLogEntity.LogLevel.INFO,
+                                String.format("VehicleEvent: %s, Event: %s", eventData.toString(), event.toString()), vehicleData.getLicensePlate());
+//                        System.out.println("VehicleEvent:"+eventData.toString()+ " Event:"+event.toString());
 //                        segmentStateMachineService.processSegmentEventSync(segmentId, event, eventData);    // 必须同步处理，否则会造成等待区清空错误
                     } else {
                         System.out.println("⚠ 无法解析车辆数据");

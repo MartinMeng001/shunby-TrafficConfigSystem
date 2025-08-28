@@ -53,6 +53,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web-services</artifactId>
         </dependency>
+
         <!-- 核心WebSocket支持 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -70,6 +71,25 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- 数据库相关依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- SQLite数据库驱动 -->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.43.0.0</version>
+        </dependency>
+
+        <!-- 数据库连接池 -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
         </dependency>
 
         <!-- JAXB for XML processing (Java 16需要显式引入) -->
@@ -106,16 +126,19 @@
             <version>${fastjson.version}</version>
         </dependency>
 
+        <!-- Jackson - 移除手动版本指定，使用Spring Boot管理的版本 -->
+        <!--
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.5</version> <!-- 与 Spring Boot 2.7.18 兼容 -->
+            <version>2.13.5</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.13.5</version>
         </dependency>
+        -->
 
         <!-- Spring Boot Configuration Processor -->
         <dependency>
@@ -166,6 +189,8 @@
                     <source>16</source>
                     <target>16</target>
                     <encoding>UTF-8</encoding>
+                    <!-- Java 16 模块系统兼容配置 -->
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
 
@@ -174,6 +199,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0</version>
+                <configuration>
+                    <!-- Java 16 测试运行时参数 -->
+                    <argLine>
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                    </argLine>
+                </configuration>
             </plugin>
 
             <!-- Maven Resources Plugin -->

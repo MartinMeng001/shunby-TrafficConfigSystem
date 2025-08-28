@@ -3,8 +3,10 @@ package com.traffic.config.statemachinev3.core;
 import com.traffic.config.entity.Segment;
 import com.traffic.config.entity.WaitingArea;
 import com.traffic.config.entity.WaitingAreas;
+import com.traffic.config.entity.log.SystemLogEntity;
 import com.traffic.config.service.ConfigService;
 import com.traffic.config.service.event.EventBusService;
+import com.traffic.config.service.log.SystemLogService;
 import com.traffic.config.signalplatform.platformbase.CrossInfoManager;
 import com.traffic.config.statemachinev3.enums.segment.SegmentState;
 import com.traffic.config.statemachinev3.enums.system.SystemStateV3;
@@ -87,6 +89,9 @@ public class TopLevelStateMachine {
     @Autowired
     private ConfigService configService;
 
+    @Autowired
+    private SystemLogService systemLogService;
+
     // ==================== 构造函数和初始化 ====================
 
     /**
@@ -112,7 +117,7 @@ public class TopLevelStateMachine {
      */
     private void initializeSegmentStateMachines() {
         for (int i = 1; i <= SystemConstants.TOTAL_SEGMENT_COUNT; i++) {
-            SegmentStateMachine segment = new SegmentStateMachine(i);
+            SegmentStateMachine segment = new SegmentStateMachine(i, systemLogService);
             //logger.debug("初始化路段状态机 - 路段ID: {}", i);
             segmentStateMachines.add(segment);
         }
@@ -488,7 +493,8 @@ public class TopLevelStateMachine {
                 // 定时器事件的动作在状态进入时执行
             }
             case SYSTEM_RESET -> {
-                SystemActions.executeEnterSystemInit(currentState, event, variables);
+                SystemActions.executeSystemReset(currentState, event, variables);
+                //SystemActions.executeEnterSystemInit(currentState, event, variables);
             }
             case HEALTH_SCORE_UPDATE -> {
                 updateSystemHealth();
@@ -757,7 +763,7 @@ public class TopLevelStateMachine {
         }
 
         // 在非感应模式下，可以考虑暂停某些路段状态机
-        else if (newState == SystemStateV3.EMERGENCY_MODE || newState == SystemStateV3.MAINTENANCE_MODE) {
+        else if (newState == SystemStateV3.EMERGENCY_MODE || newState == SystemStateV3.MAINTENANCE_MODE || newState == SystemStateV3.SYSTEM_INIT) {
             // 这里可以根据需要暂停或调整路段状态机
             for (SegmentStateMachine segment : segmentStateMachines) {
                 if (segment.isRunning()) {
@@ -881,12 +887,13 @@ public class TopLevelStateMachine {
         SystemStateTransitionRecord record = new SystemStateTransitionRecord(
                 fromState, toState, triggerEvent, transitionTime);
 
-        transitionHistory.add(record);
-
-        // 保持历史记录大小限制
-        if (transitionHistory.size() > 500) {
-            transitionHistory.remove(0);
-        }
+        systemLogService.logSystemEvent(SystemLogEntity.LogLevel.INFO, record.toString());
+//        transitionHistory.add(record);
+//
+//        // 保持历史记录大小限制
+//        if (transitionHistory.size() > 500) {
+//            transitionHistory.remove(0);
+//        }
     }
 
     // ==================== 辅助方法 =====================

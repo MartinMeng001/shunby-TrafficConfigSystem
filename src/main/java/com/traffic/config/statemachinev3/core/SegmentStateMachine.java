@@ -1,5 +1,7 @@
 package com.traffic.config.statemachinev3.core;
 
+import com.traffic.config.entity.log.SystemLogEntity;
+import com.traffic.config.service.log.SystemLogService;
 import com.traffic.config.statemachinev3.enums.segment.SegmentState;
 import com.traffic.config.statemachinev3.enums.segment.SegmentEvent;
 import com.traffic.config.statemachinev3.enums.segment.ClearanceDecision;
@@ -36,6 +38,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class SegmentStateMachine {
 
     private static final Logger logger = LoggerFactory.getLogger(SegmentStateMachine.class);
+
+    private final SystemLogService systemLogService;
 
     // ==================== 状态机核心组件 ====================
 
@@ -80,7 +84,7 @@ public class SegmentStateMachine {
      * 构造函数
      * @param segmentId 路段ID
      */
-    public SegmentStateMachine(int segmentId) {
+    public SegmentStateMachine(int segmentId, SystemLogService systemLogService) {
         this.variables = new SegmentVariables(segmentId);
         this.clearanceEngine = new ClearanceDecisionEngine();
         this.eventQueue = new LinkedBlockingQueue<>();
@@ -88,6 +92,7 @@ public class SegmentStateMachine {
         this.currentState = SegmentState.ALL_RED_CLEAR;
         this.isRunning = false;
         this.lastEventProcessTime = LocalDateTime.now();
+        this.systemLogService = systemLogService;
 
         logger.info("路段状态机初始化完成 - 路段ID: {}, 初始状态: {}",
                 segmentId, currentState.getChineseName());
@@ -436,13 +441,16 @@ public class SegmentStateMachine {
      * 基于优先级算法和通行请求
      */
     private SegmentState determineGreenStateFromRed() {
-        // 如果红灯超时应该进入降级状态
-        if(variables.isRedTimeout()){
-            return SegmentState.ALL_YELLOWFLASH_MANUAL;
-        }
+//        // 如果红灯超时应该进入降级状态
+//        if(variables.isRedTimeout()){
+//            if (!isClearanceConditionMet()) {   // 达到超时，且仍未清空的条件下才进黄闪
+//                return SegmentState.ALL_YELLOWFLASH_MANUAL;
+//            }
+//        }
         // 检查清空条件是否满足
         if (!isClearanceConditionMet()) {
-            return SegmentState.ALL_RED_CLEAR; // 继续等待清空
+            if(variables.isRedTimeout()) return SegmentState.ALL_YELLOWFLASH_MANUAL;    // 如果未清空且超时进黄闪
+            else return SegmentState.ALL_RED_CLEAR; // 不超时,才继续等待清空, 超时了要么切换，要么黄闪
         }
         // 先判断前方等待区容量是否允许放行, 这里是判断等待区，不是请求等待区
         boolean isUpMax = variables.isUpMaxCapacityA(variables.getMeetZoneCrossId(true));
@@ -815,12 +823,13 @@ public class SegmentStateMachine {
         StateTransitionRecord record = new StateTransitionRecord(
                 fromState, toState, triggerEvent, transitionTime);
 
-        transitionHistory.add(record);
-
-        // 保持历史记录大小限制
-        if (transitionHistory.size() > 1000) {
-            transitionHistory.remove(0);
-        }
+        systemLogService.logSegmentStatus(SystemLogEntity.LogLevel.INFO, record.toString(), String.valueOf(getSegmentId()));
+//        transitionHistory.add(record);
+//
+//        // 保持历史记录大小限制
+//        if (transitionHistory.size() > 1000) {
+//            transitionHistory.remove(0);
+//        }
     }
 
     // ==================== 内部类定义 ====================

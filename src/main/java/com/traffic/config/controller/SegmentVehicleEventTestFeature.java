@@ -1,8 +1,12 @@
 package com.traffic.config.controller;
 
+import com.traffic.config.statemachinev3.core.SegmentStateMachine;
 import com.traffic.config.statemachinev3.enums.segment.SegmentEvent;
+import com.traffic.config.statemachinev3.enums.system.SystemEventV3;
 import com.traffic.config.statemachinev3.threading.SegmentStateMachineV3Service;
+import com.traffic.config.statemachinev3.threading.SystemStateMachineV3Service;
 import com.traffic.config.statemachinev3.variables.SegmentVariables;
+import com.traffic.config.statemachinev3.variables.SystemVariables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -38,6 +44,9 @@ public class SegmentVehicleEventTestFeature {
     @Autowired
     private SegmentStateMachineV3Service segmentStateMachineV3Service;
 
+    @Autowired
+    private SystemStateMachineV3Service systemStateMachineV3Service;
+
     // 固定的测试车牌号
     private static final String TEST_LICENSE_PLATE_1 = "TEST001";  // 上行方向测试车牌
     private static final String TEST_LICENSE_PLATE_2 = "TEST002";  // 下行方向测试车牌
@@ -63,6 +72,271 @@ public class SegmentVehicleEventTestFeature {
         return info;
     }
 
+    @GetMapping("/reset")
+    public Map<String, Object> getResetCtrl() {
+        return triggerSystemCommonEvent(SystemEventV3.SYSTEM_RESET);
+    }
+
+    /**
+     * 获取特定路段SegmentVariables所有变量当前状态的接口
+     * @param segmentId 路段ID
+     * @return 该路段所有变量的当前状态
+     */
+    @GetMapping("/segment/{segmentId}/variables")
+    public Map<String, Object> getSegmentVariables(@PathVariable int segmentId) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // 通过TopLevelStateMachine获取指定路段的状态机实例
+            SegmentStateMachine segmentMachine = systemStateMachineV3Service.getTopLevelStateMachine().getSegmentStateMachine(segmentId);
+
+            if (segmentMachine == null) {
+                response.put("success", false);
+                response.put("message", "路段状态机不存在: " + segmentId);
+                response.put("segmentId", segmentId);
+                response.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                return response;
+            }
+
+            SegmentVariables variables = segmentMachine.getVariables();
+            Map<String, Object> variableData = new HashMap<>();
+
+            // 基础信息
+            variableData.put("segmentId", variables.getSegmentId());
+            //variableData.put("currentState", segmentMachine.getCurrentState().getCode());
+
+            // 配置参数
+            Map<String, Object> configParams = new HashMap<>();
+            configParams.put("minGreen", variables.getMinGreen());
+            configParams.put("maxGreen", variables.getMaxGreen());
+            configParams.put("minRed", variables.getMinRed());
+            configParams.put("maxRed", variables.getMaxRed());
+            configParams.put("roadLength", variables.getRoadLength());
+            variableData.put("configParams", configParams);
+
+            // 时间变量
+            Map<String, Object> timeVariables = new HashMap<>();
+            timeVariables.put("greenStartTime", variables.getGreenStartTime() != null ?
+                    variables.getGreenStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            timeVariables.put("redStartTime", variables.getRedStartTime() != null ?
+                    variables.getRedStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            timeVariables.put("lastSwitchTime", variables.getLastSwitchTime() != null ?
+                    variables.getLastSwitchTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            timeVariables.put("conservativeTimerStart", variables.getConservativeTimerStart() != null ?
+                    variables.getConservativeTimerStart().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            variableData.put("timeVariables", timeVariables);
+
+            // 车辆相关变量
+            Map<String, Object> vehicleVariables = new HashMap<>();
+            vehicleVariables.put("upstreamVehicleIds", variables.getUpstreamVehicleIds());
+            vehicleVariables.put("downstreamVehicleIds", variables.getDownstreamVehicleIds());
+            vehicleVariables.put("upstreamInCounter", variables.getUpstreamInCounter());
+            vehicleVariables.put("upstreamOutCounter", variables.getUpstreamOutCounter());
+            vehicleVariables.put("downstreamInCounter", variables.getDownstreamInCounter());
+            vehicleVariables.put("downstreamOutCounter", variables.getDownstreamOutCounter());
+            //vehicleVariables.put("upstreamCapacity", variables.getUpstreamCapacity());
+            //vehicleVariables.put("downstreamCapacity", variables.getDownstreamCapacity());
+            variableData.put("vehicleVariables", vehicleVariables);
+
+            // 通行请求变量
+            Map<String, Object> requestVariables = new HashMap<>();
+            requestVariables.put("upstreamRequest", variables.isUpstreamRequest());
+            requestVariables.put("downstreamRequest", variables.isDownstreamRequest());
+            requestVariables.put("upstreamRequestTime", variables.getUpstreamRequestTime() != null ?
+                    variables.getUpstreamRequestTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            requestVariables.put("downstreamRequestTime", variables.getDownstreamRequestTime() != null ?
+                    variables.getDownstreamRequestTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            requestVariables.put("forceSwitchReq", variables.getForceSwitchReq());
+            variableData.put("requestVariables", requestVariables);
+
+            // 清空决策变量
+            Map<String, Object> clearanceVariables = new HashMap<>();
+            clearanceVariables.put("upstreamClearanceDecision", variables.getUpstreamClearanceDecision().name());
+            clearanceVariables.put("downstreamClearanceDecision", variables.getDownstreamClearanceDecision().name());
+            clearanceVariables.put("overallClearanceDecision", variables.getOverallClearanceDecision().name());
+            variableData.put("clearanceVariables", clearanceVariables);
+
+            // 优先级和调度变量
+            Map<String, Object> scheduleVariables = new HashMap<>();
+            scheduleVariables.put("lastServedDirection", variables.getLastServedDirection().name());
+            scheduleVariables.put("upstreamWaitingTime", variables.getUpstreamWaitingTime());
+            scheduleVariables.put("downstreamWaitingTime", variables.getDownstreamWaitingTime());
+            scheduleVariables.put("priorityScoreUpstream", variables.getPriorityScoreUpstream());
+            scheduleVariables.put("priorityScoreDownstream", variables.getPriorityScoreDownstream());
+            scheduleVariables.put("priorityDirection", variables.determinePriorityDirection().name());
+            variableData.put("scheduleVariables", scheduleVariables);
+
+            // 错误统计变量
+            Map<String, Object> errorVariables = new HashMap<>();
+            errorVariables.put("errorCountMismatch", variables.getErrorCountMismatch());
+            errorVariables.put("errorCountIdLogic", variables.getErrorCountIdLogic());
+            errorVariables.put("consecutiveErrors", variables.getConsecutiveErrors());
+            errorVariables.put("segmentHealthScore", variables.getSegmentHealthScore());
+            variableData.put("errorVariables", errorVariables);
+
+            // 状态标识变量
+            Map<String, Object> statusVariables = new HashMap<>();
+            //statusVariables.put("maintenanceMode", variables.isMaintenanceMode());
+            statusVariables.put("faultDetected", variables.isFaultDetected());
+            statusVariables.put("criticalSensorsNormal", variables.areCriticalSensorsNormal());
+            statusVariables.put("emptyUpstreamMeetingzone", variables.isEmptyUpstreamMeetingzone());
+            statusVariables.put("emptyDownstreamMeetingzone", variables.isEmptyDownstreamMeetingzone());
+            variableData.put("statusVariables", statusVariables);
+
+            // 构建最终响应
+            response.put("success", true);
+            response.put("message", "获取路段变量状态成功");
+            response.put("segmentId", segmentId);
+            response.put("variables", variableData);
+            response.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
+            logger.info("获取路段{}变量状态成功", segmentId);
+
+        } catch (Exception e) {
+            logger.error("获取路段{}变量状态失败: {}", segmentId, e.getMessage(), e);
+
+            response.put("success", false);
+            response.put("message", "获取路段变量状态失败: " + e.getMessage());
+            response.put("segmentId", segmentId);
+            response.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        }
+
+        return response;
+    }
+
+    /**
+     * 获取SystemVariables所有变量当前状态的接口
+     * @return 系统所有变量的当前状态
+     */
+    @GetMapping("/system/variables")
+    public Map<String, Object> getSystemVariables() {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // 通过TopLevelStateMachine获取系统变量
+            SystemVariables variables = systemStateMachineV3Service.getTopLevelStateMachine().getVariables();
+
+            if (variables == null) {
+                response.put("success", false);
+                response.put("message", "系统变量获取失败");
+                response.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                return response;
+            }
+
+            Map<String, Object> variableData = new HashMap<>();
+
+            // 时间变量
+            Map<String, Object> timeVariables = new HashMap<>();
+            timeVariables.put("allRedTime", variables.getAllRedTime());
+            timeVariables.put("maxAllRedTime", variables.getMaxAllRedTime());
+            timeVariables.put("stateStartTime", variables.getStateStartTime() != null ?
+                    variables.getStateStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            timeVariables.put("systemInitStartTime", variables.getSystemInitStartTime() != null ?
+                    variables.getSystemInitStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            timeVariables.put("transitionStartTime", variables.getTransitionStartTime() != null ?
+                    variables.getTransitionStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            timeVariables.put("lastFaultTime", variables.getLastFaultTime() != null ?
+                    variables.getLastFaultTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            timeVariables.put("recoveryStartTime", variables.getRecoveryStartTime() != null ?
+                    variables.getRecoveryStartTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            timeVariables.put("lastHealthUpdateTime", variables.getLastHealthUpdateTime() != null ?
+                    variables.getLastHealthUpdateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            timeVariables.put("lastClearanceCheckTime", variables.getLastClearanceCheckTime() != null ?
+                    variables.getLastClearanceCheckTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null);
+            variableData.put("timeVariables", timeVariables);
+
+            // 状态标记变量
+            Map<String, Object> statusVariables = new HashMap<>();
+            statusVariables.put("previousState", variables.getPreviousState() != null ?
+                    variables.getPreviousState().name() : null);
+            statusVariables.put("faultSource", variables.getFaultSource() != null ?
+                    variables.getFaultSource().name() : null);
+            statusVariables.put("maintenanceType", variables.getMaintenanceType() != null ?
+                    variables.getMaintenanceType().name() : null);
+            statusVariables.put("emergencyLevel", variables.getEmergencyLevel().name());
+            statusVariables.put("clearDetectionActive", variables.isClearDetectionActive());
+            statusVariables.put("autoRecoveryEnabled", variables.isAutoRecoveryEnabled());
+            variableData.put("statusVariables", statusVariables);
+
+            // 路段管理变量
+            Map<String, Object> segmentVariables = new HashMap<>();
+            segmentVariables.put("segmentCount", variables.getSegmentCount());
+            //segmentVariables.put("segmentsAllReady", variables.areSegmentsAllReady());
+            segmentVariables.put("clearedSegmentCount", variables.getClearedSegmentCount());
+
+            // 路段清空状态详情
+            Map<String, Object> segmentClearanceStates = new HashMap<>();
+            for (Map.Entry<Integer, SystemVariables.ClearanceState> entry : variables.getSegmentClearanceStates().entrySet()) {
+                Map<String, Object> clearanceState = new HashMap<>();
+                clearanceState.put("segmentId", entry.getValue().getSegmentId());
+                clearanceState.put("overallDecision", entry.getValue().getOverallDecision().name());
+                clearanceState.put("readyForSwitch", entry.getValue().isReadyForSwitch());
+                clearanceState.put("faultDetected", entry.getValue().isFaultDetected());
+                segmentClearanceStates.put("segment" + entry.getKey(), clearanceState);
+            }
+            segmentVariables.put("segmentClearanceStates", segmentClearanceStates);
+            variableData.put("segmentVariables", segmentVariables);
+
+            // 系统健康度变量
+            Map<String, Object> healthVariables = new HashMap<>();
+            healthVariables.put("systemHealthScore", variables.getSystemHealthScore());
+            healthVariables.put("performanceDegradation", variables.getPerformanceDegradation());
+            healthVariables.put("lastStableConfig", variables.getLastStableConfig());
+            healthVariables.put("communicationNormal", variables.isCommunicationNormal());
+            healthVariables.put("powerStatusNormal", variables.isPowerStatusNormal());
+            variableData.put("healthVariables", healthVariables);
+
+            // 控制模式变量
+            Map<String, Object> controlVariables = new HashMap<>();
+            controlVariables.put("currentControlMode", variables.getCurrentControlMode().name());
+            controlVariables.put("configurationLoaded", variables.isConfigurationLoaded());
+            variableData.put("controlVariables", controlVariables);
+
+            // 通信和外部接口变量
+            Map<String, Object> communicationVariables = new HashMap<>();
+            communicationVariables.put("communicationStatus", variables.getCommunicationStatus().name());
+            communicationVariables.put("powerStatus", variables.getPowerStatus().name());
+            variableData.put("communicationVariables", communicationVariables);
+
+            // 错误统计变量
+            Map<String, Object> errorVariables = new HashMap<>();
+            errorVariables.put("idLogicErrorCount", variables.getIdLogicErrorCount());
+            errorVariables.put("counterMismatchErrorCount", variables.getCounterMismatchErrorCount());
+
+            // 错误历史（只取最近10条）
+            List<SystemVariables.ErrorRecord> errorHistory = variables.getErrorHistory();
+            List<Map<String, Object>> recentErrors = new ArrayList<>();
+            int startIndex = Math.max(0, errorHistory.size() - 10);
+            for (int i = startIndex; i < errorHistory.size(); i++) {
+                SystemVariables.ErrorRecord error = errorHistory.get(i);
+                Map<String, Object> errorInfo = new HashMap<>();
+                errorInfo.put("errorType", error.getErrorType());
+                errorInfo.put("description", error.getDescription());
+                errorInfo.put("source", error.getSource());
+                errorInfo.put("timestamp", error.getTimestamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                recentErrors.add(errorInfo);
+            }
+            errorVariables.put("recentErrorHistory", recentErrors);
+            variableData.put("errorVariables", errorVariables);
+
+            // 构建最终响应
+            response.put("success", true);
+            response.put("message", "获取系统变量状态成功");
+            response.put("variables", variableData);
+            response.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
+            logger.info("获取系统变量状态成功");
+
+        } catch (Exception e) {
+            logger.error("获取系统变量状态失败: {}", e.getMessage(), e);
+
+            response.put("success", false);
+            response.put("message", "获取系统变量状态失败: " + e.getMessage());
+            response.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        }
+
+        return response;
+    }
     /**
      * 强控接口：手动触发路段控制阶段强控
      * @param segmentId 路段ID
@@ -244,6 +518,27 @@ public class SegmentVehicleEventTestFeature {
      * 通用的车辆事件触发方法
      * 传入的licensePlate为空时，根据方向使用固定的测试车牌
      */
+    private Map<String, Object> triggerSystemCommonEvent(SystemEventV3 event){
+        systemStateMachineV3Service.processSystemEventAsync(event);
+        recordEventHistory(event);
+        // 构建响应
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "事件触发成功");
+        response.put("event", event.getChineseName());
+        response.put("eventCode", event.getCode());
+        response.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        response.put("eventCounter", eventCounter);
+
+        logger.info("手动触发Reset事件 - {}", event.getChineseName());
+
+        return response;
+    }
+
+    /**
+     * 通用的车辆事件触发方法
+     * 传入的licensePlate为空时，根据方向使用固定的测试车牌
+     */
     private Map<String, Object> triggerVehicleEvent(int segmentId, SegmentEvent event, String licensePlate) {
         // 如果传入的licensePlate为空，则根据事件方向选择固定的测试车牌
         String finalLicensePlate = licensePlate;
@@ -339,6 +634,23 @@ public class SegmentVehicleEventTestFeature {
         historyEntry.put("licensePlate", licensePlate);
         historyEntry.put("direction", event.getVehicleDirection());
         historyEntry.put("action", event.getVehicleAction());
+        historyEntry.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
+        eventHistory.put(historyKey, historyEntry);
+    }
+
+    private void recordEventHistory(SystemEventV3 event) {
+        eventCounter++;
+        String historyKey = "event_" + eventCounter;
+
+        Map<String, Object> historyEntry = new HashMap<>();
+        historyEntry.put("eventId", eventCounter);
+        //historyEntry.put("segmentId", segmentId);
+        historyEntry.put("event", event.getChineseName());
+        historyEntry.put("eventCode", event.getCode());
+//        historyEntry.put("licensePlate", licensePlate);
+//        historyEntry.put("direction", event.getVehicleDirection());
+//        historyEntry.put("action", event.getVehicleAction());
         historyEntry.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         eventHistory.put(historyKey, historyEntry);
