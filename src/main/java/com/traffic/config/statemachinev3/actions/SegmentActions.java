@@ -227,6 +227,10 @@ public class SegmentActions {
                                            SegmentState targetState,
                                            SegmentEvent event,
                                            SegmentVariables variables){
+        if(targetState.isYellowFlashState()){   // 如果目标为黄闪，设置故障信息
+            executeEnterFaultMode(currentState, targetState, event, variables);
+            return;
+        }
         switch (variables.getLastServedDirection()){
             case DOWNSTREAM -> variables.clearDownstreamMeetingzone();
             case UPSTREAM -> variables.clearUpstreamMeetingzone();
@@ -588,51 +592,6 @@ public class SegmentActions {
                     variables.incrementDownstreamOutCounter();
                 }
             }
-        }
-    }
-
-    /**
-     * 检查并清除通行请求（如果需要）
-     */
-    private static void checkAndClearRequestIfNeeded(SegmentVariables.Direction direction, SegmentVariables variables) {
-        switch (direction) {
-            case UPSTREAM -> {
-                if (variables.isUpstreamRequest() && variables.getUpstreamVehicleIds().isEmpty()) {
-                    // 检查计数器一致性
-                    if (variables.getUpstreamInCounter() == variables.getUpstreamOutCounter()) {
-                        variables.setUpstreamRequest(false);
-                        variables.setUpstreamRequestTime(null);
-                        logger.debug("路段 {} 清除上行通行请求 - 无剩余车辆", variables.getSegmentId());
-                    }
-                }
-            }
-            case DOWNSTREAM -> {
-                if (variables.isDownstreamRequest() && variables.getDownstreamVehicleIds().isEmpty()) {
-                    // 检查计数器一致性
-                    if (variables.getDownstreamInCounter() == variables.getDownstreamOutCounter()) {
-                        variables.setDownstreamRequest(false);
-                        variables.setDownstreamRequestTime(null);
-                        logger.debug("路段 {} 清除下行通行请求 - 无剩余车辆", variables.getSegmentId());
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 更新车辆等待时间
-     */
-    private static void updateVehicleWaitingTime(String vehicleId, SegmentVariables variables) {
-        LocalDateTime entryTime = variables.getVehicleEntryTime(vehicleId);
-        if (entryTime != null) {
-            LocalDateTime now = LocalDateTime.now();
-            long waitingSeconds = ChronoUnit.SECONDS.between(entryTime, now);
-
-            // 更新平均等待时间（移动平均）
-            double currentAvg = variables.getAverageWaitingTime();
-            double newAvg = SegmentConstants.WAITING_TIME_SMOOTH_FACTOR * currentAvg +
-                    (1 - SegmentConstants.WAITING_TIME_SMOOTH_FACTOR) * waitingSeconds;
-            variables.setAverageWaitingTime(newAvg);
         }
     }
 

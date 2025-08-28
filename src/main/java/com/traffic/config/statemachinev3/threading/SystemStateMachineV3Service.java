@@ -23,6 +23,9 @@ public class SystemStateMachineV3Service {
     @Autowired
     private TopLevelStateMachine topLevelStateMachine;
 
+    public TopLevelStateMachine getTopLevelStateMachine() {
+        return topLevelStateMachine;
+    }
     @PostConstruct
     public void init() {
         // 启动顶层状态机

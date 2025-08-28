@@ -4,38 +4,171 @@
       "name": "adapter.webservice",
       "type": "com.traffic.config.config.WebServiceAdapterConfig",
       "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+    },
+    {
+      "name": "traffic.data",
+      "type": "com.traffic.config.configuration.DataDirectoryProperties",
+      "sourceType": "com.traffic.config.configuration.DataDirectoryProperties"
+    },
+    {
+      "name": "traffic.data.backup",
+      "type": "com.traffic.config.configuration.DataDirectoryProperties$Backup",
+      "sourceType": "com.traffic.config.configuration.DataDirectoryProperties",
+      "sourceMethod": "getBackup()"
+    },
+    {
+      "name": "traffic.data.logs",
+      "type": "com.traffic.config.configuration.DataDirectoryProperties$Logs",
+      "sourceType": "com.traffic.config.configuration.DataDirectoryProperties",
+      "sourceMethod": "getLogs()"
+    },
+    {
+      "name": "traffic.log",
+      "type": "com.traffic.config.configuration.SystemLogProperties",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties"
+    },
+    {
+      "name": "traffic.log.database",
+      "type": "com.traffic.config.configuration.SystemLogProperties$Database",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties",
+      "sourceMethod": "getDatabase()"
+    },
+    {
+      "name": "traffic.log.database.cleanup",
+      "type": "com.traffic.config.configuration.SystemLogProperties$Database$Cleanup",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Database",
+      "sourceMethod": "getCleanup()"
+    },
+    {
+      "name": "traffic.log.level",
+      "type": "com.traffic.config.configuration.SystemLogProperties$Level",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties",
+      "sourceMethod": "getLevel()"
     }
   ],
   "properties": [
     {
       "name": "adapter.webservice.connection-timeout",
       "type": "java.lang.Integer",
-      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig",
+      "defaultValue": 30000
     },
     {
       "name": "adapter.webservice.default-port",
       "type": "java.lang.String",
-      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig",
+      "defaultValue": "8080"
     },
     {
       "name": "adapter.webservice.enable-logging",
       "type": "java.lang.Boolean",
-      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig",
+      "defaultValue": true
     },
     {
       "name": "adapter.webservice.name-space",
       "type": "java.lang.String",
-      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig",
+      "defaultValue": "http:\/\/webservice\/"
     },
     {
       "name": "adapter.webservice.read-timeout",
       "type": "java.lang.Integer",
-      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig",
+      "defaultValue": 60000
     },
     {
       "name": "adapter.webservice.service-path",
       "type": "java.lang.String",
-      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig"
+      "sourceType": "com.traffic.config.config.WebServiceAdapterConfig",
+      "defaultValue": "\/SignalListenServer\/SignalListenDelegate?wsdl"
+    },
+    {
+      "name": "traffic.data.backup.dir",
+      "type": "java.lang.String",
+      "description": "备份目录路径",
+      "sourceType": "com.traffic.config.configuration.DataDirectoryProperties$Backup",
+      "defaultValue": ".\/data\/backup"
+    },
+    {
+      "name": "traffic.data.dir",
+      "type": "java.lang.String",
+      "description": "主数据目录",
+      "sourceType": "com.traffic.config.configuration.DataDirectoryProperties",
+      "defaultValue": ".\/data"
+    },
+    {
+      "name": "traffic.data.logs.dir",
+      "type": "java.lang.String",
+      "description": "日志目录路径",
+      "sourceType": "com.traffic.config.configuration.DataDirectoryProperties$Logs",
+      "defaultValue": ".\/logs"
+    },
+    {
+      "name": "traffic.log.database.cleanup.cron",
+      "type": "java.lang.String",
+      "description": "清理任务执行时间表达式",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Database$Cleanup"
+    },
+    {
+      "name": "traffic.log.database.cleanup.enabled",
+      "type": "java.lang.Boolean",
+      "description": "是否启用自动清理",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Database$Cleanup"
+    },
+    {
+      "name": "traffic.log.database.cleanup.error-retain-days",
+      "type": "java.lang.Integer",
+      "description": "错误日志保留天数",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Database$Cleanup"
+    },
+    {
+      "name": "traffic.log.database.cleanup.normal-retain-days",
+      "type": "java.lang.Integer",
+      "description": "普通日志保留天数",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Database$Cleanup"
+    },
+    {
+      "name": "traffic.log.database.enabled",
+      "type": "java.lang.Boolean",
+      "description": "是否启用数据库日志",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Database"
+    },
+    {
+      "name": "traffic.log.level.conflict",
+      "type": "java.lang.String",
+      "description": "冲突告警日志级别",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Level"
+    },
+    {
+      "name": "traffic.log.level.detector",
+      "type": "java.lang.String",
+      "description": "检测器错误日志级别",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Level"
+    },
+    {
+      "name": "traffic.log.level.segment",
+      "type": "java.lang.String",
+      "description": "路段状态日志级别",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Level"
+    },
+    {
+      "name": "traffic.log.level.sensor",
+      "type": "java.lang.String",
+      "description": "传感器状态日志级别",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Level"
+    },
+    {
+      "name": "traffic.log.level.system",
+      "type": "java.lang.String",
+      "description": "系统事件日志级别",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Level"
+    },
+    {
+      "name": "traffic.log.level.vehicle",
+      "type": "java.lang.String",
+      "description": "车辆事件日志级别",
+      "sourceType": "com.traffic.config.configuration.SystemLogProperties$Level"
     }
   ],
   "hints": []

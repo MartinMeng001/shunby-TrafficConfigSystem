@@ -1,5 +1,63 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <SingleLane>
+    <global>
+        <AllRed>120</AllRed>
+        <MaxAllRed>300</MaxAllRed>
+        <PlatformUrl>122.5.105.22:2020</PlatformUrl>
+        <SignalControllerList>
+            <Signal name="上行入口信号机">37</Signal>
+            <Signal name="信号机2">38</Signal>
+            <Signal name="信号机3">41</Signal>
+            <Signal name="信号机4">42</Signal>
+            <Signal name="下行入口信号机">43</Signal>
+        </SignalControllerList>
+    </global>
+    <segments size="4">
+        <segment>
+            <segmentId>1</segmentId>
+            <name>路段1</name>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
+            <upsigid>37</upsigid>
+            <downsigid>38</downsigid>
+        </segment>
+        <segment>
+            <segmentId>2</segmentId>
+            <name>路段2</name>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
+            <upsigid>38</upsigid>
+            <downsigid>41</downsigid>
+        </segment>
+        <segment>
+            <segmentId>3</segmentId>
+            <name>路段3</name>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
+            <upsigid>41</upsigid>
+            <downsigid>42</downsigid>
+        </segment>
+        <segment>
+            <segmentId>4</segmentId>
+            <name>路段4</name>
+            <length>1000</length>
+            <minRed>5</minRed>
+            <maxRed>60</maxRed>
+            <minGreen>5</minGreen>
+            <maxGreen>15</maxGreen>
+            <upsigid>42</upsigid>
+            <downsigid>43</downsigid>
+        </segment>
+    </segments>
     <DetectPoints readonly="true">
         <DetectPoint>
             <index>1</index>
@@ -34,64 +92,6 @@
             <details>路段4下行检测</details>
         </DetectPoint>
     </DetectPoints>
-    <global>
-        <AllRed>30</AllRed>
-        <MaxAllRed>150</MaxAllRed>
-        <PlatformUrl>122.5.105.22:2020</PlatformUrl>
-        <SignalControllerList>
-            <Signal>37</Signal>
-            <Signal>38</Signal>
-            <Signal>41</Signal>
-            <Signal>42</Signal>
-            <Signal>43</Signal>
-        </SignalControllerList>
-    </global>
-    <segments size="4">
-        <segment>
-            <downsigid>38</downsigid>
-            <length>800</length>
-            <maxGreen>15</maxGreen>
-            <maxRed>30</maxRed>
-            <minGreen>5</minGreen>
-            <minRed>5</minRed>
-            <name>路段1</name>
-            <segmentId>1</segmentId>
-            <upsigid>37</upsigid>
-        </segment>
-        <segment>
-            <downsigid>41</downsigid>
-            <length>900</length>
-            <maxGreen>16</maxGreen>
-            <maxRed>40</maxRed>
-            <minGreen>6</minGreen>
-            <minRed>5</minRed>
-            <name>路段2</name>
-            <segmentId>2</segmentId>
-            <upsigid>38</upsigid>
-        </segment>
-        <segment>
-            <downsigid>42</downsigid>
-            <length>1100</length>
-            <maxGreen>17</maxGreen>
-            <maxRed>50</maxRed>
-            <minGreen>7</minGreen>
-            <minRed>5</minRed>
-            <name>路段3</name>
-            <segmentId>3</segmentId>
-            <upsigid>41</upsigid>
-        </segment>
-        <segment>
-            <downsigid>43</downsigid>
-            <length>1200</length>
-            <maxGreen>18</maxGreen>
-            <maxRed>62</maxRed>
-            <minGreen>8</minGreen>
-            <minRed>7</minRed>
-            <name>路段4</name>
-            <segmentId>4</segmentId>
-            <upsigid>42</upsigid>
-        </segment>
-    </segments>
     <WaitingAreas>
         <waitingArea>
             <index>1</index>

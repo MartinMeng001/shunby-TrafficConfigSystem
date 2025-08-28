@@ -9,12 +9,17 @@
 package com.traffic.config.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> implements Serializable {
 
@@ -49,6 +54,11 @@ public class ApiResponse<T> implements Serializable {
      * 是否成功
      */
     private Boolean success;
+
+    /**
+     * 请求跟踪ID
+     */
+    private String traceId;
 
     /**
      * 错误详情（仅在失败时返回）
@@ -194,6 +204,19 @@ public class ApiResponse<T> implements Serializable {
     }
 
     /**
+     * 成功响应（有数据和消息）
+     */
+    public static <T> ApiResponse<T> success(T data, String message) {
+        return ApiResponse.<T>builder()
+                .code(200)
+                .message(message)
+                .data(data)
+                .success(true)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    /**
      * 创建成功响应
      *
      * @param data 创建的数据
@@ -247,6 +270,17 @@ public class ApiResponse<T> implements Serializable {
         ApiResponse<T> response = new ApiResponse<>(responseCode.getCode(), message, null);
         response.setSuccess(false);
         return response;
+    }
+    /**
+     * 失败响应
+     */
+    public static <T> ApiResponse<T> error(String message) {
+        return ApiResponse.<T>builder()
+                .code(500)
+                .message(message)
+                .success(false)
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     /**
