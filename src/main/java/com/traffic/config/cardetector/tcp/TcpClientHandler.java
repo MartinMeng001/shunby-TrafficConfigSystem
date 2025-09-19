@@ -1,6 +1,6 @@
 package com.traffic.config.cardetector.tcp;
 
-import com.traffic.config.cardetector.manager.ConnectionManager;
+import com.traffic.config.cardetector.manager.ConnectionManagerOrg;
 import com.traffic.config.cardetector.manager.DataAccessManager;
 import com.traffic.config.cardetector.model.ProtocolMessage;
 import com.traffic.config.util.DataUtil;
@@ -17,7 +17,7 @@ public class TcpClientHandler {
     private static final Logger log = LoggerFactory.getLogger(TcpClientHandler.class);
 
     @Autowired
-    private ConnectionManager connectionManager;
+    private ConnectionManagerOrg connectionManagerOrg;
 
     @Autowired
     private DataAccessManager dataAccessManager;
@@ -27,7 +27,7 @@ public class TcpClientHandler {
 
         try {
             // 注册连接
-            connectionManager.addConnection(clientSocket);
+            connectionManagerOrg.addConnection(clientSocket);
 
             InputStream inputStream = clientSocket.getInputStream();
             OutputStream outputStream = clientSocket.getOutputStream();
@@ -61,7 +61,7 @@ public class TcpClientHandler {
             log.error("处理客户端 {} 时发生错误", clientAddress, e);
         } finally {
             try {
-                connectionManager.removeConnection(clientSocket);
+                connectionManagerOrg.removeConnection(clientSocket);
                 if (!clientSocket.isClosed()) {
                     clientSocket.close();
                 }

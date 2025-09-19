@@ -105,7 +105,7 @@ public class DataAccessManager {
                         systemLogService.logVehicleEvent(SystemLogEntity.LogLevel.INFO,
                                 String.format("VehicleEvent: %s, Event: %s", eventData.toString(), event.toString()), vehicleData.getLicensePlate());
 //                        System.out.println("VehicleEvent:"+eventData.toString()+ " Event:"+event.toString());
-//                        segmentStateMachineService.processSegmentEventSync(segmentId, event, eventData);    // 必须同步处理，否则会造成等待区清空错误
+                        segmentStateMachineService.processSegmentEventSync(segmentId, event, eventData);    // 必须同步处理，否则会造成等待区清空错误
                     } else {
                         System.out.println("⚠ 无法解析车辆数据");
                     }

@@ -1,6 +1,6 @@
 package com.traffic.config.cardetector.tcp;
 
-import com.traffic.config.cardetector.manager.ConnectionManager;
+import com.traffic.config.cardetector.manager.ConnectionManagerOrg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component
+//@Component
 public class TcpServer {
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
 
@@ -26,7 +26,7 @@ public class TcpServer {
     private int threadPoolSize;
 
     @Autowired
-    private ConnectionManager connectionManager;
+    private ConnectionManagerOrg connectionManagerOrg;
 
     @Autowired
     private TcpClientHandler clientHandler;
@@ -35,7 +35,7 @@ public class TcpServer {
     private ExecutorService executorService;
     private volatile boolean running = false;
 
-    @PostConstruct
+//    @PostConstruct
     public void startServer() {
         try {
             serverSocket = new ServerSocket(port);
@@ -69,7 +69,7 @@ public class TcpServer {
         }
     }
 
-    @PreDestroy
+//    @PreDestroy
     public void stopServer() {
         running = false;
 
@@ -85,7 +85,7 @@ public class TcpServer {
                 }
             }
 
-            connectionManager.closeAllConnections();
+            connectionManagerOrg.closeAllConnections();
             log.info("TCP服务器已停止");
 
         } catch (Exception e) {

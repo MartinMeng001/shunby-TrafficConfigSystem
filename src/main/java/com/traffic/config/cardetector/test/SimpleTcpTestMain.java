@@ -1,6 +1,6 @@
 package com.traffic.config.cardetector.test;
 
-import com.traffic.config.cardetector.manager.ConnectionManager;
+import com.traffic.config.cardetector.manager.ConnectionManagerOrg;
 import com.traffic.config.cardetector.manager.DataAccessManager;
 import com.traffic.config.cardetector.model.ProtocolMessage;
 import com.traffic.config.cardetector.parser.VehicleDataParser;
@@ -21,7 +21,7 @@ public class SimpleTcpTestMain {
 
         try {
             // 创建组件
-            ConnectionManager connectionManager = new ConnectionManager();
+            ConnectionManagerOrg connectionManagerOrg = new ConnectionManagerOrg();
             VehicleDataParser vehicleDataParser = new VehicleDataParser();
 
             // 创建数据访问管理器，打印解析结果
@@ -29,14 +29,14 @@ public class SimpleTcpTestMain {
 
             // 创建客户端处理器
             TcpClientHandler clientHandler = new TcpClientHandler();
-            setField(clientHandler, "connectionManager", connectionManager);
+            setField(clientHandler, "connectionManager", connectionManagerOrg);
             setField(clientHandler, "dataAccessManager", dataAccessManager);
 
             // 创建并启动TCP服务器
             TcpServer tcpServer = new TcpServer();
             setField(tcpServer, "port", 8130);
             setField(tcpServer, "threadPoolSize", 10);
-            setField(tcpServer, "connectionManager", connectionManager);
+            setField(tcpServer, "connectionManager", connectionManagerOrg);
             setField(tcpServer, "clientHandler", clientHandler);
 
             // 启动服务器
